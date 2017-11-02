@@ -8,7 +8,7 @@ FrameBuffer::~FrameBuffer()
 	delete[] depthBuffer;
 }
 
-bool FrameBuffer::WriteToColor(int w, int h, const ColorFormat& col)
+bool FrameBuffer::WriteToColor(int w, int h, const Color& col)
 {
 	if (w < 0 || h < 0 || w >= width || h >= height) return false;
 
@@ -28,18 +28,28 @@ float FrameBuffer::GetDepth(int w, int h) const
 	return depthBuffer[width * h + w];
 }
 
-void FrameBuffer::Fill(const ColorFormat& col)
+const Color& FrameBuffer::GetColor(int w, int h) const
 {
+	return colorBuffer[width * h + w];
+}
+
+void FrameBuffer::Fill(const Color& col)
+{
+	float x = col.x;
+	float y = col.y;
+	float z = col.z;
 	for (int i = 0; i < width * height; ++i)
 	{
-		colorBuffer[i] = col;
+		colorBuffer[i].x = x;
+		colorBuffer[i].y = y;
+		colorBuffer[i].z = z;
 		depthBuffer[i] = std::numeric_limits<float>::max();
 	}
 }
 
-ColorFormat* FrameBuffer::GetBufferCopy() const
+Color* FrameBuffer::GetBufferCopy() const
 {
-	ColorFormat* copy = new ColorFormat[width * height];
+	Color* copy = new Color[width * height];
 
 	for (int i = 0; i < width*height; ++i)
 	{
@@ -48,14 +58,3 @@ ColorFormat* FrameBuffer::GetBufferCopy() const
 	return copy;
 }
 
-RGB888 * FrameBuffer::GetBufferCopy_RGB888() const
-{
-	RGB888* copy = new RGB888[width * height];
-
-	for (int i = 0; i < width*height; ++i)
-	{
-		copy[i] = RGB888((int) (colorBuffer[i].x * 255), (int) (colorBuffer[i].y * 255), (int) (colorBuffer[i].z * 255));
-	}
-
-	return copy;
-}
