@@ -22,7 +22,7 @@ public:
 	Vertex() : pos(Position::Zero()), nrml(Normal::Zero()), uv(UV::Zero())
 	{}
 
-	Vertex(const Position& pos, const Normal& nrml, const UV& uv) : pos(pos), nrml(nrml), uv(uv) {}
+	Vertex(const Position& pos_, const Normal& nrml_, const UV& uv_) : pos(pos_), nrml(nrml_), uv(uv_) {}
 	Vertex& operator=(const Vertex& v);
 	
 	Vertex GetMatrixVertex(const Matrix4& m) const;
@@ -37,7 +37,7 @@ public:
 	Vertex v2;
 
 	Face();
-	Face(const Vertex& v0, const Vertex& v1, const Vertex& v2) : v0(v0), v1(v1), v2(v2) {}
+	Face(const Vertex& v0_, const Vertex& v1_, const Vertex& v2_) : v0(v0_), v1(v1_), v2(v2_) {}
 	Face(const Position& p0, const Position& p1, const Position& p2, const Face& face);
 	Face& operator=(const Face& f);
 
@@ -54,7 +54,7 @@ public:
 	unsigned int i1;
 	unsigned int i2;
 
-	FaceIndices(unsigned int i0, unsigned int i1, unsigned int i2) : i0(i0), i1(i1), i2(i2) {}
+	FaceIndices(unsigned int i0_, unsigned int i1_, unsigned int i2_) : i0(i0_), i1(i1_), i2(i2_) {}
 };
 
 
@@ -64,7 +64,7 @@ public:
 	Position pos;
 	float radius;
 
-	Sphere(Position pos, float radius) : pos(pos), radius(radius) {}
+	Sphere(Position pos_, float radius_) : pos(pos_), radius(radius_) {}
 };
 
 
@@ -74,5 +74,5 @@ public:
 	Position pos;
 	float sideSize;
 
-	Cube(Position pos, float sideSize) : pos(pos), sideSize(sideSize) {}
+	Cube(Position pos_, float sideSize_) : pos(pos_), sideSize(sideSize_) {}
 };
