@@ -22,7 +22,7 @@ public:
 	Vertex() : pos(Position::Zero()), nrml(Normal::Zero()), uv(UV::Zero())
 	{}
 
-	Vertex(const Position& pos, const Normal& nmrl, const UV& uv) : pos(pos), nrml(nrml), uv(uv) {}
+	Vertex(const Position& pos, const Normal& nrml, const UV& uv) : pos(pos), nrml(nrml), uv(uv) {}
 	Vertex& operator=(const Vertex& v);
 	
 	Vertex GetMatrixVertex(const Matrix4& m) const;
