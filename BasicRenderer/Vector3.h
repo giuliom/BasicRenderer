@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Vector4.h"
+
 class Vector3
 {
 public:
@@ -11,6 +13,7 @@ public:
 	Vector3() {}
 	Vector3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
 	Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z) {}
+	Vector3(const Vector4& v) : x(v.x), y(v.y), z(v.z) {}
 	~Vector3();
 
 	Vector3 Normalize() const;

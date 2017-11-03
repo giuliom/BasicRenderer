@@ -51,8 +51,8 @@ void BasicRenderer::DrawObject(const SceneObject& obj, FrameBuffer* buf)
 	for (int i = 0; i < nfaces; i++)
 	{
 		Face face = faces[i].ToMatrixSpace(mvp);
-		Vector3 faceNormal = (Vector3::CrossProduct(Vector3(face.v0.pos.x, face.v0.pos.y, face.v0.pos.z), Vector3(face.v1.pos.x, face.v1.pos.y, face.v1.pos.z)).Normalize() +1.0f) * 0.5;
-		faceNormal.z = 1.f - faceNormal.z;
+
+		Vector3 faceNormal = (Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize() +1.0f) * 0.5;
 		
 		face = PerspectiveDivide(face);
 		face = NormalizedToScreenSpace(face);
