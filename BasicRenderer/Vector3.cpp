@@ -8,9 +8,9 @@ Vector3::~Vector3()
 
 Vector3 Vector3::Normalize() const
 {
-	float l = Magnitude();
+	float l = 1 / Magnitude();
 	if (l == 0) return Vector3::Zero();
-	return Vector3(x / l, y / l, z / l);
+	return Vector3(x * l, y * l, z * l);
 }
 
 float Vector3::Magnitude() const

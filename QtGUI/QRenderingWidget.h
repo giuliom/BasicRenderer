@@ -2,6 +2,7 @@
 #define RENDERINGWIDGET_H
 
 #include <qopenglwidget.h>
+#include <QTimer>
 #include "BasicRenderer\BasicRenderer.h"
 
 class QRenderingWidget : public QOpenGLWidget
@@ -11,6 +12,7 @@ class QRenderingWidget : public QOpenGLWidget
 protected:
 	BasicRenderer* bRenderer = nullptr;
 	QImage* img = nullptr;
+	QTimer* timer;
 	SceneObject* scene = nullptr;
 
 	std::string rTime = "";
@@ -21,8 +23,11 @@ public:
 
 	void SetScene(SceneObject* scene);
 
-//signals:
+signals:
 	void RenderingCompleted(double time);
+
+public slots:
+	void RenderFrame();
 
 protected:
 

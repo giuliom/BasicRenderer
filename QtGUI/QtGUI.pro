@@ -13,7 +13,8 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    QRenderingWidget.cpp
 
 HEADERS  += mainwindow.h\
 		QRenderingWidget.h

@@ -71,7 +71,12 @@ void FrameBuffer::Fill(const Color& col)
 	}
 }
 
-Color* FrameBuffer::GetBufferCopy() const
+const Color * FrameBuffer::GetColorBuffer() const
+{
+	return colorBuffer;
+}
+
+Color* FrameBuffer::GetColorBufferCopy() const
 {
 	Color* copy = new Color[width * height];
 

@@ -35,7 +35,8 @@ public:
 	const Color& GetColor(int index) const;
 
 	void Fill(const Color& col);
-	Color* GetBufferCopy() const;
+	Color* GetColorBufferCopy() const;
+	const Color* GetColorBuffer() const;
 
 };
 

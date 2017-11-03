@@ -8,11 +8,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-	SetupSignals();
 
 	renderView = ui->renderWidget;
 	scene = new SceneObject(ObjLoader::Load("C:/BasicRenderer/Assets/bunny.obj")); //"../../Assets/bunny.obj")
 	renderView->SetScene(scene);
+
+	SetupSignals();
 }
 
 MainWindow::~MainWindow()
@@ -24,7 +25,7 @@ MainWindow::~MainWindow()
 void MainWindow::SetupSignals()
 {
 	connect(ui->actionRender, SIGNAL(triggered()), this, SLOT(RenderImage()));
-	connect(renderView, SIGNAL(RenderingCompleted(double)), this, SLOT(UpdateFpsLabel(double)));
+    connect(renderView, SIGNAL(RenderingCompleted(double)), this, SLOT(UpdateFpsLabel(double)));
 }
 
 void MainWindow::UpdateFpsLabel(double time)
@@ -37,9 +38,7 @@ void MainWindow::UpdateFpsLabel(double time)
 //TODO later for offline rendering
 void MainWindow::RenderImage()
 {
-	
-	
-	
-	
+	renderView->update();
+
 	
 }

@@ -143,6 +143,15 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_mainwindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_QRenderingWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_mainwindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_QRenderingWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainwindow.cpp" />
   </ItemGroup>
@@ -160,7 +169,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QRenderingWidget.cpp" />
-    <CustomBuild Include="QRenderingWidget.h" />
+    <CustomBuild Include="QRenderingWidget.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing QRenderingWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB "-I\BasicRenderer\BasicRenderer\x64\Debug" "-I\BasicRenderer" "-I." "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include\QtGui" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include\QtCore" "-I.\debug" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\mkspecs\win32-msvc2015"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing QRenderingWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG "-I\BasicRenderer\BasicRenderer\x64\Release" "-I\BasicRenderer" "-I." "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include\QtWidgets" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include\QtGui" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include\QtANGLE" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\include\QtCore" "-I.\release" "-I.\..\..\Qt\Qt5.6.2\5.6\msvc2015_64\mkspecs\win32-msvc2015"</Command>
+    </CustomBuild>
     <ClInclude Include="ui_mainwindow.h" />
   </ItemGroup>
   <ItemGroup>
