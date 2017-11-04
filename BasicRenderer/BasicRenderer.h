@@ -13,13 +13,15 @@ protected:
 	float fwidth = 640.0f;
 	float fheight = 640.0f;
 	FrameBuffer* fBuffer = nullptr;
-	Camera camera;
+	
 
 public:
 	BasicRenderer() {}
 	~BasicRenderer();
 
 	const FrameBuffer* Render(int width, int height, SceneObject& scene);
+
+	Camera camera;
 
 protected:
 	void DrawObject(const SceneObject& obj, FrameBuffer* buf);

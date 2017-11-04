@@ -12,7 +12,7 @@ class QRenderingWidget : public QOpenGLWidget
 protected:
 	BasicRenderer* bRenderer = nullptr;
 	QImage* img = nullptr;
-	QTimer* timer;
+	QTimer* timer = nullptr;
 	SceneObject* scene = nullptr;
 
 	std::string rTime = "";
@@ -36,7 +36,7 @@ protected:
 	virtual void paintGL() override;
 	virtual void paintEvent(QPaintEvent *e) override;
 
-
+	virtual void keyPressEvent(QKeyEvent *event) override;
 
 };
 

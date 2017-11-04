@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	renderView = ui->renderWidget;
 	scene = new SceneObject(ObjLoader::Load("C:/BasicRenderer/Assets/bunny.obj")); //"../../Assets/bunny.obj")
 	renderView->SetScene(scene);
+	renderView->setFocus();
 
 	SetupSignals();
 }

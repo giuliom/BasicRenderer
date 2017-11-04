@@ -1,5 +1,6 @@
 #include "QRenderingWidget.h"
 #include <qpainter.h>
+#include <QKeyEvent>
 #include <ctime>
 #include "BasicRenderer\PrimitiveTypes.h"
 #include "BasicRenderer\ImageFormats.h"
@@ -31,7 +32,6 @@ void QRenderingWidget::initializeGL()
 	timer = new QTimer(this);
 	timer->setInterval(15);
 	timer->start();
-
 	connect(timer, SIGNAL(timeout()), this, SLOT(RenderFrame()));
 	
 }
@@ -53,12 +53,12 @@ void QRenderingWidget::RenderFrame()
 
 void QRenderingWidget::paintEvent(QPaintEvent * e)
 {
-	double beginClock = clock();
-
 	QPainter painter(this) ;
-
+	
+	double beginClock = clock();
+	
 	const FrameBuffer* buf = bRenderer->Render(width(), height(), *scene);
-
+	
 	QRgb* rgb = (QRgb*)img->bits();
 	int size = width() * height();
 
@@ -75,11 +75,16 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	}
 	
 	painter.drawImage(0, 0, *img);
-
+	
 	double endClock = clock() - beginClock;
 	
 	emit RenderingCompleted(endClock);
 	
+}
+
+void QRenderingWidget::keyPressEvent(QKeyEvent * event)
+{
+	bRenderer->camera.transform.SetPosition(bRenderer->camera.transform.GetPosition() + 0.2f);
 }
 
 
