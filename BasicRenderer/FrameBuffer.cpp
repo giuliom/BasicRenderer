@@ -1,5 +1,6 @@
 #include "FrameBuffer.h"
 #include <limits>
+#include <cassert>
 
 
 FrameBuffer::~FrameBuffer()
@@ -10,50 +11,53 @@ FrameBuffer::~FrameBuffer()
 
 bool FrameBuffer::WriteToColor(int w, int h, const Color& col)
 {
-	if (w < 0 || h < 0 || w >= width || h >= height) return false;
-
+	assert(w >= 0 && w < width && h >= 0 && h <width);
 	colorBuffer[width * h + w] = col;
 	return true;
 }
 
 bool FrameBuffer::WriteToColor(int index, const Color & col)
 {
-	if (index < 0 || index >= size) return false;
+	assert(index >= 0 && index < size);
 	colorBuffer[index] = col;
 	return true;
 }
 
 bool FrameBuffer::WriteToDepth(int w, int h, float col)
 {
-	if (w < 0 || h < 0 || w >= width || h >= height) return false;
+	assert(w >= 0 && w < width && h >= 0 && h <width);
 	depthBuffer[width * h + w] = col;
 	return true;
 }
 
 bool FrameBuffer::WriteToDepth(int index, float col)
 {
-	if (index < 0 || index >= size) return false;
+	assert(index >= 0 && index < size);
 	depthBuffer[index] = col;
 	return true;
 }
 
 float FrameBuffer::GetDepth(int w, int h) const
 {
+	assert(w >= 0 && w < width && h >= 0 && h <width);
 	return depthBuffer[width * h + w];
 }
 
 float FrameBuffer::GetDepth(int index) const
 {
+	assert(index >= 0 && index < size);
 	return depthBuffer[index];
 }
 
 const Color& FrameBuffer::GetColor(int w, int h) const
 {
+	assert(w >= 0 && w < width && h >= 0 && h <width);
 	return colorBuffer[width * h + w];
 }
 
 const Color & FrameBuffer::GetColor(int index) const
 {
+	assert(index >= 0 && index < size);
 	return colorBuffer[index];
 }
 

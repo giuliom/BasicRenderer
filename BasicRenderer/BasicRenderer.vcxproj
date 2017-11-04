@@ -196,6 +196,7 @@
       <SDLCheck>true</SDLCheck>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/DNDEBUG %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -212,6 +213,7 @@
       <PreprocessorDefinitions>LIB_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <AdditionalOptions>/DNDEBUG %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
