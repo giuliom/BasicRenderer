@@ -13,6 +13,7 @@ public:
 	Vector3() {}
 	Vector3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
 	Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z) {}
+	Vector3(Vector3&& v) : x(v.x), y(v.y), z(v.z) {}
 	Vector3(const Vector4& v) : x(v.x), y(v.y), z(v.z) {}
 	~Vector3();
 
@@ -20,6 +21,7 @@ public:
 	float Magnitude() const;
 
 	Vector3& operator=(const Vector3& v);
+	Vector3& operator=(Vector3&& v);
 	Vector3 operator+(const Vector3& v) const;
 	Vector3 operator+(const float f) const;
 	Vector3 operator-(const Vector3& v) const;

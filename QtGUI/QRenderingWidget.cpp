@@ -4,6 +4,7 @@
 #include <ctime>
 #include "BasicRenderer\PrimitiveTypes.h"
 #include "BasicRenderer\ImageFormats.h"
+#include "BasicRenderer\Vector3.h"
 
 
 QRenderingWidget::QRenderingWidget(QWidget* parent)
@@ -28,7 +29,9 @@ void QRenderingWidget::initializeGL()
 {
 	img = new QImage(width(), height(), QImage::Format_ARGB32);
 	img->fill(QColor(211, 211, 211));
-	
+
+	renderingTime = clock();
+
 	timer = new QTimer(this);
 	timer->setInterval(15);
 	timer->start();
@@ -48,6 +51,11 @@ void QRenderingWidget::paintGL()
 
 void QRenderingWidget::RenderFrame()
 {
+	float deltaMs = (clock() - renderingTime) * 0.001;
+	renderingTime = clock();
+	bRenderer->camera.transform.SetPosition(bRenderer->camera.transform.GetPosition() + cameraPos * deltaMs);
+	cameraPos = Vector3::Zero();
+
 	update();
 }
 
@@ -84,7 +92,27 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 
 void QRenderingWidget::keyPressEvent(QKeyEvent * event)
 {
-	bRenderer->camera.transform.SetPosition(bRenderer->camera.transform.GetPosition() + 0.2f);
+	
+	if (event->type() == QKeyEvent::KeyPress)
+	{
+		if (event->key() == Qt::Key::Key_A)
+		{
+			cameraPos.x += cameraSpeed;
+		}
+		if (event->key() == Qt::Key::Key_D)
+		{
+			cameraPos.x -= cameraSpeed;
+		}
+		if (event->key() == Qt::Key::Key_W)
+		{
+			cameraPos.y += cameraSpeed;
+		}
+		if (event->key() == Qt::Key::Key_S)
+		{
+			cameraPos.y -= cameraSpeed;
+		}
+	}
+	
 }
 
 

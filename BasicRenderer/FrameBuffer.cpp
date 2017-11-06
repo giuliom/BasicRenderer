@@ -1,6 +1,5 @@
 #include "FrameBuffer.h"
 #include <limits>
-#include <cassert>
 
 
 FrameBuffer::~FrameBuffer()
@@ -75,7 +74,7 @@ void FrameBuffer::Fill(const Color& col)
 	}
 }
 
-const Color * FrameBuffer::GetColorBuffer() const
+const Color * const FrameBuffer::GetColorBuffer() const
 {
 	return colorBuffer;
 }

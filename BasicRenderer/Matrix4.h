@@ -40,9 +40,11 @@ public:
 	
 	
 	Matrix4(const Matrix4& m);
+	Matrix4(Matrix4&& m);
 	~Matrix4();
 
 	Matrix4& operator=(const Matrix4& m);
+	Matrix4& operator=(Matrix4&& m);
 	Matrix4 operator*(const Matrix4& m) const;
 	Vector4 operator*(const Vector4& v) const;
 	Matrix4 operator*(const float f) const;

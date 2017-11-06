@@ -21,11 +21,52 @@ Matrix4::Matrix4(const Matrix4 & m)
 	w4 = m.w4;
 }
 
+Matrix4::Matrix4(Matrix4 && m)
+{
+	x1 = m.x1;
+	x2 = m.x2;
+	x3 = m.x3;
+	x4 = m.x4;
+	y1 = m.y1;
+	y2 = m.y2;
+	y3 = m.y3;
+	y4 = m.y4;
+	z1 = m.z1;
+	z2 = m.z2;
+	z3 = m.z3;
+	z4 = m.z4;
+	w1 = m.w1;
+	w2 = m.w2;
+	w3 = m.w3;
+	w4 = m.w4;
+}
+
 Matrix4::~Matrix4()
 {
 }
 
 Matrix4& Matrix4::operator=(const Matrix4 & m)
+{
+	x1 = m.x1;
+	x2 = m.x2;
+	x3 = m.x3;
+	x4 = m.x4;
+	y1 = m.y1;
+	y2 = m.y2;
+	y3 = m.y3;
+	y4 = m.y4;
+	z1 = m.z1;
+	z2 = m.z2;
+	z3 = m.z3;
+	z4 = m.z4;
+	w1 = m.w1;
+	w2 = m.w2;
+	w3 = m.w3;
+	w4 = m.w4;
+	return *this;
+}
+
+Matrix4 & Matrix4::operator=(Matrix4 && m)
 {
 	x1 = m.x1;
 	x2 = m.x2;

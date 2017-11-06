@@ -5,4 +5,5 @@
 
 SceneObject::~SceneObject()
 {
+	
 }

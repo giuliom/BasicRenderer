@@ -17,6 +17,11 @@ protected:
 
 	std::string rTime = "";
 
+	float cameraSpeed = 1.0f;
+	Vector3 cameraPos;
+
+	double renderingTime = 0.0;
+
 public:
 	QRenderingWidget(QWidget* parent);
 	~QRenderingWidget();

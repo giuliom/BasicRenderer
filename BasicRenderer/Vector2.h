@@ -10,12 +10,14 @@ public:
 	Vector2() : x(0.0f), y(0.0f) {}
 	Vector2(float x_, float y_) : x(x_), y(y_) {}
 	Vector2(const Vector2& v) : x(v.x), y(v.y) {}
+	Vector2(Vector2&& v) : x(v.x), y(v.y) {}
 	~Vector2();
 
 	Vector2 Normalize() const;
 	float Magnitude() const;
 
 	Vector2& operator=(const Vector2& v);
+	Vector2& operator=(Vector2&& v);
 	Vector2 operator+(const Vector2& v) const;
 	Vector2 operator+(const float f) const;
 	Vector2 operator-(const Vector2& v) const;

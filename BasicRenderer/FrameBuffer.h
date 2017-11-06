@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include "ImageFormats.h"
 #include "PrimitiveTypes.h"
 
@@ -18,6 +19,7 @@ protected:
 public:
 	FrameBuffer(const int width_, const int height_) : width(width_), height(height_)
 	{
+		assert(width_ > 0 && height > 0);
 		colorBuffer = new Color[width_ * height_];
 		depthBuffer = new float[width_ * height_];
 		size = width_ * height_;
@@ -36,7 +38,7 @@ public:
 
 	void Fill(const Color& col);
 	Color* GetColorBufferCopy() const;
-	const Color* GetColorBuffer() const;
+	const Color* const GetColorBuffer() const;
 
 };
 

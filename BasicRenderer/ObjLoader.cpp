@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cassert>
 #include <stdio.h>
 #include "Vector3.h"
 #include "Vector2.h"
@@ -11,6 +12,8 @@
 /** TODO expand to support textures and materials */
 Mesh* ObjLoader::Load(const char* path_name_extension)
 {
+	assert(path_name_extension != nullptr);
+
 	std::ifstream file(path_name_extension);
 
 	if (!file.is_open())

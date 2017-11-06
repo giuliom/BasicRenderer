@@ -8,7 +8,7 @@ Vector3::~Vector3()
 
 Vector3 Vector3::Normalize() const
 {
-	float l = 1 / Magnitude();
+	float l = 1.0f / Magnitude();
 	if (l == 0) return Vector3::Zero();
 	return Vector3(x * l, y * l, z * l);
 }
@@ -19,6 +19,14 @@ float Vector3::Magnitude() const
 }
 
 Vector3& Vector3::operator=(const Vector3 & v)
+{
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	return *this;
+}
+
+Vector3 & Vector3::operator=(Vector3 && v)
 {
 	x = v.x;
 	y = v.y;

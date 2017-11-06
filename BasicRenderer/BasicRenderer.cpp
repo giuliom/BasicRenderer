@@ -1,5 +1,6 @@
-#include "BasicRenderer.h"
 #include <random>
+#include <cassert>
+#include "BasicRenderer.h"
 #include "ObjLoader.h"
 
 
@@ -10,6 +11,8 @@ BasicRenderer::~BasicRenderer()
 
 const FrameBuffer* BasicRenderer::Render(int width, int height, SceneObject& scene)
 {
+	assert(width > 0 && height > 0);
+
 	if (width != this->width || height != this->height || fBuffer == nullptr)
 	{
 		if (fBuffer != nullptr) delete fBuffer;

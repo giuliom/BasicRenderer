@@ -9,9 +9,9 @@ Vector4::~Vector4()
 
 Vector4 Vector4::Normalize() const
 {
-	float l = Magnitude();
-	if (l == 0) l = 1.0f;
-	return Vector4(x / l, y / l, z / l, w / l);
+	float l = 1.0f / Magnitude();
+	if (l == 0) return Vector4::Zero();
+	return Vector4(x * l, y * l, z * l, w * l);
 }
 
 float Vector4::Magnitude() const
@@ -20,6 +20,15 @@ float Vector4::Magnitude() const
 }
 
 Vector4& Vector4::operator=(const Vector4 & v)
+{
+	x = v.x;
+	y = v.y;
+	z = v.z;
+	w = v.w;
+	return *this;
+}
+
+Vector4 & Vector4::operator=(Vector4 && v)
 {
 	x = v.x;
 	y = v.y;

@@ -9,9 +9,9 @@ Vector2::~Vector2()
 
 Vector2 Vector2::Normalize() const
 {
-	float l = Magnitude();
-	if (l == 0) l = 1.0f;
-	return Vector2(x / l, y / l);
+	float l = 1.0f / Magnitude();
+	if (l == 0) return Vector2::Zero();
+	return Vector2(x * l, y * l);
 }
 
 float Vector2::Magnitude() const
@@ -20,6 +20,13 @@ float Vector2::Magnitude() const
 }
 
 Vector2& Vector2::operator=(const Vector2 & v)
+{
+	x = v.x;
+	y = v.y;
+	return *this;
+}
+
+Vector2 & Vector2::operator=(Vector2 && v)
 {
 	x = v.x;
 	y = v.y;

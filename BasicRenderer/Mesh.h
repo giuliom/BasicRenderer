@@ -4,7 +4,7 @@
 
 class Mesh
 {
-
+	//TODO refactor
 public:
 	Mesh(int nfaces, Face faces[]);
 	~Mesh();

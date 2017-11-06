@@ -12,12 +12,14 @@ public:
 	Vector4() : x(0.0f), y(0.0f), z(0.0f), w(0.0f) {}
 	Vector4(float x_, float y_, float z_, float w_) : x(x_), y(y_), z(z_), w(w_) {}
 	Vector4(const Vector4& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
+	Vector4(Vector4&& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
 	~Vector4();
 
 	Vector4 Normalize() const;
 	float Magnitude()const;
 
 	Vector4& operator=(const Vector4& v);
+	Vector4& operator=(Vector4&& v);
 	Vector4 operator+(const Vector4& v) const;
 	Vector4 operator+(const float f) const;
 	Vector4 operator-(const Vector4& v) const;
