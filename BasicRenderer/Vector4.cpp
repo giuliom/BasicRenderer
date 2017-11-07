@@ -9,8 +9,9 @@ Vector4::~Vector4()
 
 Vector4 Vector4::Normalize() const
 {
-	float l = 1.0f / Magnitude();
+	float l = Magnitude();
 	if (l == 0) return Vector4::Zero();
+	l = 1.0f / l;
 	return Vector4(x * l, y * l, z * l, w * l);
 }
 

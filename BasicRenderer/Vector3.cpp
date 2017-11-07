@@ -8,8 +8,9 @@ Vector3::~Vector3()
 
 Vector3 Vector3::Normalize() const
 {
-	float l = 1.0f / Magnitude();
+	float l = Magnitude();
 	if (l == 0) return Vector3::Zero();
+	l = 1.0f / l;
 	return Vector3(x * l, y * l, z * l);
 }
 
@@ -79,7 +80,7 @@ float Vector3::Dot(const Vector3& a, const Vector3& b)
 	Vector3 an = a.Normalize();
 	Vector3 bn = b.Normalize();
 		
-		return an.x * bn.x + an.y * bn.y + an.z * bn.z;
+	return an.x * bn.x + an.y * bn.y + an.z * bn.z;
 }
 
 Vector3 Vector3::CrossProduct(const Vector3& v1, const Vector3& v2)
