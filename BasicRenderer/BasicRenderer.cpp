@@ -29,7 +29,7 @@ const FrameBuffer* BasicRenderer::Render(int width, int height, SceneObject& sce
 
 	scene.transform.SetScale(10.f, 10.f, 10.f);
 	scene.transform.SetPosition(Vector3(0.0f, -1.0f, 2.0f));
-	camera.LookAt(Vector3::Zero(), scene.transform.GetPosition());
+	camera.LookAt(scene.transform.GetPosition());
 
 	
 	if (scene.mesh != nullptr)

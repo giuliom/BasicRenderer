@@ -19,10 +19,11 @@ void Camera::SetAspectRatio(int w, int h)
 }
 
 // Using right handed coordinate system
-Matrix4 Camera::LookAt(Vector3 pos, Vector3 target, Vector3 up)
+Matrix4 Camera::LookAt(Vector3 target, Vector3 up)
 {
-	Vector3 za = (pos - target).Normalize(); // Forward
-	Vector3 xa = Vector3::CrossProduct(up, za).Normalize(); // Right
+	Vector3 pos = transform.GetPosition();
+	Vector3 za = (target - pos).Normalize(); // Forward
+	Vector3 xa = Vector3::CrossProduct(up.Normalize(), za).Normalize(); // Right
 	Vector3 ya = Vector3::CrossProduct(za, xa).Normalize(); // Up
 	
 	Matrix4 nview = Matrix4(	xa.x,					ya.x,					za.x,					za.x,

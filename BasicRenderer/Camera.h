@@ -24,7 +24,7 @@ public:
 	
 
 	void SetAspectRatio(int w, int h);
-	Matrix4 LookAt(Vector3 pos, Vector3 target, Vector3 up = Vector3(0.0f, 1.0f, 0.0f));
+	Matrix4 LookAt(Vector3 target, Vector3 up = Vector3(0.0f, 1.0f, 0.0f));
 
 	float GetAspectRatio() { return aspectRatio; }
 	Matrix4 GetViewMatrix();
