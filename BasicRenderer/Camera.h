@@ -12,8 +12,8 @@ protected:
 
 	float fov = 70.0f;
 	float aspectRatio = 4.0f / 3.0f;
-	float nearClipPlane = 0.1f;
-	float farClipPlane = 100.0f;
+	float nearClip = 0.1f;
+	float farClip = 100.0f;
 
 public:
 	Camera();
