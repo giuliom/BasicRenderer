@@ -49,6 +49,9 @@ public:
 	Vector4 operator*(const Vector4& v) const;
 	Matrix4 operator*(const float f) const;
 
+	float Det();
+	Matrix4 Inverse();
+
 	static Matrix4 Identity();
 	static Matrix4 Zero();
 };

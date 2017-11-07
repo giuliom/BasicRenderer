@@ -99,11 +99,7 @@ void Transform::Rotate(Vector3 rotation)
 
 Matrix4 Transform::GetInverseMatrix()
 {
-	Matrix4 S = GetScaleMatrix(Vector3(1 / scale.x, 1 / scale.y, 1 / scale.z));
-	Matrix4 R = GetRotationMatrix(rotation * -1.0f);
-	Matrix4 T = GetPositionMatrix(position * -1.0f);
-
-	return T * R * S;
+	return m.Inverse();
 }
 
 Vector4 Transform::GetTransformVector(Vector4 & v)

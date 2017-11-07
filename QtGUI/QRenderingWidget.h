@@ -17,7 +17,7 @@ protected:
 
 	std::string rTime = "";
 
-	float cameraSpeed = 1.0f;
+	float cameraSpeed = 1.5f;
 	Vector3 cameraPos;
 
 	double renderingTime = 0.0;
