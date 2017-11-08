@@ -1,24 +1,5 @@
 #include "Vector2.h"
-#include <math.h>
 
-
-
-Vector2::~Vector2()
-{
-}
-
-Vector2 Vector2::Normalize() const
-{
-	float l = Magnitude();
-	if (l == 0) return Vector2::Zero();
-	l = 1.0f / l;
-	return Vector2(x * l, y * l);
-}
-
-float Vector2::Magnitude() const
-{
-	return sqrtf((x * x) + (y * y));
-}
 
 Vector2& Vector2::operator=(const Vector2 & v)
 {
@@ -72,28 +53,4 @@ bool Vector2::operator==(const Vector2 & v) const
 bool Vector2::operator!=(const Vector2 & v) const
 {
 	return !(x == v.x && y == v.y);
-}
-
-float Vector2::Dot(const Vector2& a, const Vector2& b)
-{
-	Vector2 an = a.Normalize();
-	Vector2 bn = b.Normalize();
-		
-	return an.x * bn.x + an.y * bn.y;
-}
-
-Vector2 Vector2::Min(const Vector2& a, const Vector2& b)
-{
-	Vector2 v;
-	v.x = a.x < b.x ? a.x : b.x;
-	v.y = a.y < b.y ? a.y : b.y;
-	return v;
-}
-
-Vector2 Vector2::Max(const Vector2& a, const Vector2& b)
-{
-	Vector2 v;
-	v.x = a.x > b.x ? a.x : b.x;
-	v.y = a.y > b.y ? a.y : b.y;
-	return v;
 }
