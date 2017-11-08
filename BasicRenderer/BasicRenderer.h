@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "FrameBuffer.h"
 #include "SceneObject.h"
 #include "Camera.h"
@@ -24,12 +25,12 @@ public:
 	Camera camera;
 
 protected:
-	void DrawObject(const SceneObject& obj, FrameBuffer* buf);
+	void DrawObject(const SceneObject& obj);
 
-	Face PerspectiveDivide(Face& f) const;
-	Face NormalizedToScreenSpace(Face& f) const;
-	bool CullFace(const Face& f) const;
-	Vector4 BoundingBox(const Face& f) const;
-	Vector3 Barycentre(const float x, const float y, const Face& f) const;
-	Vector2 Clamp(Vector2  v, const Vector2 min, const Vector2 max) const;
+	inline Face PerspectiveDivide(Face& f) const;
+	inline Face NormalizedToScreenSpace(Face& f) const;
+	inline bool CullFace(const Face& f) const;
+	inline Vector4 BoundingBox(const Face& f) const;
+	inline Vector3 Barycentre(const float x, const float y, const Face& f) const;
+	inline Vector2 Clamp(Vector2  v, const Vector2 min, const Vector2 max) const;
 };

@@ -16,14 +16,37 @@ Mesh::Mesh(int nfaces, Face faces[])
 	}
 }
 
+Mesh::Mesh(const Mesh & m)
+{
+	nfaces = m.nfaces;
+	faces = new Face[nfaces];
+	memcpy(faces, m.faces, sizeof(Face) * nfaces);
+}
+
+Mesh::Mesh(Mesh && m)
+{
+	nfaces = m.nfaces;
+	faces = m.faces;
+	m.faces = nullptr;
+}
+
 
 Mesh::~Mesh()
 {
 	delete[] faces;
 }
 
-//TODO return copy
-Face * Mesh::GetFaces()
+
+Mesh & Mesh::operator=(Mesh && m)
+{
+	nfaces = m.nfaces;
+	faces = m.faces;
+	m.faces = nullptr;
+	return *this;
+}
+
+
+const Face* const Mesh::GetFaces() const
 {
 	return faces;
 }

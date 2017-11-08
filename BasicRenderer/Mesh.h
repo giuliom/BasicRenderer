@@ -1,17 +1,26 @@
 #pragma once
 
-#include "PrimitiveTypes.h"
+#include <memory>
+#include "Face.h"
 
 class Mesh
 {
-	//TODO refactor
-public:
-	Mesh(int nfaces, Face faces[]);
-	~Mesh();
+protected:
 
 	int nfaces = 0;
-	Face* faces;
+	Face* faces = nullptr;
 
-	Face* GetFaces();
+public:
+	Mesh() = delete;
+	Mesh(int nfaces, Face faces[]);
+	Mesh(const Mesh& m);
+	Mesh(Mesh&& m);
+	~Mesh();
+
+	Mesh& operator=(const Mesh& m) = delete;
+	Mesh& operator=(Mesh&& m);
+	
+	int GetFacesCount() const { return nfaces; }
+	const Face* const GetFaces() const;
 };
 

@@ -30,24 +30,23 @@ const FrameBuffer* BasicRenderer::Render(int width, int height, SceneObject& sce
 	scene.transform.SetScale(10.f, 10.f, 10.f);
 	scene.transform.SetPosition(Vector3(0.0f, 0.0f, 2.0f));
 
-	
 	if (scene.mesh != nullptr)
 	{
-		DrawObject(scene, fBuffer);
+		DrawObject(scene);
 	}
 
 	return fBuffer;
 }
 
-void BasicRenderer::DrawObject(const SceneObject& obj, FrameBuffer* buf)
+void BasicRenderer::DrawObject(const SceneObject& obj)
 {
 	Matrix4 view = camera.GetViewMatrix();
 	Matrix4 projection = camera.GetProjectionMatrix();
 
 	Matrix4 mvp = projection * view * obj.transform.m;
 
-	const int nfaces = obj.mesh->nfaces;
-	Face* faces = obj.mesh->GetFaces();
+	const int nfaces = obj.mesh->GetFacesCount();
+	const auto faces = obj.mesh->GetFaces();
 
 	//TODO frustum culling
 	for (int i = 0; i < nfaces; i++)

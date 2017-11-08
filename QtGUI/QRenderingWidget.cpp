@@ -2,6 +2,7 @@
 #include <qpainter.h>
 #include <QKeyEvent>
 #include <ctime>
+#include <memory>
 #include "BasicRenderer\PrimitiveTypes.h"
 #include "BasicRenderer\ImageFormats.h"
 #include "BasicRenderer\Vector3.h"
@@ -18,6 +19,7 @@ QRenderingWidget::~QRenderingWidget()
 {
 	delete bRenderer;
 	delete timer;
+	delete img;
 }
 
 void QRenderingWidget::SetScene(SceneObject* scene)
@@ -41,6 +43,7 @@ void QRenderingWidget::initializeGL()
 
 void QRenderingWidget::resizeGL(int w, int h)
 {
+	delete img;
 	img = new QImage(w, h, QImage::Format_ARGB32);
 }
 
@@ -53,7 +56,7 @@ void QRenderingWidget::RenderFrame()
 {
 	float deltaMs = (clock() - renderingTime) * 0.001;
 	renderingTime = clock();
-	bRenderer->camera.transform.SetPosition(bRenderer->camera.transform.GetPosition() + cameraPos * deltaMs);
+	bRenderer->camera.transform.Translate(cameraPos * deltaMs);
 	cameraPos = Vector3::Zero();
 
 	update();
@@ -66,7 +69,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	double beginClock = clock();
 	
 	const FrameBuffer* buf = bRenderer->Render(width(), height(), *scene);
-	
+
 	QRgb* rgb = (QRgb*)img->bits();
 	int size = width() * height();
 
@@ -113,6 +116,13 @@ void QRenderingWidget::keyPressEvent(QKeyEvent * event)
 		}
 	}
 	
+	if (event->type() == QKeyEvent::KeyRelease)
+	{
+		if (event->key() == Qt::Key::Key_Escape)
+		{
+			//TODO
+		}
+	}
 }
 
 

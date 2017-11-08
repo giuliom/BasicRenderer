@@ -38,6 +38,7 @@ Transform & Transform::operator=(const Transform & t)
 	position = t.position;
 	scale = t.scale;
 	rotation = t.rotation;
+	return *this;
 }
 
 Transform & Transform::operator=(Transform && t)
@@ -47,6 +48,7 @@ Transform & Transform::operator=(Transform && t)
 	position = t.position;
 	scale = t.scale;
 	rotation = t.rotation;
+	return *this;
 }
 
 void Transform::SetPosition(const Vector3& position)
