@@ -1,5 +1,4 @@
 #include "Matrix4.h"
-#include <cassert>
 
 Matrix4::Matrix4(const Matrix4 & m)
 {
@@ -39,10 +38,6 @@ Matrix4::Matrix4(Matrix4 && m)
 	w2 = m.w2;
 	w3 = m.w3;
 	w4 = m.w4;
-}
-
-Matrix4::~Matrix4()
-{
 }
 
 Matrix4& Matrix4::operator=(const Matrix4 & m)
@@ -128,67 +123,5 @@ Matrix4 Matrix4::operator*(const float f) const
 					y1 * f, y2 * f, y3 * f, y4 * f,
 					z1 * f, z2 * f, z3 * f, z4 * f,
 					w1 * f, w2 * f, w3 * f, w4 * f
-				);
-}
-
-float Matrix4::Det()
-{
-	return x1*y2*z3*w4 + x1*y3*z4*w2 + x1*y4*z2*w3
-		 + x2*y1*z4*w3 + x2*y3*z1*w4 + x2*y4*z3*w1
-		 + x3*y1*z2*w4 + x3*y2*z4*w1 + x3*y4*z1*w2
-		 + x4*y1*z3*w2 + x4*y2*z1*w3 + x4*y3*z2*w1
-		 - x1*y2*z4*w3 - x1*y3*z2*w4 - x1*y4*z3*w2
-		 - x2*y1*z3*w4 - x2*y3*z4*w1 - x2*y4*z1*w3
-		 - x3*y1*z4*w2 - x3*y2*z1*w4 - x3*y4*z2*w1
-		 - x4*y1*z2*w3 - x4*y2*z3*w1 - x4*y3*z1*w2;
-}
-
-Matrix4 Matrix4::Inverse()
-{
-	float det = Det();
-	assert(det != 0);
-
-	Matrix4 m = {
-
-	y2*z3*w4 + y3*z4*w2 + y4*z2*w3 - y2*z4*w3 - y3*z2*w4 - y4*z3*w2,
-	x2*z4*w3 + x3*z2*w4 + x4*z3*w2 - x2*z3*w4 - x3*z4*w2 - x4*z2*w3,
-	x2*y3*w4 + x3*y4*w2 + x4*y2*w3 - x2*y4*w3 - x3*y2*w4 - x4*y3*w2,
-	x2*y4*z3 + x3*y2*z4 + x4*y3*z2 - x2*y3*z4 - x3*y4*z2 - x4*y2*z3,
-
-	y1*z4*w3 + y3*z1*w4 + y4*z3*w1 - y1*z3*w4 - y3*z4*w1 - y4*z1*w3,
-	x1*z3*w4 + x3*z4*w1 + x4*z1*w3 - x1*z4*w3 - x3*z1*w4 - x4*z3*w1,
-	x1*y4*w3 + x3*y1*w4 + x4*y3*w1 - x1*y3*w4 - x3*y4*w1 - x4*y1*w3,
-	x1*y3*z4 + x3*y4*z1 + x4*y1*z3 - x1*y4*z3 - x3*y1*z4 - x4*y3*z1,
-
-	y1*z2*w4 + y2*z4*w1 + y4*z1*w2 - y1*z4*w2 - y2*z1*w4 - y4*z2*w1,
-	x1*z4*w2 + x2*z1*w4 + x4*z2*w1 - x1*z2*w4 - x2*z4*w1 - x4*z1*w2,
-	x1*y2*w4 + x2*y4*w1 + x4*y1*w2 - x1*y4*w2 - x2*y1*w4 - x4*y2*w1,
-	x1*y4*z2 + x2*y1*z4 + x4*y2*z1 - x1*y2*z4 - x2*y4*z1 - x4*y1*z2,
-
-	y1*z3*w2 + y2*z1*w3 + y3*z2*w1 - y1*z2*w3 - y2*z3*w1 - y3*z1*w2,
-	x1*z2*w3 + x2*z3*w1 + x3*z1*w2 - x1*z3*w2 - x2*z1*w3 - x3*z2*w1,
-	x1*y3*w2 + x2*y1*w3 + x3*y2*w1 - x1*y2*w3 - x2*y3*w1 - x3*y1*w2,
-	x1*y2*z3 + x2*y3*z1 + x3*y1*z2 - x1*y3*z2 - x2*y1*z3 - x3*y2*z1
-
-	};
-
-	return m * (1.0f / det);
-}
-
-Matrix4 Matrix4::Identity()
-{
-	return Matrix4( 1.0f, 0.0f, 0.0f, 0.0f,
-					0.0f, 1.0f, 0.0f, 0.0f, 
-					0.0f, 0.0f, 1.0f, 0.0f, 
-					0.0f, 0.0f, 0.0f, 1.0f );
-}
-
-Matrix4 Matrix4::Zero()
-{
-	return Matrix4(
-		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 0.0f
 	);
 }
