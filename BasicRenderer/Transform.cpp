@@ -2,37 +2,27 @@
 #include <math.h>
 
 
-void Transform::UpdateTransform()
+
+Matrix4 Transform::GetPositionMatrix()
 {
-	Matrix4 S = GetScaleMatrix(scale);
-
-	Matrix4 R = GetRotationMatrix(rotation);
-
-	Matrix4 T = GetPositionMatrix(position);
-
-	m = T * R * S;
-}
-
-Matrix4 Transform::GetPositionMatrix(Vector3 p)
-{
-	return Matrix4 (1.0f, 0.0f, 0.0f, p.x,
-					0.0f, 1.0f, 0.0f, p.y,
-					0.0f, 0.0f, 1.0f, p.z,
+	return Matrix4 (1.0f, 0.0f, 0.0f, position.x,
+					0.0f, 1.0f, 0.0f, position.y,
+					0.0f, 0.0f, 1.0f, position.z,
 					0.0f, 0.0f, 1.0f, 1.0f
 					);
 }
 
-Matrix4 Transform::GetScaleMatrix(Vector3 s)
+Matrix4 Transform::GetScaleMatrix()
 {
-	return Matrix4(	s.x, 0.0f, 0.0f, 0.0f,
-					0.0f, s.y, 0.0f, 0.0f,
-					0.0f, 0.0f, s.z, 0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f
+	return Matrix4(	scale.x,0.0f,	0.0f,	0.0f,
+					0.0f,	scale.y,0.0f,	0.0f,
+					0.0f,	0.0f,	scale.z,0.0f,
+					0.0f,	0.0f,	 0.0f,	1.0f
 					);
 }
 
 // TODO implement full axis rotation
-Matrix4 Transform::GetRotationMatrix(Vector3 r)
+Matrix4 Transform::GetRotationMatrix()
 {
 	return Matrix4( 1.0f, 0.0f, 0.0f, 0.0f,
 					0.0f, 1.0f, 0.0f, 0.0f,
@@ -41,24 +31,37 @@ Matrix4 Transform::GetRotationMatrix(Vector3 r)
 				);
 }
 
-Transform::~Transform()
+Transform & Transform::operator=(const Transform & t)
 {
-
+	parent = t.parent;
+	m = t.m;
+	position = t.position;
+	scale = t.scale;
+	rotation = t.rotation;
 }
 
-void Transform::SetPosition(Vector3 position)
+Transform & Transform::operator=(Transform && t)
+{
+	parent = t.parent;
+	m = t.m;
+	position = t.position;
+	scale = t.scale;
+	rotation = t.rotation;
+}
+
+void Transform::SetPosition(const Vector3& position)
 {
 	this->position = position;
 	UpdateTransform();
 }
 
-void Transform::SetScale(Vector3 scale)
+void Transform::SetScale(const Vector3& scale)
 {
 	this->scale = scale;
 	UpdateTransform();
 }
 
-void Transform::SetRotation(Vector3 rotation)
+void Transform::SetRotation(const Vector3& rotation)
 {
 	this->rotation = rotation;
 	UpdateTransform();
@@ -79,30 +82,24 @@ void Transform::SetRotation(float x, float y, float z)
 	SetRotation(Vector3(x, y, z));
 }
 
-void Transform::Translate(Vector3 position)
+void Transform::Translate(const Vector3& position)
 {
 	this->position = this->position + position;
 	UpdateTransform();
 }
 
-void Transform::Scale(Vector3 scale)
+void Transform::Scale(const Vector3& scale)
 {
 	this->scale = this->scale + scale;
 	UpdateTransform();
 }
 
-void Transform::Rotate(Vector3 rotation)
+void Transform::Rotate(const Vector3& rotation)
 {
 	this->rotation = this->rotation + rotation;
 	UpdateTransform();
 }
 
-Matrix4 Transform::GetInverseMatrix()
-{
-	return m.Inverse();
-}
 
-Vector4 Transform::GetTransformVector(Vector4 & v)
-{
-	return m * v;
-}
+
+

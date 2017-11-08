@@ -7,40 +7,54 @@ class Transform
 {
 protected:
 
+	Transform* parent = nullptr; //TODO
 	Vector3 position;
 	Vector3 scale;
 	Vector3 rotation;
 
-	void UpdateTransform();
-
-	Matrix4 GetPositionMatrix(Vector3 p);
-	Matrix4 GetScaleMatrix(Vector3 s);
-	Matrix4 GetRotationMatrix(Vector3 r);
-
 public:
-	Transform() : m(), position(Vector3::Zero()), scale(Vector3::One()), rotation(Vector3::Zero()) {}
-	Transform(Matrix4 m) : m(m) {} //TODO pos, scale, rotation from Matrix4
-	~Transform();
 
 	Matrix4 m;
 
-	Vector3 GetPosition() { return position; }
-	Vector3 GetScale() { return scale; }
-	Vector3 GetRotation() { return rotation; }
+protected:
 
-	void SetPosition(Vector3 position);
-	void SetScale(Vector3 scale);
-	void SetRotation(Vector3 rotation);
+	inline Matrix4 GetPositionMatrix();
+	inline Matrix4 GetScaleMatrix();
+	inline Matrix4 GetRotationMatrix();
+
+	inline void UpdateTransform()
+	{
+		m = GetPositionMatrix() * GetRotationMatrix() * GetScaleMatrix();;
+	}
+
+
+public:
+	Transform() : m(), parent(nullptr), position(Vector3::Zero()), scale(Vector3::One()), rotation(Vector3::Zero()) {}
+	Transform(const Transform& t) : m(t.m), parent(t.parent), position(t.position), scale(t.scale), rotation(t.rotation) {}
+	Transform(Transform&& t) : m(t.m), parent(t.parent), position(t.position), scale(t.scale), rotation(t.rotation) {}
+	~Transform() {}
+
+	Transform& operator=(const Transform& t);
+	Transform& operator=(Transform&& t);
+
+	inline Vector3 GetPosition() const { return position; }
+	inline Vector3 GetScale() const { return scale; }
+	inline Vector3 GetRotation() const { return rotation; }
+
+	void SetPosition(const Vector3& position);
+	void SetScale(const Vector3& scale);
+	void SetRotation(const Vector3& rotation);
 	void SetPosition(float x, float y, float z);
 	void SetScale(float x, float y, float z);
 	void SetRotation(float x, float y, float z);
 
-	void Translate(Vector3 position);
-	void Scale(Vector3 scale);
-	void Rotate(Vector3 rotation);
+	void Translate(const Vector3& position);
+	void Scale(const Vector3& scale);
+	void Rotate(const Vector3& rotation);
 
-	Matrix4 GetInverseMatrix();
 
-	Vector4 GetTransformVector(Vector4 &v);
+	inline Matrix4 GetInverseMatrix() { return m.Inverse(); }
+	inline Vector4 GetTransformVector(const Vector4 &v)	{ return m * v; }
+
 };
 
