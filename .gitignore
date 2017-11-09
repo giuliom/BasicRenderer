@@ -41,3 +41,6 @@ LibRelease/
 
 *.VC.db
 *.VC.VC.opendb
+
+# Visual Studio 2015 Options file
+*.suo
