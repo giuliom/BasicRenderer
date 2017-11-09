@@ -6,45 +6,43 @@
 #include "BasicRenderer\PrimitiveTypes.h"
 #include "BasicRenderer\ImageFormats.h"
 #include "BasicRenderer\Vector3.h"
+#include "BasicRenderer\ObjLoader.h"
 
 
 QRenderingWidget::QRenderingWidget(QWidget* parent)
 {
 	QOpenGLWidget::QOpenGLWidget(parent);
-	bRenderer = new BasicRenderer();
+	bRenderer = std::make_unique<BasicRenderer>();
 }
 
 
 QRenderingWidget::~QRenderingWidget()
 {
-	delete bRenderer;
-	delete timer;
-	delete img;
 }
 
-void QRenderingWidget::SetScene(SceneObject* scene)
+void QRenderingWidget::SetScene(const char* filename)
 {
-	this->scene = scene; 
+	scene = std::make_unique<SceneObject>(ObjLoader::Load(filename));
 }
 
 void QRenderingWidget::initializeGL()
 {
-	img = new QImage(width(), height(), QImage::Format_ARGB32);
+	img = std::make_unique<QImage>(width(), height(), QImage::Format_ARGB32);
 	img->fill(QColor(211, 211, 211));
 
 	renderingTime = clock();
 
-	timer = new QTimer(this);
+	timer = std::make_unique<QTimer>(this);
 	timer->setInterval(15);
 	timer->start();
-	connect(timer, SIGNAL(timeout()), this, SLOT(RenderFrame()));
+	connect(timer.get(), SIGNAL(timeout()), this, SLOT(RenderFrame()));
 	
 }
 
 void QRenderingWidget::resizeGL(int w, int h)
 {
-	delete img;
-	img = new QImage(w, h, QImage::Format_ARGB32);
+	//delete img;
+	img = std::make_unique<QImage>(w, h, QImage::Format_ARGB32);
 }
 
 void QRenderingWidget::paintGL()
@@ -68,7 +66,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
-	const FrameBuffer* buf = bRenderer->Render(width(), height(), *scene);
+	const auto buf = bRenderer->Render(width(), height(), *scene);
 
 	QRgb* rgb = (QRgb*)img->bits();
 	int size = width() * height();

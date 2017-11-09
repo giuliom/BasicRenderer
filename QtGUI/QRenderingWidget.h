@@ -10,10 +10,10 @@ class QRenderingWidget : public QOpenGLWidget
 	Q_OBJECT
 
 protected:
-	BasicRenderer* bRenderer = nullptr;
-	QImage* img = nullptr;
-	QTimer* timer = nullptr;
-	SceneObject* scene = nullptr;
+	std::unique_ptr<BasicRenderer> bRenderer;
+	std::unique_ptr<QImage> img;
+	std::unique_ptr<QTimer> timer;
+	std::unique_ptr<SceneObject> scene;
 
 	std::string rTime = "";
 
@@ -26,7 +26,7 @@ public:
 	QRenderingWidget(QWidget* parent);
 	~QRenderingWidget();
 
-	void SetScene(SceneObject* scene);
+	void SetScene(const char* filename);
 
 signals:
 	void RenderingCompleted(double time);

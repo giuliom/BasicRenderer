@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "BasicRenderer\ObjLoader.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -10,8 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 	renderView = ui->renderWidget;
-	scene = new SceneObject(ObjLoader::Load("C:/BasicRenderer/Assets/bunny.obj")); //"../../Assets/bunny.obj")
-	renderView->SetScene(scene);
+	renderView->SetScene("C:/BasicRenderer/Assets/bunny.obj"); //"../../Assets/bunny.obj");
 	renderView->setFocus();
 
 	SetupSignals();
@@ -20,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-	delete scene;
 }
 
 void MainWindow::SetupSignals()

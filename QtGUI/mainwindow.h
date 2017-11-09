@@ -5,7 +5,6 @@
 #include <qlabel.h>
 #include <qimage.h>
 #include "QRenderingWidget.h"
-#include "BasicRenderer\SceneObject.h"
 
 namespace Ui {
 class MainWindow;
@@ -28,8 +27,6 @@ public slots:
 private:
     Ui::MainWindow *ui;
 	QRenderingWidget* renderView;
-
-	SceneObject* scene = nullptr; 
 
 };
 

@@ -13,14 +13,14 @@ protected:
 	int height = 480;
 	float fwidth = 640.0f;
 	float fheight = 640.0f;
-	FrameBuffer* fBuffer = nullptr;
+	std::shared_ptr<FrameBuffer> fBuffer;
 	
 
 public:
 	BasicRenderer() {}
 	~BasicRenderer();
 
-	const FrameBuffer* Render(int width, int height, SceneObject& scene);
+	const std::shared_ptr<const FrameBuffer> Render(int width, int height, SceneObject& scene);
 
 	Camera camera;
 

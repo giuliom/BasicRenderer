@@ -9,14 +9,13 @@ BasicRenderer::~BasicRenderer()
 {
 }
 
-const FrameBuffer* BasicRenderer::Render(int width, int height, SceneObject& scene)
+const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, SceneObject& scene)
 {
 	assert(width > 0 && height > 0);
 
 	if (width != this->width || height != this->height || fBuffer == nullptr)
 	{
-		if (fBuffer != nullptr) delete fBuffer;
-		fBuffer = new FrameBuffer(width, height);
+		fBuffer = std::make_shared<FrameBuffer>(width, height);
 	}
 
 	this->width = width;
