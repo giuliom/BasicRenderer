@@ -18,13 +18,13 @@ public:
 
 protected:
 
-	inline Matrix4 GetPositionMatrix();
+	inline Matrix4 GetTranslationMatrix();
 	inline Matrix4 GetScaleMatrix();
 	inline Matrix4 GetRotationMatrix();
 
 	inline void UpdateTransform()
 	{
-		m = GetPositionMatrix() * GetRotationMatrix() * GetScaleMatrix();;
+		m = GetTranslationMatrix() * GetRotationMatrix() * GetScaleMatrix();
 	}
 
 

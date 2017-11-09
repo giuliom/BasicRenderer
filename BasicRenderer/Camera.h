@@ -10,10 +10,10 @@ protected:
 	Matrix4 view;
 	Matrix4 projection; // MVP = P * V * M
 
-	float fov = 90.0f;
+	float fov = 70.0f;
 	float aspectRatio = 4.0f / 3.0f;
 	float nearClip = 0.1f;
-	float farClip = 1000.0f;
+	float farClip = 100.0f;
 
 public:
 	Camera();

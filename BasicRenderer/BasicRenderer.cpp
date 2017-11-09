@@ -27,7 +27,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	camera.SetAspectRatio(width, height);
 
 	scene.transform.SetScale(10.f, 10.f, 10.f);
-	scene.transform.SetPosition(Vector3(0.0f, 0.0f, 2.0f));
+	scene.transform.SetPosition(Vector3(0.0f, -1.0f, 2.0f));
 
 	if (scene.mesh != nullptr)
 	{

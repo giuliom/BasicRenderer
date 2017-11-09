@@ -3,7 +3,7 @@
 
 
 
-Matrix4 Transform::GetPositionMatrix()
+Matrix4 Transform::GetTranslationMatrix()
 {
 	return Matrix4 (1.0f, 0.0f, 0.0f, position.x,
 					0.0f, 1.0f, 0.0f, position.y,

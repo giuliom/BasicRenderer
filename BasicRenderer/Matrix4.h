@@ -34,10 +34,10 @@ public:
 			float y1_, float y2_, float y3_, float y4_,
 			float z1_, float z2_, float z3_, float z4_,
 			float w1_, float w2_, float w3_, float w4_) : 
-		x1(x1_), x2(x2_), x3(x3_), x4(x4_),
-		y1(y1_), y2(y2_), y3(y3_), y4(y4_),
-		z1(z1_), z2(z2_), z3(z3_), z4(z4_),
-		w1(w1_), w2(w2_), w3(w3_), w4(w4_) {}
+			x1(x1_), x2(x2_), x3(x3_), x4(x4_),
+			y1(y1_), y2(y2_), y3(y3_), y4(y4_),
+			z1(z1_), z2(z2_), z3(z3_), z4(z4_),
+			w1(w1_), w2(w2_), w3(w3_), w4(w4_) {}
 	
 	
 	Matrix4(const Matrix4& m);
@@ -46,7 +46,6 @@ public:
 
 	Matrix4& operator=(const Matrix4& m);
 	Matrix4& operator=(Matrix4&& m);
-	Matrix4 operator*(const Matrix4& m) const;
 	Vector4 operator*(const Vector4& v) const;
 	Matrix4 operator*(const float f) const;
 
@@ -113,3 +112,4 @@ public:
 	}
 };
 
+Matrix4 operator*(const Matrix4& m1, const Matrix4& m2);
