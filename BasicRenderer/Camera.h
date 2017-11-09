@@ -2,6 +2,7 @@
 
 #include "Transform.h"
 
+/* Aligned with -z */
 class Camera
 {
 protected:
@@ -10,10 +11,10 @@ protected:
 	Matrix4 view;
 	Matrix4 projection; // MVP = P * V * M
 
-	float fov = 70.0f;
+	float fov = 60.0f;
 	float aspectRatio = 4.0f / 3.0f;
-	float nearClip = 0.1f;
-	float farClip = 100.0f;
+	float nearClip = 0.3f;
+	float farClip = 1000.0f;
 
 public:
 	Camera();

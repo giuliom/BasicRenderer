@@ -27,7 +27,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	camera.SetAspectRatio(width, height);
 
 	scene.transform.SetScale(10.f, 10.f, 10.f);
-	scene.transform.SetPosition(Vector3(0.0f, -1.0f, 2.0f));
+	scene.transform.SetPosition(Vector3(0.0f, -1.0f, -5.0f));
 
 	if (scene.mesh != nullptr)
 	{
@@ -73,7 +73,8 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 
 					float z = face.v0.pos.z * bary.x + face.v1.pos.z * bary.y + face.v2.pos.z * bary.z;
 
-					int index = width * y + x;
+					//Because of the Pinhole model
+					int index = width * (height - y - 1) + x;
 
 					if (z < fBuffer->GetDepth(index))
 					{

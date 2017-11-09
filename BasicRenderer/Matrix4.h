@@ -3,6 +3,7 @@
 #include <cassert>
 #include "Vector4.h"
 
+/* Row-major */
 class Matrix4
 {
 public:

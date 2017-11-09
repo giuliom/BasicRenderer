@@ -98,11 +98,11 @@ void QRenderingWidget::keyPressEvent(QKeyEvent * event)
 	{
 		if (event->key() == Qt::Key::Key_A)
 		{
-			cameraPos.x += cameraSpeed;
+			cameraPos.x -= cameraSpeed;
 		}
 		if (event->key() == Qt::Key::Key_D)
 		{
-			cameraPos.x -= cameraSpeed;
+			cameraPos.x += cameraSpeed;
 		}
 		if (event->key() == Qt::Key::Key_W)
 		{

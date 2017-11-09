@@ -46,31 +46,14 @@ Matrix4 Camera::GetProjectionMatrix()
 	float radfov = (fov * PI) / 180.0f;
 	float f = 1.0f / tanf(radfov * 0.5f);
 	Matrix4 m = Matrix4::Zero();
-		
-	/*	
-	Matrix4 m {	1.0f, 0.0f, 0.0f, 0.0f,
-					0.0f, 1.0f, 0.0f, 0.0f,
-					0.0f, 0.0f, farClip / (farClip - nearClip), -farClip * nearClip / (farClip - nearClip),
-					0.0f, 0.0f, 1.0f, 0.0f
-	};
 
-	Matrix4 m2 {	f / aspectRatio, 0.0f, 0.0f, 0.0f,
-					0.0f, f, 0.0f, 0.0f,
-					0.0f, 0.0f, 1.0f, 0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f
-	};
-	projection = m2 * m;
-	*/
-			
 	m.x1 = f / aspectRatio;
 	m.y2 = f;
-	m.z3 = (farClip + nearClip) / (nearClip - farClip);
-	m.z4 = (2.0 * farClip * nearClip) / (nearClip - farClip);
-	m.w3 = -1.0f;
+	m.z3 = -(farClip / (farClip - nearClip));
+	m.w3 = -1.0f * ((farClip * nearClip) / (farClip - nearClip));
+	m.z4 = -1.0f;
 	m.w4 = 0.0f;
 			
-	projection = m;
-			
+	projection = m;			
 	return projection;
-	//return Matrix4::Identity();
 }
