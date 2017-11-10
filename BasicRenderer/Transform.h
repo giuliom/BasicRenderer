@@ -16,6 +16,10 @@ public:
 
 	Matrix4 m;
 
+	Vector3 forward;
+	Vector3 right;
+	Vector3 up;
+
 protected:
 
 	inline Matrix4 GetTranslationMatrix();
@@ -25,6 +29,9 @@ protected:
 	inline void UpdateTransform()
 	{
 		m = GetTranslationMatrix() * GetRotationMatrix() * GetScaleMatrix();
+		forward = Vector3(m.x1, m.y1, m.z1).Normalize();
+		up = Vector3(m.x2, m.y2, m.z2).Normalize();
+		right = Vector3(-m.x3, -m.y3, -m.z3).Normalize();
 	}
 
 
@@ -46,11 +53,14 @@ public:
 	void SetRotation(const Vector3& rotation);
 	void SetPosition(float x, float y, float z);
 	void SetScale(float x, float y, float z);
-	void SetRotation(float x, float y, float z);
+	void SetRotation(float roll, float yaw, float pitch);
 
-	void Translate(const Vector3& position);
-	void Scale(const Vector3& scale);
-	void Rotate(const Vector3& rotation);
+	void Translate(const Vector3& position_);
+	void Translate(float x, float y, float z);
+	void Scale(const Vector3& scale_);
+	void Scale(float x, float y, float z);
+	void Rotate(const Vector3& rotation_);
+	void Rotate(float roll, float yaw, float pitch);
 
 
 	inline Matrix4 GetInverseMatrix() { return m.Inverse(); }

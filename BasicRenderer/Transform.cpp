@@ -8,7 +8,7 @@ Matrix4 Transform::GetTranslationMatrix()
 	return Matrix4 (1.0f, 0.0f, 0.0f, position.x,
 					0.0f, 1.0f, 0.0f, position.y,
 					0.0f, 0.0f, 1.0f, position.z,
-					0.0f, 0.0f, 1.0f, 1.0f
+					0.0f, 0.0f, 0.0f, 1.0f
 					);
 }
 
@@ -21,14 +21,31 @@ Matrix4 Transform::GetScaleMatrix()
 					);
 }
 
-// TODO implement full axis rotation
+// Right-hand
 Matrix4 Transform::GetRotationMatrix()
 {
-	return Matrix4( 1.0f, 0.0f, 0.0f, 0.0f,
-					0.0f, 1.0f, 0.0f, 0.0f,
-					0.0f, 0.0f, 1.0f, 0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f
-				);
+	// X-axis
+	Matrix4 roll(1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, cosf(rotation.x), -sinf(rotation.x), 0.0f,
+		0.0f, sinf(rotation.x), cosf(rotation.x), 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+	 
+	 // Y-axis
+	 Matrix4 yaw(	cosf(rotation.y),	0.0f, sinf(rotation.y), 0.0f,
+					0.0f,				1.0f, 0.0f,				0.0f,
+					-sinf(rotation.y),	0.0f, cosf(rotation.y),	0.0f,
+					0.0f,				0.0f, 0.0f,				1.0f
+	 );
+	 
+	 // Z-axis
+	 Matrix4 pitch(cosf(rotation.z), -sinf(rotation.z), 0.0f, 0.0f,
+		 sinf(rotation.z), cosf(rotation.z), 0.0f, 0.0f,
+		 0.0f, 0.0f, 1.0f, 0.0f,
+		 0.0f, 0.0f, 0.0f, 1.0f
+	 );
+
+	 return yaw * pitch * roll;
 }
 
 Transform & Transform::operator=(const Transform & t)
@@ -79,27 +96,42 @@ void Transform::SetScale(float x, float y, float z)
 	SetScale(Vector3(x, y, z));
 }
 
-void Transform::SetRotation(float x, float y, float z)
+void Transform::SetRotation(float roll, float yaw, float pitch)
 {
-	SetRotation(Vector3(x, y, z));
+	SetRotation(Vector3(roll, yaw, pitch));
 }
 
-void Transform::Translate(const Vector3& position)
+void Transform::Translate(const Vector3& position_)
 {
-	this->position = this->position + position;
+	position = position + position_;
 	UpdateTransform();
 }
 
-void Transform::Scale(const Vector3& scale)
+void Transform::Translate(float x, float y, float z)
 {
-	this->scale = this->scale + scale;
+	Translate(Vector3(x, y, z));
+}
+
+void Transform::Scale(const Vector3& scale_)
+{
+	scale = scale + scale_;
 	UpdateTransform();
 }
 
-void Transform::Rotate(const Vector3& rotation)
+void Transform::Scale(float x, float y, float z)
 {
-	this->rotation = this->rotation + rotation;
+	Scale(Vector3(x, y, z));
+}
+
+void Transform::Rotate(const Vector3& rotation_)
+{
+	rotation = rotation + rotation_;
 	UpdateTransform();
+}
+
+void Transform::Rotate(float roll, float yaw, float pitch)
+{
+	Rotate(Vector3(roll, yaw, pitch));
 }
 
 

@@ -101,6 +101,15 @@ Matrix4 Matrix4::operator*(const float f) const
 	);
 }
 
+Vector3 Matrix4::operator*(const Vector3 & v) const
+{
+	return Vector3(
+		x1*v.x + x2*v.y + x3*v.z + x4*1.0f,
+		y1*v.x + y2*v.y + y3*v.z + y4*1.0f,
+		z1*v.x + z2*v.y + z3*v.z + z4*1.0f
+	);
+}
+
 Matrix4 operator*(const Matrix4& m1, const Matrix4& m2)
 {
 	return Matrix4( m1.x1*m2.x1 + m1.x2*m2.y1 + m1.x3*m2.z1 + m1.x4*m2.w1,

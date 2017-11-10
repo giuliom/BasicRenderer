@@ -4,11 +4,6 @@
 #include "ObjLoader.h"
 
 
-
-BasicRenderer::~BasicRenderer()
-{
-}
-
 const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, SceneObject& scene)
 {
 	assert(width > 0 && height > 0);
@@ -26,8 +21,10 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	fBuffer->Fill(Color(0.64f, 0.92f ,0.92f));
 	camera.SetAspectRatio(width, height);
 
+	//TODO move outside rendering
 	scene.transform.SetScale(10.f, 10.f, 10.f);
-	scene.transform.SetPosition(Vector3(0.0f, -1.0f, -5.0f));
+	scene.transform.SetPosition(0.0f, -1.0f, -5.0f);
+	scene.transform.Rotate(0.0f, 0.0f, 0.0f);
 
 	if (scene.mesh != nullptr)
 	{

@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include "Vector4.h"
+#include "Vector3.h"
 
 /* Row-major */
 class Matrix4
@@ -49,6 +50,7 @@ public:
 	Matrix4& operator=(Matrix4&& m);
 	Vector4 operator*(const Vector4& v) const;
 	Matrix4 operator*(const float f) const;
+	Vector3 operator*(const Vector3& v) const;
 
 	inline float Det() const
 	{

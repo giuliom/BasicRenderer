@@ -13,6 +13,7 @@ QRenderingWidget::QRenderingWidget(QWidget* parent)
 {
 	QOpenGLWidget::QOpenGLWidget(parent);
 	bRenderer = std::make_unique<BasicRenderer>();
+	setMouseTracking(false);
 }
 
 
@@ -41,7 +42,6 @@ void QRenderingWidget::initializeGL()
 
 void QRenderingWidget::resizeGL(int w, int h)
 {
-	//delete img;
 	img = std::make_unique<QImage>(w, h, QImage::Format_ARGB32);
 }
 
@@ -54,8 +54,16 @@ void QRenderingWidget::RenderFrame()
 {
 	float deltaMs = (clock() - renderingTime) * 0.001;
 	renderingTime = clock();
-	bRenderer->camera.transform.Translate(cameraPos * deltaMs);
+
+	bRenderer->camera.transform.Rotate(cameraRot.y * deltaMs, cameraRot.x * deltaMs, 0.0f);
+
+	Vector3 forward = bRenderer->camera.transform.right * cameraPos.z;
+	Vector3 right = bRenderer->camera.transform.forward * cameraPos.x;
+	bRenderer->camera.transform.Translate((forward + right) * deltaMs);
+
+	
 	cameraPos = Vector3::Zero();
+	cameraRot = Vector2::Zero();
 
 	update();
 }
@@ -93,7 +101,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 
 void QRenderingWidget::keyPressEvent(QKeyEvent * event)
 {
-	
+
 	if (event->type() == QKeyEvent::KeyPress)
 	{
 		if (event->key() == Qt::Key::Key_A)
@@ -106,11 +114,11 @@ void QRenderingWidget::keyPressEvent(QKeyEvent * event)
 		}
 		if (event->key() == Qt::Key::Key_W)
 		{
-			cameraPos.y += cameraSpeed;
+			cameraPos.z += cameraSpeed;
 		}
 		if (event->key() == Qt::Key::Key_S)
 		{
-			cameraPos.y -= cameraSpeed;
+			cameraPos.z -= cameraSpeed;
 		}
 	}
 	
@@ -121,6 +129,19 @@ void QRenderingWidget::keyPressEvent(QKeyEvent * event)
 			//TODO
 		}
 	}
+}
+
+void QRenderingWidget::mousePressEvent(QMouseEvent * event)
+{
+	lastMousePos = Vector2(event->x(), event->y());
+}
+
+void QRenderingWidget::mouseMoveEvent(QMouseEvent * event)
+{
+	Vector2 currentPos(event->x(), event->y());
+	float ratio = 1.0 / height();
+	cameraRot = cameraRot + Vector2((currentPos.x - lastMousePos.x) * ratio * cameraRotationSpeed, (currentPos.y - lastMousePos.y) * ratio * cameraRotationSpeed);
+	lastMousePos = currentPos;
 }
 
 

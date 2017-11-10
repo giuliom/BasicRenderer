@@ -18,7 +18,7 @@ protected:
 
 public:
 	BasicRenderer() {}
-	~BasicRenderer();
+	~BasicRenderer() {}
 
 	const std::shared_ptr<const FrameBuffer> Render(int width, int height, SceneObject& scene);
 

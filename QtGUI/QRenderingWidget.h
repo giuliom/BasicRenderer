@@ -17,8 +17,11 @@ protected:
 
 	std::string rTime = "";
 
-	float cameraSpeed = 1.5f;
+	float cameraSpeed = 3.0f;
+	float cameraRotationSpeed = 20.0f;
 	Vector3 cameraPos;
+	Vector2 cameraRot;
+	Vector2 lastMousePos;
 
 	double renderingTime = 0.0;
 
@@ -42,6 +45,8 @@ protected:
 	virtual void paintEvent(QPaintEvent *e) override;
 
 	virtual void keyPressEvent(QKeyEvent *event) override;
+	virtual void mousePressEvent(QMouseEvent *event) override;
+	virtual void mouseMoveEvent(QMouseEvent *event) override;
 
 };
 

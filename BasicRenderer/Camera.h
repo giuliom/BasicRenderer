@@ -2,7 +2,7 @@
 
 #include "Transform.h"
 
-/* Aligned with -z */
+/* Pinhole camera aligned with -z therefore left handed */
 class Camera
 {
 protected:
@@ -11,7 +11,7 @@ protected:
 	Matrix4 view;
 	Matrix4 projection; // MVP = P * V * M
 
-	float fov = 60.0f;
+	float fov = 70.0f;
 	float aspectRatio = 4.0f / 3.0f;
 	float nearClip = 0.3f;
 	float farClip = 1000.0f;
