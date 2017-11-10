@@ -33,6 +33,7 @@ public:
 
 signals:
 	void RenderingCompleted(double time);
+	void RendererResized();
 
 public slots:
 	void RenderFrame();

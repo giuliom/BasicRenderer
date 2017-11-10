@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	auto endClock = clock();
 
 	std::string rt = std::to_string(endClock - beginClock);
-	std::cout << "Rendering Time: " <<rt.substr(0, rt.length() - 6).append("ms ").c_str() << "\n";
+	std::cout << "Rendering Time: " <<rt.substr(0, rt.length() - 7).append("ms ").c_str() << "\n";
 
 
 	int i = 0;

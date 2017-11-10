@@ -5,6 +5,9 @@
 #include <qlabel.h>
 #include <qimage.h>
 #include "QRenderingWidget.h"
+#include <qlineedit.h>
+#include <qpushbutton.h>
+#include <qcombobox.h>
 
 namespace Ui {
 class MainWindow;
@@ -22,11 +25,21 @@ public:
 
 public slots:
 	void RenderImage();
+	void SaveImage();
+	void OpenFile();
 	void UpdateFpsLabel(double time);
+	void UpdateResolutionLabels();
+
 
 private:
     Ui::MainWindow *ui;
 	QRenderingWidget* renderView;
+	QLineEdit* widthLineEdit;
+	QLineEdit* heightLineEdit;
+	QPushButton* renderButton;
+	QPushButton* saveButton;
+	QComboBox* renderingCombo;
+	QComboBox* shadingCombo;
 
 };
 

@@ -43,6 +43,7 @@ void QRenderingWidget::initializeGL()
 void QRenderingWidget::resizeGL(int w, int h)
 {
 	img = std::make_unique<QImage>(w, h, QImage::Format_ARGB32);
+	emit RendererResized();
 }
 
 void QRenderingWidget::paintGL()
