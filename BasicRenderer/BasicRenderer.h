@@ -4,6 +4,7 @@
 #include "FrameBuffer.h"
 #include "SceneObject.h"
 #include "Camera.h"
+#include "DirectionalLight.h"
 
 
 class BasicRenderer
@@ -23,6 +24,7 @@ public:
 	const std::shared_ptr<const FrameBuffer> Render(int width, int height, SceneObject& scene);
 
 	Camera camera;
+	DirectionalLight sun;
 
 protected:
 	void DrawObject(const SceneObject& obj);

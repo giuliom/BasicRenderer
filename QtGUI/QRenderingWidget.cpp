@@ -59,7 +59,8 @@ void QRenderingWidget::RenderFrame()
 
 	Vector3 forward = bRenderer->camera.transform.right * cameraPos.z;
 	Vector3 right = bRenderer->camera.transform.forward * cameraPos.x;
-	bRenderer->camera.transform.Translate((forward + right) * deltaMs);
+	Vector3 up = bRenderer->camera.transform.up * cameraPos.y;
+	bRenderer->camera.transform.Translate((forward + right + up) * deltaMs);
 
 	
 	cameraPos = Vector3::Zero();
@@ -119,6 +120,14 @@ void QRenderingWidget::keyPressEvent(QKeyEvent * event)
 		if (event->key() == Qt::Key::Key_S)
 		{
 			cameraPos.z -= cameraSpeed;
+		}
+		if (event->key() == Qt::Key::Key_Q)
+		{
+			cameraPos.y -= cameraSpeed;
+		}
+		if (event->key() == Qt::Key::Key_E)
+		{
+			cameraPos.y += cameraSpeed;
 		}
 	}
 	

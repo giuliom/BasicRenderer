@@ -24,7 +24,8 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	//TODO move outside rendering
 	scene.transform.SetScale(10.f, 10.f, 10.f);
 	scene.transform.SetPosition(0.0f, -1.0f, -5.0f);
-	scene.transform.Rotate(0.0f, 0.0f, 0.0f);
+	scene.transform.Rotate(0.0f, 0.01f, 0.0f);
+	sun.direction = { 1.0f, -0.5f, 1.0f };
 
 	if (scene.mesh != nullptr)
 	{
@@ -50,6 +51,7 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 		Face face = faces[i].ToMatrixSpace(mvp);
 
 		Vector3 faceNormal = (Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize() +1.0f) * 0.5;
+		float faceDiffuse =  std::fmaxf(0.0f, Vector3::Dot(faceNormal, sun.direction.Normalize())) * sun.intensity;
 		
 		face = PerspectiveDivide(face);
 		face = NormalizedToScreenSpace(face);
@@ -75,7 +77,7 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 
 					if (z < fBuffer->GetDepth(index))
 					{
-						fBuffer->WriteToColor(index, faceNormal);
+						fBuffer->WriteToColor(index, Vector3::One() * faceDiffuse);
 						fBuffer->WriteToDepth(index, z);
 					}
 
