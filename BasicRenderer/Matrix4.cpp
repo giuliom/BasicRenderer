@@ -82,33 +82,38 @@ Matrix4 & Matrix4::operator=(Matrix4 && m)
 	return *this;
 }
 
-Vector4 Matrix4::operator*(const Vector4 & v) const
+Matrix4 Matrix4::Inverse() const
 {
-	return Vector4(
-		x1*v.x + x2*v.y + x3*v.z + x4*v.w,
-		y1*v.x + y2*v.y + y3*v.z + y4*v.w,
-		z1*v.x + z2*v.y + z3*v.z + z4*v.w,
-		w1*v.x + w2*v.y + w3*v.z + w4*v.w
-	);
+		float det = Det();
+		assert(det != 0);
+
+		Matrix4 m = {
+
+			y2*z3*w4 + y3*z4*w2 + y4*z2*w3 - y2*z4*w3 - y3*z2*w4 - y4*z3*w2,
+			x2*z4*w3 + x3*z2*w4 + x4*z3*w2 - x2*z3*w4 - x3*z4*w2 - x4*z2*w3,
+			x2*y3*w4 + x3*y4*w2 + x4*y2*w3 - x2*y4*w3 - x3*y2*w4 - x4*y3*w2,
+			x2*y4*z3 + x3*y2*z4 + x4*y3*z2 - x2*y3*z4 - x3*y4*z2 - x4*y2*z3,
+
+			y1*z4*w3 + y3*z1*w4 + y4*z3*w1 - y1*z3*w4 - y3*z4*w1 - y4*z1*w3,
+			x1*z3*w4 + x3*z4*w1 + x4*z1*w3 - x1*z4*w3 - x3*z1*w4 - x4*z3*w1,
+			x1*y4*w3 + x3*y1*w4 + x4*y3*w1 - x1*y3*w4 - x3*y4*w1 - x4*y1*w3,
+			x1*y3*z4 + x3*y4*z1 + x4*y1*z3 - x1*y4*z3 - x3*y1*z4 - x4*y3*z1,
+
+			y1*z2*w4 + y2*z4*w1 + y4*z1*w2 - y1*z4*w2 - y2*z1*w4 - y4*z2*w1,
+			x1*z4*w2 + x2*z1*w4 + x4*z2*w1 - x1*z2*w4 - x2*z4*w1 - x4*z1*w2,
+			x1*y2*w4 + x2*y4*w1 + x4*y1*w2 - x1*y4*w2 - x2*y1*w4 - x4*y2*w1,
+			x1*y4*z2 + x2*y1*z4 + x4*y2*z1 - x1*y2*z4 - x2*y4*z1 - x4*y1*z2,
+
+			y1*z3*w2 + y2*z1*w3 + y3*z2*w1 - y1*z2*w3 - y2*z3*w1 - y3*z1*w2,
+			x1*z2*w3 + x2*z3*w1 + x3*z1*w2 - x1*z3*w2 - x2*z1*w3 - x3*z2*w1,
+			x1*y3*w2 + x2*y1*w3 + x3*y2*w1 - x1*y2*w3 - x2*y3*w1 - x3*y1*w2,
+			x1*y2*z3 + x2*y3*z1 + x3*y1*z2 - x1*y3*z2 - x2*y1*z3 - x3*y2*z1
+
+		};
+
+		return m * (1.0f / det);
 }
 
-Matrix4 Matrix4::operator*(const float f) const
-{
-	return Matrix4( x1 * f, x2 * f, x3 * f, x4 * f,
-					y1 * f, y2 * f, y3 * f, y4 * f,
-					z1 * f, z2 * f, z3 * f, z4 * f,
-					w1 * f, w2 * f, w3 * f, w4 * f
-	);
-}
-
-Vector3 Matrix4::operator*(const Vector3 & v) const
-{
-	return Vector3(
-		x1*v.x + x2*v.y + x3*v.z + x4*1.0f,
-		y1*v.x + y2*v.y + y3*v.z + y4*1.0f,
-		z1*v.x + z2*v.y + z3*v.z + z4*1.0f
-	);
-}
 
 Matrix4 operator*(const Matrix4& m1, const Matrix4& m2)
 {

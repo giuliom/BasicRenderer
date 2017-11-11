@@ -15,36 +15,6 @@ Vector2 & Vector2::operator=(Vector2 && v)
 	return *this;
 }
 
-Vector2 Vector2::operator+(const Vector2 & v) const
-{
-	return Vector2(x + v.x, y + v.y);
-}
-
-Vector2 Vector2::operator+(const float f) const
-{
-	return Vector2(x + f, y + f);
-}
-
-Vector2 Vector2::operator-(const Vector2 & v) const
-{
-	return Vector2(x - v.x, y - v.y);
-}
-
-Vector2 Vector2::operator-(const float f) const
-{
-	return Vector2(x - f, y - f);
-}
-
-Vector2 Vector2::operator*(const Vector2 & v) const
-{
-	return Vector2(x * v.x, y * v.y);
-}
-
-Vector2 Vector2::operator*(const float f) const
-{
-	return Vector2(x * f, y * f);
-}
-
 bool Vector2::operator==(const Vector2 & v) const
 {
 	return (x == v.x && y == v.y) ;

@@ -28,7 +28,12 @@ public:
 	Face& operator=(const Face& f);
 	Face& operator=(Face&& f);
 
-	Face ToMatrixSpace(const Matrix4& m) const;
+	inline Face ToMatrixSpace(const Matrix4& m) const
+	{
+		return Face(Vertex(m * v0.pos, v0.nrml, v0.uv),
+					Vertex(m * v1.pos, v1.nrml, v1.uv),
+					Vertex(m * v2.pos, v2.nrml, v2.uv));
+	}
 
 	Vector3 CalculateNormal() const;
 };

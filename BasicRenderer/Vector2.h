@@ -30,14 +30,15 @@ public:
 
 	Vector2& operator=(const Vector2& v);
 	Vector2& operator=(Vector2&& v);
-	Vector2 operator+(const Vector2& v) const;
-	Vector2 operator+(const float f) const;
-	Vector2 operator-(const Vector2& v) const;
-	Vector2 operator-(const float f) const;
-	Vector2 operator*(const Vector2& v) const;
-	Vector2 operator*(const float f) const;
 	bool	operator==(const Vector2& v) const;
 	bool	operator!=(const Vector2& v) const;
+
+	inline Vector2 operator+(const Vector2& v) const	{ return Vector2(x + v.x, y + v.y); }
+	inline Vector2 operator+(const float f) const		{ return Vector2(x + f, y + f); }
+	inline Vector2 operator-(const Vector2& v) const	{ return Vector2(x - v.x, y - v.y); }
+	inline Vector2 operator-(const float f) const		{ return Vector2(x - f, y - f); }
+	inline Vector2 operator*(const Vector2& v) const	{ return Vector2(x * v.x, y * v.y); }
+	inline Vector2 operator*(const float f) const		{ return Vector2(x * f, y * f); }
 
 	inline static float Dot(const Vector2& a, const Vector2& b)
 	{

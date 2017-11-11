@@ -26,22 +26,19 @@ public:
 		return Vector3(x * l, y * l, z * l);
 	}
 
-	inline float Magnitude() const
-	{
-		return sqrtf((x * x) + (y * y) + (z * z));
-	}
+	inline float Magnitude() const	{ return sqrtf((x * x) + (y * y) + (z * z)); }
 
 	Vector3& operator=(const Vector3& v);
 	Vector3& operator=(Vector3&& v);
-	Vector3 operator+(const Vector3& v) const;
-	Vector3 operator+(const float f) const;
-	Vector3 operator-(const Vector3& v) const;
-	Vector3 operator-(const float f) const;
-	Vector3 operator*(const Vector3& v) const;
-	Vector3 operator*(const float f) const;
 	bool	operator==(const Vector3& v) const;
 	bool	operator!=(const Vector3& v) const;
 
+	inline Vector3 operator+(const Vector3& v) const	{	return Vector3(x + v.x, y + v.y, z + v.z); }
+	inline Vector3 operator+(const float f) const		{	return Vector3(x + f, y + f, z + f); }
+	inline Vector3 operator-(const Vector3& v) const	{	return Vector3(x - v.x, y - v.y, z - v.z); }
+	inline Vector3 operator-(const float f) const		{	return Vector3(x - f, y - f, z - f); }
+	inline Vector3 operator*(const Vector3& v) const	{	return Vector3(x * v.x, y * v.y, z * v.z); }
+	inline Vector3 operator*(const float f) const		{	return Vector3(x * f, y * f, z * f); }
 
 	inline static float Dot(const Vector3& a, const Vector3& b)
 	{

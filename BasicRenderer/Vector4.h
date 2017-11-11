@@ -25,21 +25,19 @@ public:
 		return Vector4(x * l, y * l, z * l, w * l);
 	}
 
-	inline float Magnitude() const
-	{
-		return sqrtf((x * x) + (y * y) + (z * z) + (w * w));
-	}
+	inline float Magnitude() const { return sqrtf((x * x) + (y * y) + (z * z) + (w * w)); }
 
 	Vector4& operator=(const Vector4& v);
 	Vector4& operator=(Vector4&& v);
-	Vector4 operator+(const Vector4& v) const;
-	Vector4 operator+(const float f) const;
-	Vector4 operator-(const Vector4& v) const;
-	Vector4 operator-(const float f) const;
-	Vector4 operator*(const Vector4& v) const;
-	Vector4 operator*(const float f) const;
 	bool	operator==(const Vector4& v) const;
 	bool	operator!=(const Vector4& v) const;
+
+	inline Vector4 operator+(const Vector4& v) const	{	return Vector4(x + v.x, y + v.y, z + v.z, w + v.w); }
+	inline Vector4 operator+(const float f) const		{	return Vector4(x + f, y + f, z + f, w + f); }
+	inline Vector4 operator-(const Vector4& v) const	{	return Vector4(x - v.x, y - v.y, z - v.z, w - v.w); }
+	inline Vector4 operator-(const float f) const		{	return Vector4(x - f, y - f, z - f, w - f); }
+	inline Vector4 operator*(const Vector4& v) const	{	return Vector4(x * v.x, y * v.y, z * v.z, w * v.w); }
+	inline Vector4 operator*(const float f) const		{ return Vector4(x * f, y * f, z * f, w * f); }
 
 	inline static float Dot(const Vector4& a, const Vector4& b)
 	{
