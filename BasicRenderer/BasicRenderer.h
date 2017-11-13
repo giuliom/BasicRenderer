@@ -32,8 +32,8 @@ protected:
 
 	inline Face PerspectiveDivide(Face& f) const;
 	inline Face NormalizedToScreenSpace(Face& f) const;
-	inline std::vector<Face> Clip(Face& f) const;
-	inline void ClipEdge(Vertex& v0, Vertex& v1, std::vector<Vertex>& vertices) const;
+	inline int Clip(Face& f, Face (&clippedFaces)[4]) const;
+	inline int ClipEdge(Vertex& v0, Vertex& v1, Vertex (&vertices)[6], int index) const;
 	inline bool CullFace(const Face& f) const;
 	inline Vector4 BoundingBox(const Face& f) const;
 

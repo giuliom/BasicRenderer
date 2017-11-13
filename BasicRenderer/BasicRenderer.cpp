@@ -55,10 +55,13 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 		face = PerspectiveDivide(face);
 		face = NormalizedToScreenSpace(face);
 
-		std::vector<Face> clippedFaces = Clip(face);
+		Face clippedFaces[4];
+		int nClippedFaces = Clip(face, clippedFaces);
 
-		for (auto face : clippedFaces)
+		for (int j = 0; j < nClippedFaces; j++)
 		{
+			face = clippedFaces[j];
+
 			if (CullFace(face)) continue;
 
 			Vector4 bbox = BoundingBox(face);
@@ -130,12 +133,13 @@ inline Face BasicRenderer::NormalizedToScreenSpace(Face& f) const
 	return Face(v0, v1, v2, f);
 }
 
-inline std::vector<Face> BasicRenderer::Clip(Face & f) const
+//TODO use custom dynamic array
+inline int BasicRenderer::Clip(Face & f, Face (&clippedFaces)[4]) const
 {
-	std::vector<Face> clippedFaces;
+	int nfaces = 0;
 
 	if (f.v0.pos.w <= 0.0 && f.v1.pos.w <= 0.0 && f.v2.pos.w <= 0.0) {
-		return clippedFaces;
+		return 0;
 	}
 
 	if (f.v0.pos.w > 0.0 &&
@@ -145,44 +149,51 @@ inline std::vector<Face> BasicRenderer::Clip(Face & f) const
 		abs(f.v1.pos.z) < f.v1.pos.w &&
 		abs(f.v2.pos.z) < f.v2.pos.w)
 	{
-		return clippedFaces;
+		return 0;
 	}
 	else 
 	{
-		std::vector<Vertex> vertices;
-		ClipEdge(f.v0, f.v1, vertices);
-		ClipEdge(f.v1, f.v2, vertices);
-		ClipEdge(f.v2, f.v0, vertices);
+		Vertex vertices[6];
+		int size = 0;
+		size = ClipEdge(f.v0, f.v1, vertices, size);
+		size = ClipEdge(f.v1, f.v2, vertices, size);
+		size = ClipEdge(f.v2, f.v0, vertices, size);
 
-		if (vertices.size() < 3) 
+		// max size() is 6
+		if (size < 3)
 		{
-			return clippedFaces;
+			return 0;
 		}
-		if (vertices[vertices.size()-1] != vertices[0])
+		if (vertices[size -1] != vertices[0])
 		{
-			vertices.pop_back();
+			--size;
 		}
 
-		for (int i = 1; i < vertices.size() - 1; ++i) 
+		for (int i = 1; i < size - 1; ++i)
 		{
-			clippedFaces.push_back(Face(vertices[0], vertices[i], vertices[i + 1]));
+			clippedFaces[i - 1] = Face(vertices[0], vertices[i], vertices[i + 1]);
+			++nfaces;
 		}
 	}
-	return clippedFaces;
+	return nfaces;
 }
 
-inline void BasicRenderer::ClipEdge(Vertex & v0, Vertex & v1, std::vector<Vertex>& vertices) const
+inline int BasicRenderer::ClipEdge(Vertex & v0, Vertex & v1, Vertex (&vertices)[6], int index) const
 {
+	assert(index < 5);
+
+	int size = index;
 	Vertex n_v0 = v0;
 	Vertex n_v1 = v1;
 
 	bool v0Inside = v0.pos.w > 0.0 && v0.pos.z > -v0.pos.w;
 	bool v1Inside = v1.pos.w > 0.0 && v1.pos.z > -v1.pos.w;
 
-	if (v0Inside && v1Inside)
+	if (!v0Inside && !v1Inside)
 	{
+		return 0;
 	}
-	else if (v0Inside || v1Inside)
+	else if (v0Inside != v1Inside)
 	{
 		float d0 = v0.pos.z + v0.pos.w;
 		float d1 = v1.pos.z + v1.pos.w;
@@ -199,17 +210,14 @@ inline void BasicRenderer::ClipEdge(Vertex & v0, Vertex & v1, std::vector<Vertex
 			n_v0 = nVertex;
 		}
 	}
-	else 
-	{
-		return;
-	}
 
-
-	if (vertices.size() == 0 || !(vertices[vertices.size()-1]!= n_v0))
+	if ((size == 0 || !(vertices[size - 1] != n_v0)) && size < 6)
 	{
-		vertices.push_back(n_v0);
+		vertices[size] = n_v0;
+		++size;
 	}
-	vertices.push_back(n_v1);
+	vertices[size] = n_v1;
+	return ++size;
 }
 
 inline bool BasicRenderer::CullFace(const Face& f) const
