@@ -24,7 +24,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	//TODO move outside rendering
 	scene.transform.SetScale(10.f, 10.f, 10.f);
 	scene.transform.SetPosition(0.0f, -1.0f, -5.0f);
-	scene.transform.Rotate(0.0f, 0.01f, 0.0f);
+	//scene.transform.Rotate(0.0f, 0.01f, 0.0f);
 	sun.direction = { 1.0f, -0.5f, 1.0f };
 
 	if (scene.mesh != nullptr)
@@ -45,7 +45,6 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 	const int nfaces = obj.mesh->GetFacesCount();
 	const auto faces = obj.mesh->GetFaces();
 
-	//TODO frustum culling
 	for (int i = 0; i < nfaces; i++)
 	{
 		Face face = faces[i].ToMatrixSpace(mvp);
@@ -56,8 +55,12 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 		face = PerspectiveDivide(face);
 		face = NormalizedToScreenSpace(face);
 
-		if (!CullFace(face))
+		std::vector<Face> clippedFaces = Clip(face);
+
+		for (auto face : clippedFaces)
 		{
+			if (CullFace(face)) continue;
+
 			Vector4 bbox = BoundingBox(face);
 			int bbz = (int)bbox.z;
 			int bbw = (int)bbox.w;
@@ -66,7 +69,7 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 			{
 				for (int y = (int)bbox.y; y < bbw; ++y)
 				{
-					Vector3 bary = Barycentre((float) x, (float) y, face);
+					Vector3 bary = Barycentre((float)x, (float)y, face);
 
 					if (bary.x < 0.0f || bary.y < 0.0f || bary.z < 0.0f) continue;
 
@@ -90,17 +93,20 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 
 inline Face BasicRenderer::PerspectiveDivide(Face& f) const
 {
-	Vector4 v0 = Vector4(f.v0.pos.x / f.v0.pos.w,
-						 f.v0.pos.y / f.v0.pos.w,
-						 f.v0.pos.z / f.v0.pos.w,
+	float v0w = 1.0f / f.v0.pos.w;
+	float v1w = 1.0f / f.v1.pos.w;
+	float v2w = 1.0f / f.v2.pos.w;
+	Vector4 v0 = Vector4(f.v0.pos.x * v0w,
+						 f.v0.pos.y * v0w,
+						 f.v0.pos.z * v0w,
 						 f.v0.pos.w);
-	Vector4 v1 = Vector4(f.v1.pos.x / f.v1.pos.w,
-						 f.v1.pos.y / f.v1.pos.w,
-						 f.v1.pos.z / f.v1.pos.w,
+	Vector4 v1 = Vector4(f.v1.pos.x * v1w,
+						 f.v1.pos.y * v1w,
+						 f.v1.pos.z * v1w,
 						 f.v1.pos.w);
-	Vector4 v2 = Vector4(f.v2.pos.x / f.v2.pos.w,
-						 f.v2.pos.y / f.v2.pos.w,
-						 f.v2.pos.z / f.v2.pos.w,
+	Vector4 v2 = Vector4(f.v2.pos.x * v2w,
+						 f.v2.pos.y * v2w,
+						 f.v2.pos.z * v2w,
 						 f.v2.pos.w);
 
 	return Face(v0, v1, v2, f);
@@ -122,6 +128,88 @@ inline Face BasicRenderer::NormalizedToScreenSpace(Face& f) const
 						 f.v2.pos.w);
 
 	return Face(v0, v1, v2, f);
+}
+
+inline std::vector<Face> BasicRenderer::Clip(Face & f) const
+{
+	std::vector<Face> clippedFaces;
+
+	if (f.v0.pos.w <= 0.0 && f.v1.pos.w <= 0.0 && f.v2.pos.w <= 0.0) {
+		return clippedFaces;
+	}
+
+	if (f.v0.pos.w > 0.0 &&
+		f.v1.pos.w > 0.0 &&
+		f.v2.pos.w > 0.0 &&
+		abs(f.v0.pos.z) < f.v0.pos.w &&
+		abs(f.v1.pos.z) < f.v1.pos.w &&
+		abs(f.v2.pos.z) < f.v2.pos.w)
+	{
+		return clippedFaces;
+	}
+	else 
+	{
+		std::vector<Vertex> vertices;
+		ClipEdge(f.v0, f.v1, vertices);
+		ClipEdge(f.v1, f.v2, vertices);
+		ClipEdge(f.v2, f.v0, vertices);
+
+		if (vertices.size() < 3) 
+		{
+			return clippedFaces;
+		}
+		if (vertices[vertices.size()-1] != vertices[0])
+		{
+			vertices.pop_back();
+		}
+
+		for (int i = 1; i < vertices.size() - 1; ++i) 
+		{
+			clippedFaces.push_back(Face(vertices[0], vertices[i], vertices[i + 1]));
+		}
+	}
+	return clippedFaces;
+}
+
+inline void BasicRenderer::ClipEdge(Vertex & v0, Vertex & v1, std::vector<Vertex>& vertices) const
+{
+	Vertex n_v0 = v0;
+	Vertex n_v1 = v1;
+
+	bool v0Inside = v0.pos.w > 0.0 && v0.pos.z > -v0.pos.w;
+	bool v1Inside = v1.pos.w > 0.0 && v1.pos.z > -v1.pos.w;
+
+	if (v0Inside && v1Inside)
+	{
+	}
+	else if (v0Inside || v1Inside)
+	{
+		float d0 = v0.pos.z + v0.pos.w;
+		float d1 = v1.pos.z + v1.pos.w;
+		float factor = 1.0 / (d1 - d0);
+
+		Vertex nVertex = Vertex((v0.pos * d1 - v1.pos * d0) * factor, 
+								(v0.nrml * d1 - v1.nrml * d0) * factor, 
+								(v0.uv * d1 - v1.uv * d0) * factor);
+		if (v0Inside)
+		{
+			n_v1 = nVertex;
+		}
+		else {
+			n_v0 = nVertex;
+		}
+	}
+	else 
+	{
+		return;
+	}
+
+
+	if (vertices.size() == 0 || !(vertices[vertices.size()-1]!= n_v0))
+	{
+		vertices.push_back(n_v0);
+	}
+	vertices.push_back(n_v1);
 }
 
 inline bool BasicRenderer::CullFace(const Face& f) const
@@ -150,40 +238,3 @@ inline Vector4 BasicRenderer::BoundingBox(const Face& f) const
 	return Vector4(finalMin.x, finalMin.y, finalMax.x, finalMax.y);
 }
 
-inline Vector3 BasicRenderer::Barycentre(const float x, const float y, const Face& f) const
-{
-	
-	Vector4 ab = f.v1.pos - f.v0.pos;
-	Vector4 ac = f.v2.pos - f.v0.pos;
-	Vector2 pa = Vector2(f.v0.pos.x - x, f.v0.pos.y -y );
-	
-	Vector3 uv1 = Vector3::CrossProduct(Vector3(ac.x, ab.x, pa.x), Vector3(ac.y, ab.y, pa.y));
-		
-		if (abs(uv1.z) < 1e-2f) 
-		{
-			return Vector3(-1.0f, 1.0f, 1.0f);
-		}
-
-		return Vector3((uv1.z - (uv1.x + uv1.y)) * (1.0f / uv1.z), uv1.y * (1.0f / uv1.z), uv1.x * (1.0f / uv1.z));
-}
-
-inline Vector2 BasicRenderer::Clamp(Vector2 v, const Vector2 min, const Vector2 max) const
-{
-	if (v.x < min.x)
-	{
-		v.x = min.x;
-	}
-	else if (v.x > max.x)
-	{
-		v.x = max.x;
-	}
-	if (v.y < min.y)
-	{
-		v.y = min.y;
-	}
-	else if (v.y > max.y)
-	{
-		v.y = max.y;
-	}
-	return v;
-}

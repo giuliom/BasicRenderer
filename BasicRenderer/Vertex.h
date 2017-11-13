@@ -27,6 +27,8 @@ public:
 
 	Vertex& operator=(const Vertex& v);
 	Vertex& operator=(Vertex&& v);
+	bool operator==(const Vertex& v) const;
+	bool operator!=(const Vertex& v) const;
 
 	inline Vertex GetMatrixVertex(const Matrix4& m) const { return Vertex(m * pos, nrml, uv); }
 };
