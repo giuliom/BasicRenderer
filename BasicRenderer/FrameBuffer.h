@@ -29,6 +29,8 @@ public:
 	} 
 	~FrameBuffer();
 
+	FrameBuffer& operator==(const FrameBuffer& buf) = delete;
+
 	bool WriteToColor(int w, int h, const Color& col);
 	bool WriteToDepth(int w, int h, float col);
 	float GetDepth(int w, int h) const;

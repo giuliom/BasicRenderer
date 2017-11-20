@@ -19,6 +19,12 @@ MainWindow::MainWindow(QWidget *parent) :
 	renderingCombo = ui->rendererComboBox;
 	shadingCombo = ui->shadingComboBox;
 
+	renderingCombo->addItem("Rasterizer");
+	renderingCombo->addItem("Raytracer");
+
+	shadingCombo->addItem("Flat");
+	shadingCombo->addItem("Blinn-Phong");
+
 	SetupSignals();
 }
 

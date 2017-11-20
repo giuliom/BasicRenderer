@@ -225,6 +225,7 @@
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="ImageExporter.cpp" />
     <ClCompile Include="ImageFormats.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix4.cpp" />
@@ -244,6 +245,7 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="ImageExporter.h" />
     <ClInclude Include="ImageFormats.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Mesh.h" />
