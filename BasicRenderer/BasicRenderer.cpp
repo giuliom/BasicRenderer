@@ -197,7 +197,7 @@ inline int BasicRenderer::ClipEdge(Vertex & v0, Vertex & v1, Vertex (&vertices)[
 	{
 		float d0 = v0.pos.z + v0.pos.w;
 		float d1 = v1.pos.z + v1.pos.w;
-		float factor = 1.0 / (d1 - d0);
+		float factor = 1.0f / (d1 - d0);
 
 		Vertex nVertex = Vertex((v0.pos * d1 - v1.pos * d0) * factor, 
 								(v0.nrml * d1 - v1.nrml * d0) * factor, 

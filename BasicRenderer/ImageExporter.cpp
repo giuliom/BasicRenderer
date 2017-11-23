@@ -5,4 +5,6 @@ bool ImageExporter::ExportToRaw(const char * path, const std::shared_ptr<const F
 {
 	std::ofstream outfile;
 	outfile.open(*path + "render.tga", std::ios::binary);
+
+	return true;
 }
