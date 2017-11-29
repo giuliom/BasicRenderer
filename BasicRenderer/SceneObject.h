@@ -9,7 +9,7 @@ class SceneObject
 protected:
 	Mesh* mesh = nullptr;
 	mutable Transform worldTransform;
-	std::vector<Transform*> children; //Move to Transform?
+	std::vector<Transform*> children; //TODO Move to Transform?
 
 public:
 	Transform transform;

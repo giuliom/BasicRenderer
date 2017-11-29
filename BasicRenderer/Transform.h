@@ -8,6 +8,8 @@ class SceneObject;
 // TODO Quaternions
 class Transform
 {
+	friend class SceneObject;
+
 protected:
 
 	Vector3 position;
@@ -15,6 +17,7 @@ protected:
 	Vector3 rotation;
 	Transform* parent = nullptr; //TODO
 	SceneObject* object = nullptr;
+	mutable bool dirty = true;
 
 public:
 
@@ -23,8 +26,6 @@ public:
 	Vector3 forward;
 	Vector3 right;
 	Vector3 up;
-
-	mutable bool dirty = true;
 
 protected:
 
