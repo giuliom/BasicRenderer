@@ -3,49 +3,60 @@
 
 
 
-Matrix4 Transform::GetTranslationMatrix()
+Matrix4 Transform::GetTranslationMatrix(const Vector3& _position)
 {
-	return Matrix4 (1.0f, 0.0f, 0.0f, position.x,
-					0.0f, 1.0f, 0.0f, position.y,
-					0.0f, 0.0f, 1.0f, position.z,
+	return Matrix4 (1.0f, 0.0f, 0.0f, _position.x,
+					0.0f, 1.0f, 0.0f, _position.y,
+					0.0f, 0.0f, 1.0f, _position.z,
 					0.0f, 0.0f, 0.0f, 1.0f
 					);
 }
 
-Matrix4 Transform::GetScaleMatrix()
+Matrix4 Transform::GetScaleMatrix(const Vector3& _scale)
 {
-	return Matrix4(	scale.x,0.0f,	0.0f,	0.0f,
-					0.0f,	scale.y,0.0f,	0.0f,
-					0.0f,	0.0f,	scale.z,0.0f,
-					0.0f,	0.0f,	 0.0f,	1.0f
+	return Matrix4(	_scale.x,	0.0f,		0.0f,		0.0f,
+					0.0f,		_scale.y,	0.0f,		0.0f,
+					0.0f,		0.0f,		_scale.z,	0.0f,
+					0.0f,		0.0f,		0.0f,		1.0f
 					);
 }
 
 // Right-hand
-Matrix4 Transform::GetRotationMatrix()
+Matrix4 Transform::GetRotationMatrix(const Vector3& _rotation)
 {
 	// X-axis
-	Matrix4 roll(1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, cosf(rotation.x), -sinf(rotation.x), 0.0f,
-		0.0f, sinf(rotation.x), cosf(rotation.x), 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f
+	Matrix4 roll(	1.0f, 0.0f,					0.0f,				0.0f,
+					0.0f, cosf(_rotation.x),	-sinf(_rotation.x), 0.0f,
+					0.0f, sinf(_rotation.x),	cosf(_rotation.x),	0.0f,
+					0.0f, 0.0f,					0.0f,				1.0f
 	);
 	 
 	 // Y-axis
-	 Matrix4 yaw(	cosf(rotation.y),	0.0f, sinf(rotation.y), 0.0f,
-					0.0f,				1.0f, 0.0f,				0.0f,
-					-sinf(rotation.y),	0.0f, cosf(rotation.y),	0.0f,
-					0.0f,				0.0f, 0.0f,				1.0f
+	 Matrix4 yaw(	cosf(_rotation.y),	0.0f, sinf(_rotation.y),	0.0f,
+					0.0f,				1.0f, 0.0f,					0.0f,
+					-sinf(_rotation.y),	0.0f, cosf(_rotation.y),	0.0f,
+					0.0f,				0.0f, 0.0f,					1.0f
 	 );
 	 
 	 // Z-axis
-	 Matrix4 pitch(cosf(rotation.z), -sinf(rotation.z), 0.0f, 0.0f,
-		 sinf(rotation.z), cosf(rotation.z), 0.0f, 0.0f,
-		 0.0f, 0.0f, 1.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 1.0f
+	 Matrix4 pitch(	cosf(_rotation.z),	-sinf(_rotation.z),	0.0f, 0.0f,
+					sinf(_rotation.z),	cosf(_rotation.z),	0.0f, 0.0f,
+					0.0f,				0.0f,				1.0f, 0.0f,
+					0.0f,				0.0f,				0.0f, 1.0f
 	 );
 
 	 return yaw * pitch * roll;
+}
+
+Transform::Transform(const Vector3 & pos, const Vector3 & scl, const Vector3 & rot, Transform * _parent, SceneObject * obj)
+{
+	position = pos;
+	scale = scl;
+	rotation = rot;
+	parent = _parent;
+	object = obj;
+
+	UpdateTransform();
 }
 
 Transform & Transform::operator=(const Transform & t)
@@ -55,6 +66,7 @@ Transform & Transform::operator=(const Transform & t)
 	position = t.position;
 	scale = t.scale;
 	rotation = t.rotation;
+	object = t.object;
 	return *this;
 }
 
@@ -65,6 +77,7 @@ Transform & Transform::operator=(Transform && t)
 	position = t.position;
 	scale = t.scale;
 	rotation = t.rotation;
+	object = t.object;
 	return *this;
 }
 
@@ -132,6 +145,17 @@ void Transform::Rotate(const Vector3& rotation_)
 void Transform::Rotate(float roll, float yaw, float pitch)
 {
 	Rotate(Vector3(roll, yaw, pitch));
+}
+
+void Transform::SetParent(Transform * par)
+{
+	parent = par;
+	dirty = true;
+}
+
+Transform Transform::Combine(const Transform & other) const
+{
+	return Transform(position + other.position, rotation + other.rotation, scale + other.scale, other.parent, other.object);
 }
 
 

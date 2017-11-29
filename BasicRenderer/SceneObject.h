@@ -1,16 +1,27 @@
 #pragma once
 
+#include <vector>
 #include "Transform.h"
 #include "Mesh.h"
 
 class SceneObject
 {
+protected:
+	Mesh* mesh = nullptr;
+	mutable Transform worldTransform;
+	std::vector<Transform*> children; //Move to Transform?
+
+public:
+	Transform transform;
+	bool dirty = true;
+
 public:
 	SceneObject(Mesh* mesh_) : mesh(mesh_) {} ;
 	SceneObject(const SceneObject& obj) : mesh(obj.mesh), transform(obj.transform) {}
 	~SceneObject();
 
-	Transform transform;
-	Mesh* mesh = nullptr;
+	inline const Mesh* const GetMesh() const { return mesh; } 
+	Transform& UpdateWorldTransform() const;
+
 };
 

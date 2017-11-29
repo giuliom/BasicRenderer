@@ -11,15 +11,16 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	if (width != this->width || height != this->height || fBuffer == nullptr)
 	{
 		fBuffer = std::make_shared<FrameBuffer>(width, height);
+
+		this->width = width;
+		this->height = height;
+		fwidth = (float)width;
+		fheight = (float)height;
+
+		camera.SetAspectRatio(width, height);
 	}
 
-	this->width = width;
-	this->height = height;
-	fwidth = (float)width;
-	fheight = (float)height;
-	
 	fBuffer->Fill(Color(0.64f, 0.92f ,0.92f));
-	camera.SetAspectRatio(width, height);
 
 	//TODO move outside rendering
 	scene.transform.SetScale(10.f, 10.f, 10.f);
@@ -27,7 +28,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	//scene.transform.Rotate(0.0f, 0.01f, 0.0f);
 	sun.direction = { 1.0f, -0.5f, 1.0f };
 
-	if (scene.mesh != nullptr)
+	if (scene.GetMesh() != nullptr)
 	{
 		DrawObject(scene);
 	}
@@ -40,10 +41,10 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 	Matrix4 view = camera.GetViewMatrix();
 	Matrix4 projection = camera.GetProjectionMatrix();
 
-	Matrix4 mvp = projection * view * obj.transform.m;
+	Matrix4 mvp = projection * view * obj.UpdateWorldTransform().m;
 
-	const int nfaces = obj.mesh->GetFacesCount();
-	const auto faces = obj.mesh->GetFaces();
+	const int nfaces = obj.GetMesh()->GetFacesCount();
+	const auto faces = obj.GetMesh()->GetFaces();
 
 	for (int i = 0; i < nfaces; i++)
 	{
