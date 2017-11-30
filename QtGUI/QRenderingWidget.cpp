@@ -78,7 +78,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	const auto buf = bRenderer->Render(width(), height(), *scene);
 
-	QRgb* rgb = (QRgb*)img->bits();
+	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
 	int size = width() * height();
 
 	const Color* c = buf->GetColorBuffer();
@@ -86,9 +86,9 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	for (int i = 0; i < size; ++i)
 	{
 		unsigned int ua = 255 << 24;
-		ua |= (unsigned int) (c[i].x * 255) << 16;
-		ua |= (unsigned int) (c[i].y * 255) << 8;
-		ua |= (unsigned int) (c[i].z * 255);
+		ua |= static_cast<unsigned int>(c[i].x * 255) << 16;
+		ua |= static_cast<unsigned int>(c[i].y * 255) << 8;
+		ua |= static_cast<unsigned int>(c[i].z * 255);
 
 		rgb[i] = ua;
 	}
