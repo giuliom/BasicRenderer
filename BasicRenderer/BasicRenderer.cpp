@@ -84,7 +84,7 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 
 					if (z < fBuffer->GetDepth(index))
 					{
-						fBuffer->WriteToColor(index, Vector3::One() * faceDiffuse);
+						fBuffer->WriteToColor(index, faceNormal); //Vector3::One() * faceDiffuse);
 						fBuffer->WriteToDepth(index, z);
 					}
 
