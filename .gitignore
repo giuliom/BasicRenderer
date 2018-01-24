@@ -44,3 +44,6 @@ LibRelease/
 
 # Visual Studio 2015 Options file
 *.suo
+
+# Visual Studio 2017 Settings
+.vs
