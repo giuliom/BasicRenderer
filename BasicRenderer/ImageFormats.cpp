@@ -1,10 +1,22 @@
 #include "ImageFormats.h"
 
-RGB888 & RGB888::operator=(RGB888 & other)
+uint32_t * ImageFormats::ToRGBA8888(const FrameBuffer * const buf)
 {
-	r = other.r;
-	g = other.g;
-	b = other.b;
+	const int size = buf->GetWidth() * buf->GetHeight();
+	uint32_t* output = new uint32_t[size];
 
-	return *this;
+	const Color* c = buf->GetColorBuffer();
+	
+	for (int i = 0; i < size; ++i)
+	{
+		uint32_t ua;
+		ua |= static_cast<uint32_t>(c[i].x * 255) << 24;
+		ua |= static_cast<uint32_t>(c[i].y * 255) << 16;
+		ua |= static_cast<uint32_t>(c[i].z * 255) << 8;
+		ua |= 255;
+
+		output[i] = ua;
+	}
+	
+	return output;
 }

@@ -1,16 +1,12 @@
 #pragma once
 
+#include <stdint.h>
+#include "FrameBuffer.h"
 
-struct RGB888
+class ImageFormats
 {
-	int r = 0;
-	int g = 0;
-	int b = 0;
 	
 public:
-	RGB888() : r(0), g(0), b(0) {}
-	RGB888(const RGB888& other) : r(other.r), g(other.g), b(other.b) {}
-	RGB888(int or, int og, int ob) : r(or), g(og), b(ob) {}
-
-	RGB888& operator=(RGB888& other);
+	
+	static uint32_t* ToRGBA8888(const FrameBuffer * const buf);
 };

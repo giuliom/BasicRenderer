@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <limits>
-#include "ImageFormats.h"
+#include <stdio.h>
 #include "PrimitiveTypes.h"
 
 
@@ -38,6 +38,10 @@ public:
 
 	Color* GetColorBufferCopy() const;
 	const Color* const GetColorBuffer() const;
+	
+
+	inline int GetWidth() const { return width; }
+	inline int GetHeight() const { return height; }
 
 	inline bool WriteToColor(int index, const Color& col)
 	{
