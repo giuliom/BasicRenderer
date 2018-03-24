@@ -7,6 +7,7 @@
 #include "BasicRenderer\ImageFormats.h"
 #include "BasicRenderer\Vector3.h"
 #include "BasicRenderer\ObjLoader.h"
+#include "BasicRenderer\ImageExporter.h"
 
 
 QRenderingWidget::QRenderingWidget(QWidget* parent)
@@ -24,6 +25,11 @@ QRenderingWidget::~QRenderingWidget()
 void QRenderingWidget::SetScene(const char* filename)
 {
 	scene = std::make_unique<SceneObject>(ObjLoader::Load(filename));
+}
+
+void QRenderingWidget::SaveFrame(const char* path)
+{
+	ImageExporter::ExportToBMP(path, frame);
 }
 
 void QRenderingWidget::initializeGL()
@@ -76,12 +82,12 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
-	const auto buf = bRenderer->Render(width(), height(), *scene);
+	frame = bRenderer->Render(width(), height(), *scene);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
 	int size = width() * height();
 
-	const Color* c = buf->GetColorBuffer();
+	const Color* c = frame->GetColorBuffer();
 
 	for (int i = 0; i < size; ++i)
 	{

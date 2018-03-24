@@ -5,7 +5,7 @@
 bool ImageExporter::ExportToRaw(const char * path, const std::shared_ptr<const FrameBuffer> fBuf)
 {
 	std::ofstream outfile;
-	outfile.open(*path + "render.tga", std::ios::binary);
+	outfile.open(*path + "render.tga", std::ofstream::binary | std::ofstream::out);
 
 	return true;
 }
@@ -13,32 +13,76 @@ bool ImageExporter::ExportToRaw(const char * path, const std::shared_ptr<const F
 bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const FrameBuffer> fBuf)
 {
 	std::ofstream outfile;
-	outfile.open(*path + "render.bmp", std::ios::binary);
+	outfile.open("render.bmp", std::ofstream::binary);
+
+	if (!outfile.is_open()) return false;
 
 	std::vector<uint8_t> bmpData;
+	uint32_t width = fBuf->GetWidth();
+	uint32_t height = fBuf->GetHeight();
 
-	bmpData.push_back('B');
-	bmpData.push_back('M');
+	bmpData.push_back(0x42);
+	bmpData.push_back(0x4D);
 	size_t fileSize_offset = bmpData.size();
-	Fill4Bytes(bmpData, 0x00); //Size, to be filled later TODO
-	Fill4Bytes(bmpData, 0x00); //Reserved data
+	Fill4Bytes(bmpData, 0xFFFFFFFF); //Size, to be filled later 
+	bmpData.push_back(0x00); //Reserved data
+	bmpData.push_back(0x00);
+	bmpData.push_back(0x00);
+	bmpData.push_back(0x00);
 	size_t pixelInfo_offset = bmpData.size();
-	Fill4Bytes(bmpData, 0x00); //Pixel offset TODO
+	Fill4Bytes(bmpData, 0x00); //Pixel offset filled later
 	Fill4Bytes(bmpData, 40); //BITMAPINFOHEADER
-	Fill4Bytes(bmpData, fBuf->GetWidth());
-	Fill4Bytes(bmpData, fBuf->GetHeight());
+	Fill4Bytes(bmpData, width);
+	Fill4Bytes(bmpData, height);
 	Fill2Bytes(bmpData, 1); //Color planes
 	Fill2Bytes(bmpData, 24); //Bits per Pixel
 	Fill4Bytes(bmpData, 0); //Compression disabled
 	size_t rawDataSize_offset = bmpData.size();
-	Fill4Bytes(bmpData, 0); //size of raw data in pixel array, TODO
+	Fill4Bytes(bmpData, 0); //size of raw data in pixel array filled later
 	Fill4Bytes(bmpData, 2835); //Horizontal resolution
 	Fill4Bytes(bmpData, 2835); //Vertical resolution
 	Fill4Bytes(bmpData, 0); //Number of colors
 	Fill4Bytes(bmpData, 0); //Important colors
 
-	uint32_t dataSize = bmpData.size();
-	memcpy(&bmpData[pixelInfo_offset], &dataSize, 4);
+	uint32_t headerPadding = bmpData.size() % 4;
+	for (int p = 0; p < headerPadding; p++)
+	{
+		bmpData.push_back(0);
+	}
+	size_t headerSize = bmpData.size();
+	memcpy(&bmpData[pixelInfo_offset], &headerSize, 4);
+
+	const Color* cBuf = fBuf->GetColorBuffer();
+	
+	//Flipped image along the y axis
+	for (uint32_t j = 0; j < height; j++)
+	{
+		for (uint32_t i = 0; i < width; i++)
+		{
+			//BGR
+			uint32_t index = (height - j - 1) * width + i;
+			Color c = cBuf[index];
+			bmpData.push_back((uint8_t) (c.z * 255));
+			bmpData.push_back((uint8_t) (c.y * 255));
+			bmpData.push_back((uint8_t) (c.x * 255));
+		}
+
+		uint32_t padding = bmpData.size() % 4;
+		for (int p=0; p<padding; p++)
+		{
+			bmpData.push_back(0);
+		}
+	}
+
+	size_t fileSize = bmpData.size();
+	memcpy(&bmpData[fileSize_offset], &fileSize, 4);
+
+	size_t pixelDataSize = bmpData.size() - headerSize;
+	memcpy(&bmpData[rawDataSize_offset], &pixelDataSize, 4);
+
+	uint8_t* data = bmpData.data();
+	outfile.write((const char*) data, bmpData.size());
+	outfile.close();
 
 	return false;
 }

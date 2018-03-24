@@ -19,6 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	renderingCombo = ui->rendererComboBox;
 	shadingCombo = ui->shadingComboBox;
 
+	actionRender = ui->actionRender;
+	actionSave = ui->actionSave;
+	actionOpen = ui->actionOpen;
+
 	renderingCombo->addItem("Rasterizer");
 	renderingCombo->addItem("Raytracer");
 
@@ -38,8 +42,8 @@ void MainWindow::SetupSignals()
 	connect(ui->actionRender, SIGNAL(triggered()), this, SLOT(RenderImage()));
 	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(SaveImage()));
 	connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(OpenFile()));
-	connect(renderButton, SIGNAL(pressed()), this, SLOT(RenderImage()));
-	connect(saveButton, SIGNAL(pressed()), this, SLOT(SaveImage()));
+	connect(renderButton, SIGNAL(pressed()), actionRender, SLOT(trigger()));
+	connect(saveButton, SIGNAL(pressed()), actionSave, SLOT(trigger()));
     connect(renderView, SIGNAL(RenderingCompleted(double)), this, SLOT(UpdateFpsLabel(double)));
 	connect(renderView, SIGNAL(RendererResized()), this, SLOT(UpdateResolutionLabels()));
 }
@@ -48,12 +52,11 @@ void MainWindow::SetupSignals()
 void MainWindow::RenderImage()
 {
 	renderView->update();
-
-
 }
 
 void MainWindow::SaveImage()
 {
+	renderView->SaveFrame("");
 }
 
 void MainWindow::OpenFile()

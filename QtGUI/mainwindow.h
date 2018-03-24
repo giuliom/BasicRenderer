@@ -40,6 +40,9 @@ private:
 	QPushButton* saveButton;
 	QComboBox* renderingCombo;
 	QComboBox* shadingCombo;
+	QAction* actionRender;
+	QAction* actionSave;
+	QAction* actionOpen;
 
 };
 

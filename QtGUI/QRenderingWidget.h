@@ -14,6 +14,7 @@ protected:
 	std::unique_ptr<QImage> img;
 	std::unique_ptr<QTimer> timer;
 	std::unique_ptr<SceneObject> scene;
+	std::shared_ptr<const FrameBuffer> frame;
 
 	std::string rTime = "";
 
@@ -30,6 +31,7 @@ public:
 	~QRenderingWidget();
 
 	void SetScene(const char* filename);
+	void SaveFrame(const char* path);
 
 signals:
 	void RenderingCompleted(double time);
