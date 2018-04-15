@@ -20,13 +20,14 @@ public:
 
 	inline Vector3 Normalize() const
 	{
-		float l = Magnitude();
+		float l = Length();
 		if (l == 0) return Vector3::Zero();
 		l = 1.0f / l;
 		return Vector3(x * l, y * l, z * l);
 	}
 
-	inline float Magnitude() const	{ return sqrtf((x * x) + (y * y) + (z * z)); }
+	inline float Length() const	{ return sqrtf((x * x) + (y * y) + (z * z)); }
+	inline float SquaredLength() const { return (x * x) + (y * y) + (z * z); }
 
 	Vector3& operator=(const Vector3& v);
 	Vector3& operator=(Vector3&& v);
