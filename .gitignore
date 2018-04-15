@@ -47,3 +47,5 @@ LibRelease/
 
 # Visual Studio 2017 Settings
 .vs
+QtGUI/render.bmp
+QtGUI/render.ppm

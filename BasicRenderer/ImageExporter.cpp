@@ -2,10 +2,28 @@
 #include <fstream>
 #include "ImageFormats.h"
 
-bool ImageExporter::ExportToRaw(const char * path, const std::shared_ptr<const FrameBuffer> fBuf)
+bool ImageExporter::ExportToPPM(const char * path, const std::shared_ptr<const FrameBuffer> fBuf)
 {
 	std::ofstream outfile;
-	outfile.open(*path + "render.tga", std::ofstream::binary | std::ofstream::out);
+	outfile.open(*path + "render.ppm");
+
+	int width = fBuf->GetWidth();
+	int height = fBuf->GetHeight();
+
+	outfile << "P3\n" << width << " " << height << "\n255\n";
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			Color c = fBuf->GetColor(i * width + j);
+			int r = int(255.99f * c.x);
+			int g = int(255.99f * c.y);
+			int b = int(255.99f * c.z);
+
+			outfile << r << " " << g << " " << b << "\n";
+		}
+	}
 
 	return true;
 }

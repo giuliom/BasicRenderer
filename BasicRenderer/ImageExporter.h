@@ -10,7 +10,7 @@ class ImageExporter
 
 public:
 
-	static bool ExportToRaw(const char* path, const std::shared_ptr<const FrameBuffer> fBuf);
+	static bool ExportToPPM(const char* path, const std::shared_ptr<const FrameBuffer> fBuf);
 
 	static bool ExportToBMP(const char* path, const std::shared_ptr<const FrameBuffer> fBuf);
 
