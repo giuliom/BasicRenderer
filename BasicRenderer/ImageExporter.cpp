@@ -63,7 +63,7 @@ bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const F
 	Fill4Bytes(bmpData, 0); //Important colors
 
 	uint32_t headerPadding = bmpData.size() % 4;
-	for (int p = 0; p < headerPadding; p++)
+	for (uint32_t p = 0; p < headerPadding; p++)
 	{
 		bmpData.push_back(0);
 	}
@@ -86,7 +86,7 @@ bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const F
 		}
 
 		uint32_t padding = bmpData.size() % 4;
-		for (int p=0; p<padding; p++)
+		for (uint32_t p=0; p < padding; p++)
 		{
 			bmpData.push_back(0);
 		}
