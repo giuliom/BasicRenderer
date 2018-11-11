@@ -82,7 +82,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
-	frame = bRenderer->Render(width(), height(), *scene);
+	frame = bRenderer->Render(width(), height(), *scene, BasicRenderer::RenderingMode::RASTERIZER);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
 	int size = width() * height();

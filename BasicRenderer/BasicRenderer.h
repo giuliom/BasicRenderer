@@ -10,19 +10,26 @@
 
 class BasicRenderer
 {
+public:
+	enum class RenderingMode
+	{
+		RASTERIZER,
+		RAYTRACER
+	};
+
 protected:
 	int width = 640;
 	int height = 480;
 	float fwidth = 640.0f;
 	float fheight = 640.0f;
 	std::shared_ptr<FrameBuffer> fBuffer;
-	
 
 public:
 	BasicRenderer() {}
 	~BasicRenderer() {}
 
-	const std::shared_ptr<const FrameBuffer> Render(int width, int height, SceneObject& scene);
+	const std::shared_ptr<const FrameBuffer> Render(int width, int height, SceneObject& scene, RenderingMode mode = RenderingMode::RASTERIZER);
+	const std::shared_ptr<const FrameBuffer> RayTrace(int width, int height, SceneObject& scene);
 
 	Camera camera;
 	DirectionalLight sun;

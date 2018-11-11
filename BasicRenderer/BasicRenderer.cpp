@@ -2,9 +2,10 @@
 #include <cassert>
 #include "BasicRenderer.h"
 #include "ObjLoader.h"
+#include "Ray.h"
 
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, SceneObject& scene)
+const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, SceneObject& scene, RenderingMode mode)
 {
 	assert(width > 0 && height > 0);
 
@@ -30,7 +31,35 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 	if (scene.GetMesh() != nullptr)
 	{
-		DrawObject(scene);
+		switch (mode) 
+		{
+			default :
+				DrawObject(scene);
+				break;
+			case RenderingMode::RAYTRACER :
+				RayTrace(width, height, scene);
+				break;
+		}
+		
+	}
+
+	return fBuffer;
+}
+
+const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, SceneObject & scene)
+{
+	for (int i = 0; i < fheight; i++)
+	{
+		for (int j = 0; j < fwidth; j++)
+		{
+			float u = j / fwidth;
+			float v = i / fheight;
+
+			//TODO check camera u and v and orientation
+			Ray r(camera.transform.GetPosition(), camera.transform.forward + camera.u  * u + camera.v * v);
+			Color c;
+			fBuffer->WriteToColor(i * width + j, c);
+		}
 	}
 
 	return fBuffer;
