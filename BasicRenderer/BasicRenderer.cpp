@@ -21,7 +21,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 		camera.SetAspectRatio(width, height);
 	}
 
-	fBuffer->Fill(Color(0.64f, 0.92f ,0.92f));
+	fBuffer->Fill(fillColor);
 
 	//TODO move outside rendering
 	scene.transform.SetScale(10.f, 10.f, 10.f);
@@ -48,17 +48,37 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, SceneObject & scene)
 {
-	for (int i = 0; i < fheight; i++)
-	{
-		for (int j = 0; j < fwidth; j++)
-		{
-			float u = j / fwidth;
-			float v = i / fheight;
+	Sphere sp({ -0.0f, -0.0f, -1.5f }, 0.5f);
 
-			//TODO check camera u and v and orientation
-			Ray r(camera.transform.GetPosition(), camera.transform.forward + camera.u  * u + camera.v * v);
-			Color c;
-			fBuffer->WriteToColor(i * width + j, c);
+	const float camW = camera.GetWidth();
+	const float camH = camera.GetHeight();
+
+	const Vector3 bottomLeftCorner(-camW * 0.5f, -camH * 0.5f, -1.f);
+	const Vector3 horizontal = { camW , 0.f, 0.f };
+	const Vector3 vertical = { 0.f, camH, 0.f };
+
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			float u = (float) j / fwidth;
+			float v = (float) i / fheight;
+
+			Vector3 dir = bottomLeftCorner + horizontal * u + vertical * v;
+			Ray r(camera.transform.GetPosition(), dir);
+			
+			float t = sp.GetHit(r);
+			if (t > 0.f)
+			{
+				Vector3 n = (r.GetPoint(t) - sp.pos).Normalize();
+				Color c(0.5f * (n.x + 1.f), 0.5f * (n.y + 1.f), 0.5f * (n.z + 1.f));
+				fBuffer->WriteToColor(i * width + j, c);
+			}
+			else
+			{
+				fBuffer->WriteToColor(i * width + j, fillColor);
+			}
 		}
 	}
 

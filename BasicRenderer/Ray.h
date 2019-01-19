@@ -12,5 +12,5 @@ public:
 	Ray() = delete;
 	Ray(const Vector3& ori, const Vector3& dir) : origin(ori), direction(dir) {}
 
-	inline Vector3 GetRayPoint(float t) const { return origin + direction * t; }
+	inline Vector3 GetPoint(float t) const { return origin + direction * t; }
 };

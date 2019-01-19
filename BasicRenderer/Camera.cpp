@@ -15,11 +15,9 @@ Camera::~Camera()
 
 void Camera::SetAspectRatio(int w, int h)
 {
-	aspectRatio = ((float)w) / ((float)h);
-	v.y = aspectRatio;
-	v.z = -1.f;
-	u.y = 1.f;
-	u.z = -1.f;
+	aspectRatio = (float)w / (float)h;
+	u = aspectRatio;
+	v = 1.0f;
 }
 
 // Using right handed coordinate system
