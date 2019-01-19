@@ -16,7 +16,7 @@ protected:
 	std::unique_ptr<SceneObject> scene;
 	std::shared_ptr<const FrameBuffer> frame;
 
-	BasicRenderer::RenderingMode renderingMode = BasicRenderer::RenderingMode::RASTERIZER;
+	BasicRenderer::RenderingMode renderingMode = BasicRenderer::RenderingMode::RAYTRACER;
 
 	std::string rTime = "";
 
