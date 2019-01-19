@@ -2,9 +2,10 @@
 
 #include <vector>
 #include "Transform.h"
+#include "Hitable.h"
 #include "Mesh.h"
 
-class SceneObject
+class SceneObject : public Hitable
 {
 protected:
 	Mesh* mesh = nullptr;
@@ -22,6 +23,8 @@ public:
 
 	inline const Mesh* const GetMesh() const { return mesh; } 
 	Transform& UpdateWorldTransform() const;
+
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override { return false; }
 
 };
 

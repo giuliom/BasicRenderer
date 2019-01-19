@@ -40,6 +40,8 @@ public:
 	inline Vector3 operator-(const float f) const		{	return Vector3(x - f, y - f, z - f); }
 	inline Vector3 operator*(const Vector3& v) const	{	return Vector3(x * v.x, y * v.y, z * v.z); }
 	inline Vector3 operator*(const float f) const		{	return Vector3(x * f, y * f, z * f); }
+	inline Vector3 operator/(const Vector3& v) const	{	return Vector3(x / v.x, y / v.y, z / v.z); }
+	inline Vector3 operator/(const float f) const		{	return Vector3(x / f, y / f, z / f); }
 
 	inline static float Dot(const Vector3& a, const Vector3& b)
 	{

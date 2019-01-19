@@ -68,11 +68,10 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int 
 			Vector3 dir = bottomLeftCorner + horizontal * u + vertical * v;
 			Ray r(camera.transform.GetPosition(), dir);
 			
-			float t = sp.GetHit(r);
-			if (t > 0.f)
+			HitResult hit;
+			if (sp.GetHit(r, 0.0f, 999999.99f, hit))
 			{
-				Vector3 n = (r.GetPoint(t) - sp.pos).Normalize();
-				Color c(0.5f * (n.x + 1.f), 0.5f * (n.y + 1.f), 0.5f * (n.z + 1.f));
+				Color c(0.5f * (hit.normal.x + 1.f), 0.5f * (hit.normal.y + 1.f), 0.5f * (hit.normal.z + 1.f));
 				fBuffer->WriteToColor(i * width + j, c);
 			}
 			else
