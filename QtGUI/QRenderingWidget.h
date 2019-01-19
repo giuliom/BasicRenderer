@@ -16,6 +16,8 @@ protected:
 	std::unique_ptr<SceneObject> scene;
 	std::shared_ptr<const FrameBuffer> frame;
 
+	BasicRenderer::RenderingMode renderingMode = BasicRenderer::RenderingMode::RASTERIZER;
+
 	std::string rTime = "";
 
 	float cameraSpeed = 3.0f;
@@ -39,6 +41,7 @@ signals:
 
 public slots:
 	void RenderFrame();
+	void SetRenderingMode(int index);
 
 protected:
 

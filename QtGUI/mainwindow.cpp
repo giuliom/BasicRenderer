@@ -46,6 +46,8 @@ void MainWindow::SetupSignals()
 	connect(saveButton, SIGNAL(pressed()), actionSave, SLOT(trigger()));
     connect(renderView, SIGNAL(RenderingCompleted(double)), this, SLOT(UpdateFpsLabel(double)));
 	connect(renderView, SIGNAL(RendererResized()), this, SLOT(UpdateResolutionLabels()));
+
+	connect(renderingCombo, SIGNAL(currentIndexChanged(int)), renderView, SLOT(SetRenderingMode(int)));
 }
 
 //TODO later for offline rendering
@@ -56,7 +58,7 @@ void MainWindow::RenderImage()
 
 void MainWindow::SaveImage()
 {
-	renderView->SaveFrame("");
+	renderView->SaveFrame("../");
 }
 
 void MainWindow::OpenFile()

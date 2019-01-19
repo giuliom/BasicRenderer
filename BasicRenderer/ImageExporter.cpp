@@ -31,7 +31,8 @@ bool ImageExporter::ExportToPPM(const char * path, const std::shared_ptr<const F
 bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const FrameBuffer> fBuf)
 {
 	std::ofstream outfile;
-	outfile.open("render.bmp", std::ofstream::binary);
+	std::string filePath = path;
+	outfile.open((filePath + "render.bmp").c_str(), std::ofstream::binary);
 
 	if (!outfile.is_open()) return false;
 

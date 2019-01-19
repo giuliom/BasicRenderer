@@ -32,6 +32,19 @@ void QRenderingWidget::SaveFrame(const char* path)
 	ImageExporter::ExportToBMP(path, frame);
 }
 
+void QRenderingWidget::SetRenderingMode(int index)
+{
+	switch (index)
+	{
+	case 1:
+		renderingMode = BasicRenderer::RenderingMode::RAYTRACER;
+		break;
+	default:
+		renderingMode = BasicRenderer::RenderingMode::RASTERIZER;
+		break;
+	}
+}
+
 void QRenderingWidget::initializeGL()
 {
 	img = std::make_unique<QImage>(width(), height(), QImage::Format_ARGB32);
@@ -82,7 +95,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
-	frame = bRenderer->Render(width(), height(), *scene, BasicRenderer::RenderingMode::RASTERIZER);
+	frame = bRenderer->Render(width(), height(), *scene, renderingMode);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
 	int size = width() * height();

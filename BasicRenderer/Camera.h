@@ -21,8 +21,7 @@ public:
 	~Camera();
 
 	Transform transform;
-
-	
+	Vector3 u, v;
 
 	void SetAspectRatio(int w, int h);
 	Matrix4 LookAt(Vector3 target, Vector3 up = Vector3(0.0f, 1.0f, 0.0f));
