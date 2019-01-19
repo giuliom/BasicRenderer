@@ -81,9 +81,9 @@ bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const F
 			//BGR
 			uint32_t index = (height - j - 1) * width + i;
 			Color c = cBuf[index];
-			bmpData.push_back((uint8_t) (c.z * 255));
-			bmpData.push_back((uint8_t) (c.y * 255));
-			bmpData.push_back((uint8_t) (c.x * 255));
+			bmpData.push_back((uint8_t) (c.z * 255.99f));
+			bmpData.push_back((uint8_t) (c.y * 255.99f));
+			bmpData.push_back((uint8_t) (c.x * 255.99f));
 		}
 
 		uint32_t padding = bmpData.size() % 4;
