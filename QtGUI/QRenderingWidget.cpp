@@ -24,7 +24,17 @@ QRenderingWidget::~QRenderingWidget()
 
 void QRenderingWidget::SetScene(const char* filename)
 {
-	scene = std::make_unique<SceneObject>(ObjLoader::Load(filename));
+	scene = std::make_unique<World>();
+
+	SceneObject* bunny = new SceneObject(ObjLoader::Load(filename));
+	bunny->transform.SetScale(10.f, 10.f, 10.f);
+	bunny->transform.SetPosition(0.0f, -1.0f, -5.0f);
+	//bunny->transform.Rotate(0.0f, 0.01f, 0.0f);
+	scene.get()->hierarchy.push_back(bunny);
+
+	Sphere* sp = new Sphere({ -0.0f, -0.0f, -1.5f }, 0.5f);
+
+	scene.get()->hierarchy.push_back(sp);
 }
 
 void QRenderingWidget::SaveFrame(const char* path)

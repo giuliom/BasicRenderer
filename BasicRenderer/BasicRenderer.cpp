@@ -3,9 +3,10 @@
 #include "BasicRenderer.h"
 #include "ObjLoader.h"
 #include "Ray.h"
+#include "World.h"
 
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, SceneObject& scene, RenderingMode mode)
+const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, World& scene, RenderingMode mode)
 {
 	assert(width > 0 && height > 0);
 
@@ -23,40 +24,37 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 	fBuffer->Fill(fillColor);
 
-	//TODO move outside rendering
-	scene.transform.SetScale(10.f, 10.f, 10.f);
-	scene.transform.SetPosition(0.0f, -1.0f, -5.0f);
-	//scene.transform.Rotate(0.0f, 0.01f, 0.0f);
 	sun.direction = { 1.0f, -0.5f, 1.0f };
 
-	if (scene.GetMesh() != nullptr)
+	switch (mode)
 	{
-		switch (mode) 
+	default:
+		for (auto& obj : scene.hierarchy)
 		{
-			default :
-				DrawObject(scene);
-				break;
-			case RenderingMode::RAYTRACER :
-				RayTrace(width, height, scene);
-				break;
+			SceneObject* sceneObj = dynamic_cast<SceneObject*>(obj);
+			if (sceneObj != nullptr)
+			{
+				DrawObject(*sceneObj);
+			}
 		}
-		
+		break;
+	case RenderingMode::RAYTRACER:
+		RayTrace(width, height, scene);
+		break;
 	}
+	
 
 	return fBuffer;
 }
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, SceneObject & scene)
+const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, World & scene)
 {
-	Sphere sp({ -0.0f, -0.0f, -1.5f }, 0.5f);
-
 	const float camW = camera.GetWidth();
 	const float camH = camera.GetHeight();
 
 	const Vector3 bottomLeftCorner(-camW * 0.5f, -camH * 0.5f, -1.f);
 	const Vector3 horizontal = { camW , 0.f, 0.f };
 	const Vector3 vertical = { 0.f, camH, 0.f };
-
 
 	for (int i = 0; i < height; i++)
 	{
@@ -69,7 +67,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int 
 			Ray r(camera.transform.GetPosition(), dir);
 			
 			HitResult hit;
-			if (sp.GetHit(r, 0.0f, 999999.99f, hit))
+			if (scene.hierarchy[1]->GetHit(r, 0.0f, 999999.99f, hit))
 			{
 				Color c(0.5f * (hit.normal.x + 1.f), 0.5f * (hit.normal.y + 1.f), 0.5f * (hit.normal.z + 1.f));
 				fBuffer->WriteToColor(i * width + j, c);

@@ -6,6 +6,7 @@
 #include "SceneObject.h"
 #include "Camera.h"
 #include "DirectionalLight.h"
+#include "World.h"
 
 
 class BasicRenderer
@@ -30,8 +31,8 @@ public:
 	BasicRenderer() {}
 	~BasicRenderer() {}
 
-	const std::shared_ptr<const FrameBuffer> Render(int width, int height, SceneObject& scene, RenderingMode mode = RenderingMode::RASTERIZER);
-	const std::shared_ptr<const FrameBuffer> RayTrace(int width, int height, SceneObject& scene);
+	const std::shared_ptr<const FrameBuffer> Render(int width, int height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER);
+	const std::shared_ptr<const FrameBuffer> RayTrace(int width, int height, World& scene);
 
 	Camera camera;
 	DirectionalLight sun;
