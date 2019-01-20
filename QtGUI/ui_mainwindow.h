@@ -97,16 +97,22 @@ public:
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         renderButton = new QPushButton(centralWidget);
         renderButton->setObjectName(QStringLiteral("renderButton"));
+        renderButton->setMinimumSize(QSize(0, 21));
+        renderButton->setMaximumSize(QSize(16777215, 21));
 
         horizontalLayout->addWidget(renderButton);
 
         rendererComboBox = new QComboBox(centralWidget);
         rendererComboBox->setObjectName(QStringLiteral("rendererComboBox"));
+        rendererComboBox->setMinimumSize(QSize(0, 20));
+        rendererComboBox->setMaximumSize(QSize(16777215, 20));
 
         horizontalLayout->addWidget(rendererComboBox);
 
         shadingComboBox = new QComboBox(centralWidget);
         shadingComboBox->setObjectName(QStringLiteral("shadingComboBox"));
+        shadingComboBox->setMinimumSize(QSize(0, 20));
+        shadingComboBox->setMaximumSize(QSize(16777215, 20));
 
         horizontalLayout->addWidget(shadingComboBox);
 
@@ -123,8 +129,8 @@ public:
         sizePolicy3.setVerticalStretch(0);
         sizePolicy3.setHeightForWidth(widthEdit->sizePolicy().hasHeightForWidth());
         widthEdit->setSizePolicy(sizePolicy3);
-        widthEdit->setMinimumSize(QSize(30, 0));
-        widthEdit->setMaximumSize(QSize(40, 16777215));
+        widthEdit->setMinimumSize(QSize(30, 21));
+        widthEdit->setMaximumSize(QSize(40, 21));
         widthEdit->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(widthEdit);
@@ -139,14 +145,16 @@ public:
         heightEdit->setObjectName(QStringLiteral("heightEdit"));
         sizePolicy3.setHeightForWidth(heightEdit->sizePolicy().hasHeightForWidth());
         heightEdit->setSizePolicy(sizePolicy3);
-        heightEdit->setMinimumSize(QSize(30, 0));
-        heightEdit->setMaximumSize(QSize(40, 16777215));
+        heightEdit->setMinimumSize(QSize(30, 21));
+        heightEdit->setMaximumSize(QSize(40, 21));
         heightEdit->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(heightEdit);
 
         saveButton = new QPushButton(centralWidget);
         saveButton->setObjectName(QStringLiteral("saveButton"));
+        saveButton->setMinimumSize(QSize(0, 21));
+        saveButton->setMaximumSize(QSize(16777215, 21));
 
         horizontalLayout->addWidget(saveButton);
 
@@ -167,7 +175,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 600, 21));
+        menuBar->setGeometry(QRect(0, 0, 600, 17));
         menuBoh = new QMenu(menuBar);
         menuBoh->setObjectName(QStringLiteral("menuBoh"));
         MainWindow->setMenuBar(menuBar);
