@@ -1,5 +1,6 @@
 #include "PrimitiveTypes.h"
 
+//TODO check bug
 bool Sphere::GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const
 {
 	Vector3 oc = r.origin - pos;
