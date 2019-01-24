@@ -1,11 +1,12 @@
 #include "Camera.h"
 #include "PrimitiveTypes.h"
+#include "Ray.h"
 #include <math.h>
 
 
 Camera::Camera()
 {
-
+	fovFactor = 1.0f / tanf(fov / 2.0f);
 }
 
 
@@ -38,12 +39,12 @@ Matrix4 Camera::LookAt(Vector3 target, Vector3 up)
 	return nview;
 }
 
-Matrix4 Camera::GetViewMatrix()
+Matrix4 Camera::GetViewMatrix() const
 {
 	return transform.GetInverseMatrix();
 }
 
-Matrix4 Camera::GetProjectionMatrix()
+Matrix4 Camera::GetProjectionMatrix() //TODO fix projection
 {
 	float radfov = (fov * PI) / 180.0f;
 	float f = 1.0f / tanf(radfov * 0.5f);
@@ -58,4 +59,10 @@ Matrix4 Camera::GetProjectionMatrix()
 			
 	projection = m;			
 	return projection;
+}
+
+Ray Camera::GetCameraRay(const float u, const float v) const
+{
+	Vector3 direction = Vector3(u, v, -fovFactor).Normalize();
+	return Ray(Vector3::Zero(),  direction); //TODO fix
 }

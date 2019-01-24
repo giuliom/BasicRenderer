@@ -45,9 +45,7 @@ public:
 
 	inline static float Dot(const Vector3& a, const Vector3& b)
 	{
-		Vector3 an = a.Normalize();
-		Vector3 bn = b.Normalize();
-		return an.x * bn.x + an.y * bn.y + an.z * bn.z;
+		return a.x * b.x + a.y * b.y + a.z * b.z;
 	}
 
 	inline static Vector3 CrossProduct(const Vector3& v1, const Vector3& v2)

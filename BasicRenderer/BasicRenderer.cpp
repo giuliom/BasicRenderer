@@ -51,30 +51,26 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int 
 {
 	const float camW = camera.GetWidth();
 	const float camH = camera.GetHeight();
+	const float aspectRatio = camera.GetAspectRatio();
 
-	const Vector3 bottomLeftCorner(-camW * 0.5f, -camH * 0.5f, -1.f);
-	const Vector3 horizontal = { camW , 0.f, 0.f };
-	const Vector3 vertical = { 0.f, camH, 0.f };
-
-	for (int i = 0; i < height; i++)
+	for (float y = 0; y < fheight; y++)
 	{
-		for (int j = 0; j < width; j++)
+		for (float x = 0; x < fwidth; x++)
 		{
-			float u = (float) j / fwidth;
-			float v = (float) i / fheight;
+			float u = aspectRatio * ((2.f  * x) / fwidth - 1.f);
+			float v = 2.f * y / fheight - 1.f;
 
-			Vector3 dir = bottomLeftCorner + horizontal * u + vertical * v;
-			Ray r(camera.transform.GetPosition(), dir);
+			Ray r = camera.GetCameraRay(u, v);
 			
 			HitResult hit;
 			if (scene.GetHit(r, 0.0f, 999999.99f, hit))
 			{
 				Color c(0.5f * (hit.normal.x + 1.f), 0.5f * (hit.normal.y + 1.f), 0.5f * (hit.normal.z + 1.f));
-				fBuffer->WriteToColor(i * width + j, c);
+				fBuffer->WriteToColor((int) (y * fwidth + x), c);
 			}
 			else
 			{
-				fBuffer->WriteToColor(i * width + j, fillColor);
+				fBuffer->WriteToColor((int) (y * fwidth + x), fillColor);
 			}
 		}
 	}

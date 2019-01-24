@@ -12,6 +12,7 @@ protected:
 	Matrix4 projection; // MVP = P * V * M
 
 	float fov = 70.0f;
+	float fovFactor;
 	float aspectRatio = 4.0f / 3.0f;
 	float nearClip = 0.3f;
 	float farClip = 1000.0f;
@@ -27,10 +28,11 @@ public:
 	void SetAspectRatio(int w, int h);
 	Matrix4 LookAt(Vector3 target, Vector3 up = Vector3(0.0f, 1.0f, 0.0f));
 
-	float GetAspectRatio() { return aspectRatio; }
-	float GetWidth() { return u; }
-	float GetHeight() { return v; }
-	Matrix4 GetViewMatrix();
+	float GetAspectRatio() const { return aspectRatio; }
+	float GetWidth() const { return u; }
+	float GetHeight() const { return v; }
+	Matrix4 GetViewMatrix() const;
 	Matrix4 GetProjectionMatrix();
+	class Ray GetCameraRay(const float u, const float v) const;
 };
 

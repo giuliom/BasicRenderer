@@ -10,23 +10,18 @@ bool Sphere::GetHit(const Ray& r, float tMin, float tMax, HitResult& result) con
 	float discriminant = b * b - 4.f * a * c;
 	if (discriminant > 0.f)
 	{
-		//TODO optimize
-		float t = (-b - sqrtf(b * b - a * c)) / a;
-		if (t > tMin && t < tMax)
-		{
-			result.t = t;
-			result.pos = r.GetPoint(result.t);
-			result.normal = (result.pos - pos) / radius;
-			return true;
-		}
-		t = (-b + sqrtf(b * b - a * c)) / a;
-		if (t > tMin && t < tMax)
-		{
-			result.t = t;
-			result.pos = r.GetPoint(result.t);
-			result.normal = (result.pos - pos) / radius;
-			return true;
-		}
+		float q = b > 0.f ?  -0.5f * (b + sqrt(discriminant)) : -0.5f * (b - sqrt(discriminant));
+		float t0 = q / a;
+		float t1 = c / q;
+		
+		float t = t1;
+		if (t0 > t1) t = t1;
+
+		result.t = t;
+		result.pos = r.GetPoint(result.t);
+		result.normal = ((result.pos - pos) / radius).Normalize();
+		return true;
+
 	}
 	return false;
 }
