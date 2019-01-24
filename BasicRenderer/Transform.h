@@ -76,8 +76,9 @@ public:
 	void SetParent(Transform* par);
 	Transform Combine(const Transform& other) const;
 
-	inline Matrix4 GetInverseMatrix() { return m.Inverse(); }
-	inline Vector4 GetTransformVector(const Vector4 &v)	{ return m * v; }
+	inline Matrix4 GetMatrix() const { return m; }
+	inline Matrix4 GetInverseMatrix() const { return m.Inverse(); }
+	inline Vector4 GetTransformVector(const Vector4 &v)	const { return m * v; }
 
 };
 

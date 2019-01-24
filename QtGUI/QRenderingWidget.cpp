@@ -32,8 +32,8 @@ void QRenderingWidget::SetScene(const char* filename)
 	//bunny->transform.Rotate(0.0f, 0.01f, 0.0f);
 	scene.get()->hierarchy.push_back(bunny);
 
-	Sphere* sp = new Sphere({ -1.0f, -0.0f, -1.5f }, 0.5f);
-	Sphere* sp2 = new Sphere({ 1.0f, -0.0f, -6.5f }, 0.5f);
+	Sphere* sp = new Sphere({ -1.0f, -0.5f, -3.5f }, 0.5f);
+	Sphere* sp2 = new Sphere({ 1.0f, 0.5f, -2.0f }, 0.5f);
 
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
