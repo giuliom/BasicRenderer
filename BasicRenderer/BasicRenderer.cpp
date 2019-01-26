@@ -24,8 +24,6 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 	fBuffer->Fill(fillColor);
 
-	sun.direction = { 1.0f, -0.5f, 1.0f };
-
 	switch (mode)
 	{
 	default:
@@ -34,12 +32,12 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 			SceneObject* sceneObj = dynamic_cast<SceneObject*>(obj);
 			if (sceneObj != nullptr)
 			{
-				DrawObject(*sceneObj);
+				DrawObject(*sceneObj, scene);
 			}
 		}
 		break;
 	case RenderingMode::RAYTRACER:
-		RayTrace(width, height, scene);
+		RayTrace(width, height, scene, &BasicRenderer::LitShading);
 		break;
 	}
 	
@@ -47,7 +45,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	return fBuffer;
 }
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, World & scene)
+const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, World & scene, Color (BasicRenderer::*shading)(const World& w, const Vector3& nrml, const Vector3& pos))
 {
 	const float camW = camera.GetWidth();
 	const float camH = camera.GetHeight();
@@ -65,7 +63,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int 
 			HitResult hit;
 			if (scene.GetHit(r, 0.0f, 999999.99f, hit))
 			{
-				Color c(0.5f * (hit.normal.x + 1.f), 0.5f * (hit.normal.y + 1.f), 0.5f * (hit.normal.z + 1.f));
+				Color c = (this->*shading)(scene, hit.pos, hit.normal);
 				fBuffer->WriteToColor((int) (y * fwidth + x), c);
 			}
 			else
@@ -78,7 +76,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int 
 	return fBuffer;
 }
 
-void BasicRenderer::DrawObject(const SceneObject& obj)
+void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene)
 {
 	Matrix4 view = camera.GetViewMatrix();
 	Matrix4 projection = camera.GetProjectionMatrix();
@@ -93,7 +91,7 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 		Face face = faces[i].ToMatrixSpace(mvp);
 
 		Vector3 faceNormal = (Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize() +1.0f) * 0.5;
-		float faceDiffuse =  std::fmaxf(0.0f, Vector3::Dot(faceNormal, sun.direction.Normalize())) * sun.intensity;
+		float faceDiffuse =  std::fmaxf(0.0f, Vector3::Dot(faceNormal, scene.sun.GetDirection())) * scene.sun.intensity;
 		
 		face = PerspectiveDivide(face);
 		face = NormalizedToScreenSpace(face);
@@ -126,7 +124,7 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 
 					if (z < fBuffer->GetDepth(index))
 					{
-						fBuffer->WriteToColor(index, faceNormal); //Vector3::One() * faceDiffuse);
+						fBuffer->WriteToColor(index, Vector3::One() * faceDiffuse);
 						fBuffer->WriteToDepth(index, z);
 					}
 
@@ -135,6 +133,16 @@ void BasicRenderer::DrawObject(const SceneObject& obj)
 		}
 	} 
 	
+}
+
+Color BasicRenderer::NormalShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
+{
+	return (normal + 1.0f) * 0.5f;
+}
+
+Color BasicRenderer::LitShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
+{
+	return Vector3::One() * std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection())) * scene.sun.intensity;
 }
 
 inline Face BasicRenderer::PerspectiveDivide(Face& f) const

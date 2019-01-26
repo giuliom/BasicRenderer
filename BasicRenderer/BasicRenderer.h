@@ -5,7 +5,6 @@
 #include "FrameBuffer.h"
 #include "SceneObject.h"
 #include "Camera.h"
-#include "DirectionalLight.h"
 #include "World.h"
 
 
@@ -32,13 +31,15 @@ public:
 	~BasicRenderer() {}
 
 	const std::shared_ptr<const FrameBuffer> Render(int width, int height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER);
-	const std::shared_ptr<const FrameBuffer> RayTrace(int width, int height, World& scene);
+	const std::shared_ptr<const FrameBuffer> RayTrace(int width, int height, World& scene, Color (BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 	Camera camera;
-	DirectionalLight sun;
 
 protected:
-	void DrawObject(const SceneObject& obj);
+	void DrawObject(const SceneObject& objl, const World& scene);
+
+	Color NormalShading(const World& scene, const Vector3& pos, const Vector3& normal);
+	Color LitShading(const World& scene, const Vector3& pos, const Vector3& normal);
 
 	inline Face PerspectiveDivide(Face& f) const;
 	inline Face NormalizedToScreenSpace(Face& f) const;

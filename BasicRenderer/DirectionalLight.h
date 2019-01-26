@@ -4,9 +4,10 @@
 
 class DirectionalLight
 {
-public:
+protected:
+	class Vector3 direction;
 
-	Vector3 direction;
+public:
 	float intensity = 1.0f;
 
 	DirectionalLight() {}
@@ -14,4 +15,6 @@ public:
 	DirectionalLight(const DirectionalLight& dl) : intensity(dl.intensity), direction(dl.direction) {}
 	~DirectionalLight() {}
 
+	void SetDirection(const Vector3& dir);
+	inline Vector3 GetDirection() const { return direction; }
 };

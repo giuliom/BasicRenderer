@@ -233,6 +233,7 @@
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ObjLoader.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="PrimitiveTypes.cpp" />
     <ClCompile Include="Ray.cpp" />
     <ClCompile Include="SceneObject.cpp" />
@@ -254,6 +255,7 @@
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ObjLoader.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="PrimitiveTypes.h" />
     <ClInclude Include="BasicRenderer.h" />
     <ClInclude Include="Ray.h" />
