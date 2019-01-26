@@ -59,6 +59,19 @@ void QRenderingWidget::SetRenderingMode(int index)
 	}
 }
 
+void QRenderingWidget::SetShadingMode(int index)
+{
+	switch (index)
+	{
+	case 1:
+		shadingMode = BasicRenderer::ShadingMode::NORMAL;
+		break;
+	default:
+		shadingMode = BasicRenderer::ShadingMode::LIT;
+		break;
+	}
+}
+
 void QRenderingWidget::initializeGL()
 {
 	img = std::make_unique<QImage>(width(), height(), QImage::Format_ARGB32);
@@ -109,7 +122,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
-	frame = bRenderer->Render(width(), height(), *scene, renderingMode);
+	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
 	int size = width() * height();

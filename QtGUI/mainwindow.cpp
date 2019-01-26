@@ -26,8 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
 	renderingCombo->addItem("Rasterizer");
 	renderingCombo->addItem("Raytracer");
 
-	shadingCombo->addItem("Flat");
-	shadingCombo->addItem("Blinn-Phong");
+	shadingCombo->addItem("Lit");
+	shadingCombo->addItem("Normal");
 
 	SetupSignals();
 }
@@ -48,6 +48,7 @@ void MainWindow::SetupSignals()
 	connect(renderView, SIGNAL(RendererResized()), this, SLOT(UpdateResolutionLabels()));
 
 	connect(renderingCombo, SIGNAL(currentIndexChanged(int)), renderView, SLOT(SetRenderingMode(int)));
+	connect(shadingCombo, SIGNAL(currentIndexChanged(int)), renderView, SLOT(SetShadingMode(int)));
 }
 
 //TODO later for offline rendering

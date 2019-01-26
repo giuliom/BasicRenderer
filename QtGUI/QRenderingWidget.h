@@ -17,6 +17,7 @@ protected:
 	std::shared_ptr<const FrameBuffer> frame;
 
 	BasicRenderer::RenderingMode renderingMode = BasicRenderer::RenderingMode::RAYTRACER;
+	BasicRenderer::ShadingMode shadingMode = BasicRenderer::ShadingMode::LIT;
 
 	std::string rTime = "";
 
@@ -42,6 +43,7 @@ signals:
 public slots:
 	void RenderFrame();
 	void SetRenderingMode(int index);
+	void SetShadingMode(int index);
 
 protected:
 

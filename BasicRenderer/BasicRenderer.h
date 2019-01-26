@@ -17,6 +17,12 @@ public:
 		RAYTRACER
 	};
 
+	enum class ShadingMode
+	{
+		LIT,
+		NORMAL
+	};
+
 protected:
 	int width = 640;
 	int height = 480;
@@ -30,13 +36,13 @@ public:
 	BasicRenderer() {}
 	~BasicRenderer() {}
 
-	const std::shared_ptr<const FrameBuffer> Render(int width, int height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER);
+	const std::shared_ptr<const FrameBuffer> Render(int width, int height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT);
 	const std::shared_ptr<const FrameBuffer> RayTrace(int width, int height, World& scene, Color (BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 	Camera camera;
 
 protected:
-	void DrawObject(const SceneObject& objl, const World& scene);
+	void DrawObject(const SceneObject& objl, const World& scene, Color(BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 	Color NormalShading(const World& scene, const Vector3& pos, const Vector3& normal);
 	Color LitShading(const World& scene, const Vector3& pos, const Vector3& normal);

@@ -6,7 +6,7 @@
 #include "World.h"
 
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, World& scene, RenderingMode mode)
+const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, World& scene, RenderingMode mode, ShadingMode shading)
 {
 	assert(width > 0 && height > 0);
 
@@ -24,6 +24,15 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 	fBuffer->Fill(fillColor);
 
+	auto shadingFunc = &BasicRenderer::LitShading;
+
+	switch (shading)
+	{
+	case ShadingMode::NORMAL:
+		shadingFunc = &BasicRenderer::NormalShading;
+		break;
+	}
+
 	switch (mode)
 	{
 	default:
@@ -32,12 +41,12 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 			SceneObject* sceneObj = dynamic_cast<SceneObject*>(obj);
 			if (sceneObj != nullptr)
 			{
-				DrawObject(*sceneObj, scene);
+				DrawObject(*sceneObj, scene, shadingFunc);
 			}
 		}
 		break;
 	case RenderingMode::RAYTRACER:
-		RayTrace(width, height, scene, &BasicRenderer::LitShading);
+		RayTrace(width, height, scene, shadingFunc);
 		break;
 	}
 	
@@ -45,7 +54,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	return fBuffer;
 }
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, World & scene, Color (BasicRenderer::*shading)(const World& w, const Vector3& nrml, const Vector3& pos))
+const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, World & scene, Color (BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	const float camW = camera.GetWidth();
 	const float camH = camera.GetHeight();
@@ -76,7 +85,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int 
 	return fBuffer;
 }
 
-void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene)
+void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene, Color(BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	Matrix4 view = camera.GetViewMatrix();
 	Matrix4 projection = camera.GetProjectionMatrix();
@@ -90,8 +99,9 @@ void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene)
 	{
 		Face face = faces[i].ToMatrixSpace(mvp);
 
-		Vector3 faceNormal = (Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize() +1.0f) * 0.5;
-		float faceDiffuse =  std::fmaxf(0.0f, Vector3::Dot(faceNormal, scene.sun.GetDirection())) * scene.sun.intensity;
+		Vector3 faceNormal = Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize();
+
+		Color c = (this->*shading)(scene, Vector3::Zero(), faceNormal);
 		
 		face = PerspectiveDivide(face);
 		face = NormalizedToScreenSpace(face);
@@ -124,7 +134,7 @@ void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene)
 
 					if (z < fBuffer->GetDepth(index))
 					{
-						fBuffer->WriteToColor(index, Vector3::One() * faceDiffuse);
+						fBuffer->WriteToColor(index, c);
 						fBuffer->WriteToDepth(index, z);
 					}
 
