@@ -79,11 +79,7 @@ void QRenderingWidget::initializeGL()
 
 	renderingTime = clock();
 
-	timer = std::make_unique<QTimer>(this);
-	timer->setInterval(15);
-	timer->start();
-	connect(timer.get(), SIGNAL(timeout()), this, SLOT(RenderFrame()));
-	
+	connect(this, SIGNAL(RenderingCompleted(double)), this, SLOT(RenderFrame()));
 }
 
 void QRenderingWidget::resizeGL(int w, int h)
@@ -99,7 +95,7 @@ void QRenderingWidget::paintGL()
 
 void QRenderingWidget::RenderFrame()
 {
-	float deltaMs = (clock() - renderingTime) * 0.001;
+	float deltaMs = (clock() - renderingTime) * 0.001f;
 	renderingTime = clock();
 
 	bRenderer->camera.transform.Rotate(cameraRot.y * deltaMs, cameraRot.x * deltaMs, 0.0f);
@@ -113,6 +109,7 @@ void QRenderingWidget::RenderFrame()
 	cameraPos = Vector3::Zero();
 	cameraRot = Vector2::Zero();
 
+	//Calls paintEvent()
 	update();
 }
 
@@ -144,7 +141,6 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	double endClock = clock() - beginClock;
 	
 	emit RenderingCompleted(endClock);
-	
 }
 
 void QRenderingWidget::keyPressEvent(QKeyEvent * event)
