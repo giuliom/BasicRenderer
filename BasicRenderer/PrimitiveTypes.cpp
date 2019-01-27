@@ -10,7 +10,7 @@ bool Sphere::GetHit(const Ray& r, float tMin, float tMax, HitResult& result) con
 	float discriminant = b * b - 4.f * a * c;
 	if (discriminant > 0.f)
 	{
-		float q = b > 0.f ?  -0.5f * (b + sqrt(discriminant)) : -0.5f * (b - sqrt(discriminant));
+		float q = b > 0.f ?  -0.5f * (b + sqrtf(discriminant)) : -0.5f * (b - sqrtf(discriminant));
 		float t0 = q / a;
 		float t1 = c / q;
 		
@@ -19,7 +19,7 @@ bool Sphere::GetHit(const Ray& r, float tMin, float tMax, HitResult& result) con
 
 		result.t = t;
 		result.pos = r.GetPoint(result.t);
-		result.normal = ((result.pos - pos) / radius).Normalize();
+		result.normal = ((result.pos - pos) / radius);
 		return true;
 
 	}

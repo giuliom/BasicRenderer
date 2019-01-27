@@ -26,16 +26,25 @@ void QRenderingWidget::SetScene(const char* filename)
 {
 	scene = std::make_unique<World>();
 
-	scene->sun.SetDirection({ 1.0f, -0.5f, 1.0f });
+	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
 
-	SceneObject* bunny = new SceneObject(ObjLoader::Load(filename));
+	//TODO resource manager needed
+	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename)); 
+
+	SceneObject* bunny = new SceneObject(bunnyMesh);
 	bunny->transform.SetScale(10.f, 10.f, 10.f);
-	bunny->transform.SetPosition(0.0f, -1.0f, -5.0f);
+	bunny->transform.SetPosition(1.0f, -1.0f, -5.0f);
 	//bunny->transform.Rotate(0.0f, 0.01f, 0.0f);
 	scene.get()->hierarchy.push_back(bunny);
 
-	Sphere* sp = new Sphere({ -0.5f, 0.0f, -3.0f }, 1.5f);
-	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.0f }, 0.5f);
+	SceneObject* bunny2 = new SceneObject(bunnyMesh);
+	bunny2->transform.SetScale(10.f, 10.f, 10.f);
+	bunny2->transform.SetPosition(-0.5f, -1.0f, -5.0f);
+	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
+	scene.get()->hierarchy.push_back(bunny2);
+
+	Sphere* sp = new Sphere({ -0.5f, 0.0f, -1.5f }, 0.5f);
+	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.5f }, 0.5f);
 
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
