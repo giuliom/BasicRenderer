@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "Vertex.h"
 #include "DirectionalLight.h"
 
 class World
@@ -8,6 +9,8 @@ class World
 public:
 
 	DirectionalLight sun;
+	float ambientLightIntensity = 0.1f;
+	Color ambientLightColor{ 1.f, 1.f, 1.f };
 
 	//TODO implement it properly
 	std::vector<class Hitable*> hierarchy;

@@ -70,7 +70,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int 
 			Ray r = camera.GetCameraRay(u, v);
 			
 			HitResult hit;
-			if (scene.GetHit(r, 0.0f, 999999.99f, hit))
+			if (scene.GetHit(r, 0.001f, 999999.99f, hit))
 			{
 				Color c = (this->*shading)(scene, hit.pos, hit.normal);
 				fBuffer->WriteToColor((int) (y * fwidth + x), c);
@@ -152,7 +152,7 @@ Color BasicRenderer::NormalShading(const World & scene, const Vector3 & pos, con
 
 Color BasicRenderer::LitShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
 {
-	return Vector3::One() * std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection())) * scene.sun.intensity;
+	return Vector3::One() * std::powf(std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection())) * scene.sun.intensity, gammaEncoding);
 }
 
 inline Face BasicRenderer::PerspectiveDivide(Face& f) const

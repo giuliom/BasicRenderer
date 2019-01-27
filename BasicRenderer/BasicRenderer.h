@@ -31,6 +31,8 @@ protected:
 	std::shared_ptr<FrameBuffer> fBuffer;
 
 	Color fillColor = Color(0.64f, 0.92f, 0.92f);
+	float gamma = 2.2f;
+	float gammaEncoding = 1.0f / gamma;
 
 public:
 	BasicRenderer() {}
