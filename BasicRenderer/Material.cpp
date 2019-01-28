@@ -16,7 +16,7 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenu
 	attenuation = (hit.material->*shading)(scene, hit.pos, hit.normal);
 	return (Vector3::Dot(scattered.direction, hit.normal) > 0);
 }
-
+//TODO Use variadic functions for shading?
 Color Material::NormalShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
 {
 	return (normal + 1.0f) * 0.5f;
