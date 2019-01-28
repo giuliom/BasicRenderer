@@ -7,6 +7,8 @@
 #include "Camera.h"
 #include "World.h"
 
+class Ray;
+class Hitable;
 
 class BasicRenderer
 {
@@ -34,20 +36,25 @@ protected:
 	float gamma = 2.2f;
 	float gammaEncoding = 1.0f / gamma;
 
+	int rayTracingDepth = 2;
+
+	Color missingMaterialColor = { 1.0f, 0.0f, 1.0f };
+
 public:
 	BasicRenderer() {}
 	~BasicRenderer() {}
 
+	//TODO move, and rename
 	const std::shared_ptr<const FrameBuffer> Render(int width, int height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT);
-	const std::shared_ptr<const FrameBuffer> RayTrace(int width, int height, World& scene, Color (BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
+	const std::shared_ptr<const FrameBuffer> RayTracing(int width, int height, World& scene, Color (Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 	Camera camera;
 
 protected:
-	void DrawObject(const SceneObject& objl, const World& scene, Color(BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
-	Color NormalShading(const World& scene, const Vector3& pos, const Vector3& normal);
-	Color LitShading(const World& scene, const Vector3& pos, const Vector3& normal);
+	Color RayTrace(const Ray& ray, World& scene, int depth, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
+
+	void DrawObject(const SceneObject& objl, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 	inline Face PerspectiveDivide(Face& f) const;
 	inline Face NormalizedToScreenSpace(Face& f) const;

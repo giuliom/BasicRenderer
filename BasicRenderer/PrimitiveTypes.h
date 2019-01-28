@@ -10,6 +10,7 @@
 
 const float PI = 3.1415926f;
 
+class Material;
 
 struct Sphere : public Hitable
 {
@@ -19,6 +20,7 @@ public:
 
 	Sphere() {}
 	Sphere(Vector3 pos_, float radius_) : pos(pos_), radius(radius_) {}
+	Sphere(Vector3 pos_, float radius_, Material* mat) : Hitable(mat), pos(pos_), radius(radius_) {}
 
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 };

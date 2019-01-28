@@ -229,6 +229,7 @@
     <ClCompile Include="ImageExporter.cpp" />
     <ClCompile Include="ImageFormats.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Matrix4.cpp" />
     <ClCompile Include="BasicRenderer.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="Hitable.h" />
     <ClInclude Include="ImageExporter.h" />
     <ClInclude Include="ImageFormats.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Matrix4.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="ObjLoader.h" />

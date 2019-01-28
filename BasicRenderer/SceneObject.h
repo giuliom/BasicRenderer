@@ -18,8 +18,9 @@ public:
 	bool dirty = true;
 
 public:
-	SceneObject(std::shared_ptr<Mesh> mesh_) : mesh(mesh_) {} ;
-	SceneObject(const SceneObject& obj) : mesh(obj.mesh), transform(obj.transform) {}
+	SceneObject(std::shared_ptr<Mesh> mesh_) : mesh(mesh_) {};
+	SceneObject(std::shared_ptr<Mesh> mesh_, Material* mat) : Hitable(mat), mesh(mesh_) {} ;
+	SceneObject(const SceneObject& obj) : Hitable(obj), mesh(obj.mesh), transform(obj.transform) {}
 	~SceneObject();
 
 	inline std::shared_ptr<Mesh> const GetMesh() const { return mesh; } 

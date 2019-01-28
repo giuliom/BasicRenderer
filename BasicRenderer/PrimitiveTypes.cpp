@@ -20,6 +20,7 @@ bool Sphere::GetHit(const Ray& r, float tMin, float tMax, HitResult& result) con
 		result.t = t;
 		result.pos = r.GetPoint(result.t);
 		result.normal = ((result.pos - pos) / radius);
+		result.material = GetMaterial();
 		return true;
 
 	}

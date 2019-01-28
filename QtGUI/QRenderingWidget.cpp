@@ -8,6 +8,7 @@
 #include "BasicRenderer\Vector3.h"
 #include "BasicRenderer\ObjLoader.h"
 #include "BasicRenderer\ImageExporter.h"
+#include "BasicRenderer\Material.h"
 
 
 QRenderingWidget::QRenderingWidget(QWidget* parent)
@@ -28,10 +29,14 @@ void QRenderingWidget::SetScene(const char* filename)
 
 	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
 
+	Material* red = new Material({ 1.0f, 0.0f, 0.0f });
+	Material* green = new Material({ 0.0f, 1.0f, 0.0f });
+	Material* blue = new Material({ 0.0f, 0.0f, 1.0f });
+
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename)); 
 
-	SceneObject* bunny = new SceneObject(bunnyMesh);
+	SceneObject* bunny = new SceneObject(bunnyMesh, red);
 	bunny->transform.SetScale(10.f, 10.f, 10.f);
 	bunny->transform.SetPosition(1.0f, -1.0f, -5.0f);
 	//bunny->transform.Rotate(0.0f, 0.01f, 0.0f);
@@ -43,11 +48,14 @@ void QRenderingWidget::SetScene(const char* filename)
 	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
 	scene.get()->hierarchy.push_back(bunny2);
 
+	//TODO check coordinates
 	Sphere* sp = new Sphere({ -0.5f, 0.0f, -1.5f }, 0.5f);
 	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.5f }, 0.5f);
+	Sphere* sp3 = new Sphere({ 0.0f, 1.5f, -1.5f }, 1.0f, blue);
 
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
+	scene.get()->hierarchy.push_back(sp3);
 }
 
 void QRenderingWidget::SaveFrame(const char* path)

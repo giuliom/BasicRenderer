@@ -1,10 +1,9 @@
-#include <random>
 #include <cassert>
 #include "BasicRenderer.h"
 #include "ObjLoader.h"
 #include "Ray.h"
 #include "World.h"
-
+#include "Material.h"
 
 const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, World& scene, RenderingMode mode, ShadingMode shading)
 {
@@ -24,12 +23,12 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 	fBuffer->Fill(fillColor);
 
-	auto shadingFunc = &BasicRenderer::LitShading;
+	auto shadingFunc = &Material::LitShading;
 
 	switch (shading)
 	{
 	case ShadingMode::NORMAL:
-		shadingFunc = &BasicRenderer::NormalShading;
+		shadingFunc = &Material::NormalShading;
 		break;
 	}
 
@@ -46,7 +45,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 		}
 		break;
 	case RenderingMode::RAYTRACER:
-		RayTrace(width, height, scene, shadingFunc);
+		RayTracing(width, height, scene, shadingFunc);
 		break;
 	}
 	
@@ -54,7 +53,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	return fBuffer;
 }
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int height, World & scene, Color (BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, int height, World & scene, Color (Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	const float camW = camera.GetWidth();
 	const float camH = camera.GetHeight();
@@ -69,23 +68,43 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTrace(int width, int 
 
 			Ray r = camera.GetCameraRay(u, v);
 			
-			HitResult hit;
-			if (scene.GetHit(r, 0.001f, 999999.99f, hit))
-			{
-				Color c = (this->*shading)(scene, hit.pos, hit.normal);
-				fBuffer->WriteToColor((int) (y * fwidth + x), c);
-			}
-			else
-			{
-				fBuffer->WriteToColor((int) (y * fwidth + x), fillColor);
-			}
+			Color c = RayTrace(r, scene, rayTracingDepth, shading);
+			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
+			fBuffer->WriteToColor((int) (y * fwidth + x), c);
+			
 		}
 	}
 
 	return fBuffer;
 }
 
-void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene, Color(BasicRenderer::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int depth, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+{
+	HitResult hit;
+	if (scene.GetHit(ray, 0.001f, 999999.99f, hit))
+	{
+		Ray scattered;
+		Color attenuation;
+		if (depth > 0)
+		{
+			if (hit.material != nullptr)
+			{
+				if (hit.material->Scatter(ray, hit, attenuation, scattered, scene, shading))
+				{
+					return attenuation * RayTrace(scattered, scene, depth - 1, shading);
+				}
+			}
+			else
+			{
+				return missingMaterialColor;
+			}
+		}
+	}
+
+	return fillColor;
+}
+
+void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	Matrix4 view = camera.GetViewMatrix();
 	Matrix4 projection = camera.GetProjectionMatrix();
@@ -101,8 +120,19 @@ void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene, Color
 
 		Vector3 faceNormal = Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize();
 
-		Color c = (this->*shading)(scene, Vector3::Zero(), faceNormal);
-		
+		Material* mat = obj.GetMaterial();
+		Color c;
+		if (mat)
+		{
+			c = (obj.GetMaterial()->*shading)(scene, Vector3::Zero(), faceNormal);
+		}
+		else
+		{
+			c = missingMaterialColor;
+		}
+
+		c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
+
 		face = PerspectiveDivide(face);
 		face = NormalizedToScreenSpace(face);
 
@@ -143,16 +173,6 @@ void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene, Color
 		}
 	} 
 	
-}
-
-Color BasicRenderer::NormalShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
-{
-	return (normal + 1.0f) * 0.5f;
-}
-
-Color BasicRenderer::LitShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
-{
-	return Vector3::One() * std::powf(std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection())) * scene.sun.intensity, gammaEncoding);
 }
 
 inline Face BasicRenderer::PerspectiveDivide(Face& f) const

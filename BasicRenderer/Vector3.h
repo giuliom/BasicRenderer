@@ -62,6 +62,11 @@ public:
 	{
 		return Vector3(a.x > b.x ? a.x : b.x, a.y > b.y ? a.y : b.y, a.z > b.z ? a.z : b.z);
 	}
+
+	inline static Vector3 Reflect(const Vector3& v, const Vector3& n)
+	{
+		return v - n * 2 * Dot(v, n);
+	}
 		
 	inline static Vector3 Zero() { return Vector3(0.0f, 0.0f, 0.0f); }
 	inline static Vector3 One() { return Vector3(1.0f, 1.0f, 1.0f); }
