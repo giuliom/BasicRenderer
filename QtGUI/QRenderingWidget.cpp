@@ -49,9 +49,9 @@ void QRenderingWidget::SetScene(const char* filename)
 	scene.get()->hierarchy.push_back(bunny2);
 
 	//TODO check coordinates
-	Sphere* sp = new Sphere({ -0.5f, 0.0f, -1.5f }, 0.5f);
-	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.5f }, 0.5f);
-	Sphere* sp3 = new Sphere({ 0.0f, 1.5f, -1.5f }, 1.0f, blue);
+	Sphere* sp = new Sphere({ -0.5f, 0.0f, -1.5f }, 0.5f, red);
+	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.5f }, 0.5f, green);
+	Sphere* sp3 = new Sphere({ 0.0f, -50.5f, -1.5f }, 50.0f, blue);
 
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);

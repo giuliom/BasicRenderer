@@ -6,7 +6,7 @@
 
 Camera::Camera()
 {
-	fovFactor = 1.0f / tanf(fov / 2.0f);
+	
 }
 
 
@@ -17,8 +17,10 @@ Camera::~Camera()
 void Camera::SetAspectRatio(int w, int h)
 {
 	aspectRatio = (float)w / (float)h;
-	u = aspectRatio;
-	v = 1.0f;
+	float theta = fov * PI / 180.f;
+	halfHeight =  tanf(theta / 2.0f);
+	fovFactor = 1.0f / halfHeight;
+	halfWidth = aspectRatio * halfHeight;
 }
 
 // Using right handed coordinate system
@@ -63,6 +65,7 @@ Matrix4 Camera::GetProjectionMatrix() //TODO fix projection
 
 Ray Camera::GetCameraRay(const float u, const float v) const
 {
-	Vector3 direction = Vector3(u, v, -fovFactor).Normalize();
-	return Ray(Vector3::Zero(),  direction); //TODO fix
+	// u,v comes from Top-left coordinates
+	Vector3 direction = Vector3(-halfWidth + u * 2.f * halfWidth, halfHeight - v * 2.f * halfHeight, -fovFactor);
+	return Ray(transform.GetPosition(),  direction - transform.GetPosition()); //TODO fix
 }

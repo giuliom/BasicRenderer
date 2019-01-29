@@ -2,6 +2,8 @@
 
 #include "Transform.h"
 
+class Ray;
+
 /* Pinhole camera aligned with -z therefore left handed */
 class Camera
 {
@@ -17,7 +19,7 @@ protected:
 	float nearClip = 0.3f;
 	float farClip = 1000.0f;
 
-	float u, v;
+	float halfWidth, halfHeight;
 
 public:
 	Camera();
@@ -28,11 +30,11 @@ public:
 	void SetAspectRatio(int w, int h);
 	Matrix4 LookAt(Vector3 target, Vector3 up = Vector3(0.0f, 1.0f, 0.0f));
 
-	float GetAspectRatio() const { return aspectRatio; }
-	float GetWidth() const { return u; }
-	float GetHeight() const { return v; }
+	inline float GetAspectRatio() const { return aspectRatio; }
+	inline float GetHalfWidth() const { return halfWidth; }
+	inline float GetHalfHeight() const { return halfHeight; }
 	Matrix4 GetViewMatrix() const;
 	Matrix4 GetProjectionMatrix();
-	class Ray GetCameraRay(const float u, const float v) const;
+	Ray GetCameraRay(const float u, const float v) const;
 };
 

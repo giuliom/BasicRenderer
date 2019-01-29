@@ -55,16 +55,17 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, int height, World & scene, Color (Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
-	const float camW = camera.GetWidth();
-	const float camH = camera.GetHeight();
+	const float camW = camera.GetHalfWidth() * 2.f;
+	const float camH = camera.GetHalfHeight() * 2.f;
 	const float aspectRatio = camera.GetAspectRatio();
 
-	for (float y = 0; y < fheight; y++)
+	//Top-left
+	for (float y = 0.f; y < fheight; y++)
 	{
-		for (float x = 0; x < fwidth; x++)
+		for (float x = 0.f; x < fwidth; x++)
 		{
-			float u = aspectRatio * ((2.f  * x) / fwidth - 1.f);
-			float v = 2.f * y / fheight - 1.f;
+			float u = x / fwidth;
+			float v = y / fheight;
 
 			Ray r = camera.GetCameraRay(u, v);
 			
