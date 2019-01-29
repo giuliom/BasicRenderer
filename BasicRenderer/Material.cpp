@@ -9,7 +9,8 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenu
 	attenuation = diffuseColor;
 	*/
 
-	//Handle shading function in a different way because recursion is not correct for NormalShading
+	//TODO Handle shading function in a different way because recursion is not correct for NormalShading
+	//TODO fix proper attenuation and color model to avoid canceling colors
 
 	Vector3 reflection = Vector3::Reflect(rayIn.direction.Normalize(), hit.normal);
 	scattered = Ray(hit.pos, reflection);
@@ -24,7 +25,7 @@ Color Material::NormalShading(const World & scene, const Vector3 & pos, const Ve
 
 Color Material::LitShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
 {
-	return diffuseColor * std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection())) * scene.sun.intensity;
+	return diffuseColor; //* std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection())) * scene.sun.intensity;
 }
 
 Vector3 RandomPointInUnitSphere()

@@ -24,10 +24,12 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	fBuffer->Fill(fillColor);
 
 	auto shadingFunc = &Material::LitShading;
+	int bounces = maxBounces;
 
 	switch (shading)
 	{
 	case ShadingMode::NORMAL:
+		bounces = 1;
 		shadingFunc = &Material::NormalShading;
 		break;
 	}
@@ -45,7 +47,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 		}
 		break;
 	case RenderingMode::RAYTRACER:
-		RayTracing(width, height, scene, shadingFunc);
+		RayTracing(width, height, scene,bounces, shadingFunc);
 		break;
 	}
 	
@@ -53,7 +55,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	return fBuffer;
 }
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, int height, World & scene, Color (Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, int height, World & scene, int bounces, Color (Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	const float camW = camera.GetHalfWidth() * 2.f;
 	const float camH = camera.GetHalfHeight() * 2.f;
@@ -69,7 +71,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 
 			Ray r = camera.GetCameraRay(u, v);
 			
-			Color c = RayTrace(r, scene, rayTracingDepth, shading);
+			Color c = RayTrace(r, scene, bounces, shading);
 			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
 			fBuffer->WriteToColor((int) (y * fwidth + x), c);
 			
@@ -79,27 +81,33 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 	return fBuffer;
 }
 
-Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int depth, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	HitResult hit;
 	if (scene.GetHit(ray, 0.001f, 999999.99f, hit))
 	{
+		if (hit.material == nullptr)
+		{
+			return missingMaterialColor;
+		}
+
 		Ray scattered;
 		Color attenuation;
-		if (depth > 0)
+		if (hit.material->Scatter(ray, hit, attenuation, scattered, scene, shading))
 		{
-			if (hit.material != nullptr)
+			if (bounces > 1)
 			{
-				if (hit.material->Scatter(ray, hit, attenuation, scattered, scene, shading))
-				{
-					return attenuation * RayTrace(scattered, scene, depth - 1, shading);
-				}
+				return attenuation * RayTrace(scattered, scene, bounces - 1, shading);
 			}
 			else
 			{
-				return missingMaterialColor;
+				return attenuation;
 			}
-		} //TODO implement shadows
+		}
+		else
+		{
+			return Color(0.f, 0.f, 0.f);
+		}
 	}
 
 	return fillColor;

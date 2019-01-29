@@ -17,7 +17,7 @@ Camera::~Camera()
 void Camera::SetAspectRatio(int w, int h)
 {
 	aspectRatio = (float)w / (float)h;
-	float theta = fov * PI / 180.f;
+	float theta = (fov * PI) / 180.f;
 	halfHeight =  tanf(theta / 2.0f);
 	fovFactor = 1.0f / halfHeight;
 	halfWidth = aspectRatio * halfHeight;
@@ -67,5 +67,5 @@ Ray Camera::GetCameraRay(const float u, const float v) const
 {
 	// u,v comes from Top-left coordinates
 	Vector3 direction = Vector3(-halfWidth + u * 2.f * halfWidth, halfHeight - v * 2.f * halfHeight, -fovFactor);
-	return Ray(transform.GetPosition(),  direction - transform.GetPosition()); //TODO fix
+	return Ray(transform.GetPosition(),  direction); //TODO fix
 }

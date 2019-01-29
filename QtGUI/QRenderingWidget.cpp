@@ -29,9 +29,9 @@ void QRenderingWidget::SetScene(const char* filename)
 
 	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
 
-	Material* red = new Material({ 1.0f, 0.0f, 0.0f });
-	Material* green = new Material({ 0.0f, 1.0f, 0.0f });
-	Material* blue = new Material({ 0.0f, 0.0f, 1.0f });
+	Material* red = new Material({ 1.0f, 0.01f, 0.01f });
+	Material* green = new Material({ 0.01f, 1.0f, 0.01f });
+	Material* blue = new Material({ 0.01f, 0.01f, 1.0f });
 
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename)); 
