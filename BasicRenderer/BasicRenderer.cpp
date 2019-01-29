@@ -99,7 +99,7 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int depth, Color(Ma
 			{
 				return missingMaterialColor;
 			}
-		}
+		} //TODO implement shadows
 	}
 
 	return fillColor;
