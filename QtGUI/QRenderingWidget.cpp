@@ -33,6 +33,10 @@ void QRenderingWidget::SetScene(const char* filename)
 	Material* green = new Material({ 0.01f, 1.0f, 0.01f });
 	Material* blue = new Material({ 0.01f, 0.01f, 1.0f });
 
+	Material* silver = new Material({ 0.972f, 0.960f, 0.915f }, Material::Type::METALLIC);
+	Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
+	Material* gold = new Material({ 1.0f, 0.766f, 0.336f });
+
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename)); 
 
@@ -48,9 +52,9 @@ void QRenderingWidget::SetScene(const char* filename)
 	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
 	scene.get()->hierarchy.push_back(bunny2);
 
-	Sphere* sp = new Sphere({ -0.5f, 0.0f, -1.5f }, 0.5f, red);
-	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.5f }, 0.5f, green);
-	Sphere* sp3 = new Sphere({ 0.0f, -50.5f, -1.5f }, 50.0f, blue);
+	Sphere* sp = new Sphere({ -0.5f, 0.0f, -1.5f }, 0.5f, silver);
+	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.5f }, 0.5f, gold);
+	Sphere* sp3 = new Sphere({ 0.0f, -50.5f, -1.5f }, 50.0f, copper);
 
 	Plane* pl = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, blue);
 
