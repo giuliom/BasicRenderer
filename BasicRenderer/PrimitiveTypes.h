@@ -33,7 +33,7 @@ class Plane : public Hitable
 
 public:
 	Plane() = delete;
-	Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Hitable(mat), centre(centre), normal(normal) {}
+	Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Hitable(mat), centre(centre), normal(normal.Normalize()) {}
 
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 
