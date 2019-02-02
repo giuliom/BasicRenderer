@@ -48,14 +48,16 @@ void QRenderingWidget::SetScene(const char* filename)
 	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
 	scene.get()->hierarchy.push_back(bunny2);
 
-	//TODO check coordinates
 	Sphere* sp = new Sphere({ -0.5f, 0.0f, -1.5f }, 0.5f, red);
 	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.5f }, 0.5f, green);
-	Sphere* sp3 = new Sphere({ 0.0f, -50.5f, -1.5f }, 50.0f, blue);
+	//Sphere* sp3 = new Sphere({ 0.0f, -50.5f, -1.5f }, 50.0f, blue);
+
+	Plane* pl = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, blue);
 
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
-	scene.get()->hierarchy.push_back(sp3);
+	//scene.get()->hierarchy.push_back(sp3);
+	scene.get()->hierarchy.push_back(pl);
 }
 
 void QRenderingWidget::SaveFrame(const char* path)

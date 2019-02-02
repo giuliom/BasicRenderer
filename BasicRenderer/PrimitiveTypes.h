@@ -12,6 +12,8 @@ const float PI = 3.1415926f;
 
 class Material;
 
+//TODO World space assumed for all these primitives
+
 struct Sphere : public Hitable
 {
 public:
@@ -23,6 +25,18 @@ public:
 	Sphere(Vector3 pos_, float radius_, Material* mat) : Hitable(mat), pos(pos_), radius(radius_) {}
 
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+};
+
+class Plane : public Hitable
+{
+	Vector3 centre, normal;
+
+public:
+	Plane() = delete;
+	Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Hitable(mat), centre(centre), normal(normal) {}
+
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+
 };
 
 

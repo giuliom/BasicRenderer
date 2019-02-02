@@ -32,3 +32,26 @@ bool Sphere::GetHit(const Ray& r, float tMin, float tMax, HitResult& result) con
 	}
 	return false;
 }
+
+bool Plane::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
+{
+	float div = Vector3::Dot(normal, r.direction);
+
+	if (div == 0.f)
+	{
+		return false;
+	}
+	
+	float t = Vector3::Dot(normal, centre - r.origin) / div;
+	
+	if (t >= 0.f)
+	{
+		result.t = t;
+		result.pos = r.GetPoint(result.t);
+		result.normal = normal;
+		result.material = GetMaterial();
+		return true;
+	}
+
+	return false;
+}
