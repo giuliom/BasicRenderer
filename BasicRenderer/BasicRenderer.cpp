@@ -71,8 +71,12 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 
 			Ray r = camera.GetCameraRay(u, v);
 			
-			Color c = RayTrace(r, scene, bounces, shading);
-			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
+			Color c;
+			for (int i = 0; i < pixelSamples; i++)
+			{
+				c = c + RayTrace(r, scene, bounces, shading);
+			}
+			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding)) / (float) pixelSamples;
 			fBuffer->WriteToColor((int) (y * fwidth + x), c);
 			
 		}
@@ -93,16 +97,9 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 
 		Ray scattered;
 		Color attenuation;
-		if (hit.material->Scatter(ray, hit, attenuation, scattered, scene, shading))
+		if (bounces > 0 && hit.material->Scatter(ray, hit, attenuation, scattered, scene, shading))
 		{
-			if (bounces > 1)
-			{
-				return attenuation * RayTrace(scattered, scene, bounces - 1, shading);
-			}
-			else
-			{
-				return attenuation;
-			}
+			return attenuation * RayTrace(scattered, scene, bounces - 1, shading);
 		}
 		else
 		{
