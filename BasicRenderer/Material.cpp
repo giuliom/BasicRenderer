@@ -86,8 +86,8 @@ Color Material::NormalShading(const World & scene, const Vector3 & pos, const Ve
 }
 
 Color Material::LitShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
-{
-	return baseColor; //*std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection())) * scene.sun.intensity;
+{ //TODO normals are flipped compared to rasterizer and check proper lighting formula
+	return baseColor;// *std::fmaxf(0.01f, Vector3::Dot(normal, scene.sun.GetDirection() * -1.f)) * scene.sun.intensity;
 }
 
 std::random_device rd;

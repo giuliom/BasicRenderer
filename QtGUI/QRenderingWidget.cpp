@@ -28,6 +28,7 @@ void QRenderingWidget::SetScene(const char* filename)
 	scene = std::make_unique<World>();
 
 	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
+	scene->sun.intensity = 1.f;
 
 	Material* red = new Material({ 1.0f, 0.01f, 0.01f });
 	Material* green = new Material({ 0.01f, 1.0f, 0.01f });
