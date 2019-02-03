@@ -36,6 +36,7 @@ void QRenderingWidget::SetScene(const char* filename)
 	Material* silver = new Material({ 0.972f, 0.960f, 0.915f }, Material::Type::METALLIC);
 	Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
 	Material* gold = new Material({ 1.0f, 0.766f, 0.336f });
+	Material* chromium = new Material({ .550f, 0.556f, 0.554f }, Material::Type::DIELECTRIC);
 
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename)); 
@@ -52,15 +53,17 @@ void QRenderingWidget::SetScene(const char* filename)
 	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
 	scene.get()->hierarchy.push_back(bunny2);
 
-	Sphere* sp = new Sphere({ -0.5f, 0.0f, -1.5f }, 0.5f, silver);
-	Sphere* sp2 = new Sphere({ 0.5f, 0.0f, -1.5f }, 0.5f, gold);
-	Sphere* sp3 = new Sphere({ 0.0f, -50.5f, -1.5f }, 50.0f, copper);
+	Sphere* sp = new Sphere({ -0.8f, 0.0f, -1.5f }, 0.4f, silver);
+	Sphere* sp2 = new Sphere({ 0.0f, 0.0f, -1.5f }, 0.4f, gold);
+	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, chromium);
+	Sphere* sp4 = new Sphere({ 0.0f, -50.4f, -1.5f }, 50.0f, copper);
 
-	Plane* pl = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, blue);
+	Plane* pl = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, copper);
 
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
 	scene.get()->hierarchy.push_back(sp3);
+	scene.get()->hierarchy.push_back(sp4);
 	//scene.get()->hierarchy.push_back(pl);
 }
 

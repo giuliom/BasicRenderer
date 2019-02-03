@@ -37,7 +37,7 @@ protected:
 	float gammaEncoding = 1.0f / gamma;
 
 	int pixelSamples = 4;
-	int maxBounces = 2;
+	int maxBounces = 4;
 
 	Color missingMaterialColor = { 1.0f, 0.0f, 1.0f };
 
