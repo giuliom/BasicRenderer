@@ -63,8 +63,8 @@ void QRenderingWidget::SetScene(const char* filename)
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
 	scene.get()->hierarchy.push_back(sp3);
-	scene.get()->hierarchy.push_back(sp4);
-	//scene.get()->hierarchy.push_back(pl);
+	//scene.get()->hierarchy.push_back(sp4);
+	scene.get()->hierarchy.push_back(pl);
 }
 
 void QRenderingWidget::SaveFrame(const char* path)

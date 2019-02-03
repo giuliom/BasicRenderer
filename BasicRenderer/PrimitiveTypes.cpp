@@ -37,20 +37,18 @@ bool Plane::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) co
 {
 	float div = Vector3::Dot(normal, r.direction);
 
-	if (div == 0.f)
+	if (abs(div) > 0.0001f)
 	{
-		return false;
-	}
-	
-	float t = Vector3::Dot(normal, centre - r.origin) / div;
-	
-	if (t >= 0.f)
-	{
-		result.t = t;
-		result.pos = r.GetPoint(result.t);
-		result.normal = normal;
-		result.material = GetMaterial();
-		return true;
+		float t = Vector3::Dot(centre - r.origin, normal) / div;
+
+		if (t >= 0.0001f)
+		{
+			result.t = t;
+			result.pos = r.GetPoint(result.t);
+			result.normal = normal;
+			result.material = GetMaterial();
+			return true;
+		}
 	}
 
 	return false;
