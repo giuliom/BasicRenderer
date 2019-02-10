@@ -88,7 +88,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	HitResult hit;
-	if (scene.GetHit(ray, 0.001f, 999999.99f, hit))
+	if (scene.GetHit(ray, 0.0001f, 999999.99f, hit))
 	{
 		if (hit.material == nullptr)
 		{

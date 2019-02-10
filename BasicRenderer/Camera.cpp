@@ -67,5 +67,5 @@ Ray Camera::GetCameraRay(const float u, const float v) const
 {
 	// u,v comes from Top-left coordinates
 	Vector3 direction = Vector3(-halfWidth + u * 2.f * halfWidth, halfHeight - v * 2.f * halfHeight, -fovFactor);
-	return Ray(transform.GetPosition(),  direction); //TODO fix
+	return Ray(transform.GetPosition(),  transform.GetMatrix() * direction); //TODO fix
 }
