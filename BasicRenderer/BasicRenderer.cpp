@@ -76,7 +76,10 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 			{
 				c = c + RayTrace(r, scene, bounces, shading);
 			}
-			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding)) / (float) pixelSamples;
+
+			float fSamples = (float)pixelSamples;
+			c = Color(std::powf(c.x / fSamples, gammaEncoding), std::powf(c.y / fSamples, gammaEncoding), std::powf(c.z / fSamples, gammaEncoding));
+
 			fBuffer->WriteToColor((int) (y * fwidth + x), c);
 			
 		}
