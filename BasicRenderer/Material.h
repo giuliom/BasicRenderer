@@ -27,7 +27,7 @@ public:
 
 	Material(const Color& base, Type type = Type::DIFFUSE) : baseColor(base), type(type) {}
 
-	virtual bool Scatter(const Ray& rayIn, const HitResult& hit, Vector3& attenuation, Ray& scattered, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml)) const;
+	virtual bool Scatter(const Ray& rayIn, const HitResult& hit, Color& outColor, Color& directLight, Ray& scattered, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml)) const;
 
 	bool Refract(const Vector3& v, const Vector3& normal, float ni_nt, Vector3& refracted) const;
 

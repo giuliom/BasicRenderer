@@ -77,8 +77,11 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 				c = c + RayTrace(r, scene, bounces, shading);
 			}
 
-			float fSamples = (float)pixelSamples;
-			c = Color(std::powf(c.x / fSamples, gammaEncoding), std::powf(c.y / fSamples, gammaEncoding), std::powf(c.z / fSamples, gammaEncoding));
+			c = c / (float) pixelSamples;
+			c.x = c.x > 1.f ? 1.f : c.x;
+			c.y = c.y > 1.f ? 1.f : c.y;
+			c.z = c.z > 1.f ? 1.f : c.z;
+			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
 
 			fBuffer->WriteToColor((int) (y * fwidth + x), c);
 			
@@ -99,14 +102,16 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 		}
 
 		Ray scattered;
-		Color attenuation;
-		if (bounces > 0 && hit.material->Scatter(ray, hit, attenuation, scattered, scene, shading))
+		Color albedo;
+		Color directLight;
+		if (bounces > 0 && hit.material->Scatter(ray, hit, albedo, directLight, scattered, scene, shading))
 		{
-			return attenuation * RayTrace(scattered, scene, bounces - 1, shading);
+			//TODO use proper formula and only for diffuse
+			return (directLight + RayTrace(scattered, scene, bounces - 1, shading)) * 0.5f * albedo;
 		}
 		else
 		{
-			return Color(0.f, 0.f, 0.f);
+			return scene.ambientLightColor;
 		}
 	}
 

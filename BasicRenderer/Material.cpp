@@ -2,7 +2,7 @@
 #include <random>
 #include "PrimitiveTypes.h"
 
-bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenuation, Ray & scattered, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml)) const
+bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Color& outColor, Color& directLight, Ray & scattered, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml)) const
 {
 	switch (type)
 	{
@@ -10,7 +10,7 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenu
 	{
 		Vector3 reflected = Vector3::Reflect(rayIn.direction, hit.normal);
 		scattered = Ray(hit.pos, reflected + UniforSampleInHemisphere(hit.normal) * (1.f - metallic));
-		attenuation = (hit.material->*shading)(scene, hit.pos, hit.normal);
+		outColor = { 1.f, 1.f, 1.f }; //TODO placeholder
 		return (Vector3::Dot(scattered.direction, hit.normal) > 0);
 	}
 		break;
@@ -19,7 +19,7 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenu
 		Vector3 outNormal;
 		Vector3 reflected = Vector3::Reflect(rayIn.direction, hit.normal);
 		float ni_nt;
-		attenuation = { 1.f, 1.f, 1.f };
+		outColor = { 1.f, 1.f, 1.f }; //TODO placeholder
 		Vector3 refracted;
 		float reflectionProb;
 		float cos;
@@ -62,12 +62,14 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenu
 		//TODO fix proper attenuation and color model to avoid canceling colors
 		Vector3 target = hit.pos + UniforSampleInHemisphere(hit.normal);
 		scattered = Ray(hit.pos, target - hit.pos);
-		attenuation = (hit.material->*shading)(scene, hit.pos, hit.normal);
+		outColor = baseColor;
+		directLight = (hit.material->*shading)(scene, hit.pos, hit.normal);
 		return true;
 	}
 		break;
 	}
 }
+
 bool Material::Refract(const Vector3 & v, const Vector3 & normal, float ni_nt, Vector3 & refracted) const
 {
 	Vector3 uv = v.Normalize();
@@ -80,6 +82,7 @@ bool Material::Refract(const Vector3 & v, const Vector3 & normal, float ni_nt, V
 	}
 	return false;
 }
+
 //TODO Use variadic functions for shading?
 Color Material::NormalShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
 {
@@ -87,8 +90,8 @@ Color Material::NormalShading(const World & scene, const Vector3 & pos, const Ve
 }
 
 Color Material::LitShading(const World & scene, const Vector3 & pos, const Vector3 & normal)
-{ //TODO normals are flipped compared to rasterizer and check proper lighting formula
-	return baseColor;// *std::fmaxf(0.01f, Vector3::Dot(normal, scene.sun.GetDirection() * -1.f)) * scene.sun.intensity;
+{ //TODO check proper lighting formula
+	return Vector3::One() *std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection() * -1.f)) * scene.sun.intensity;
 }
 
 std::random_device rd;
