@@ -1,5 +1,6 @@
 #include "Material.h"
 #include <random>
+#include "PrimitiveTypes.h"
 
 bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenuation, Ray & scattered, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml)) const
 {
@@ -8,7 +9,7 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenu
 	case Material::Type::METALLIC:
 	{
 		Vector3 reflected = Vector3::Reflect(rayIn.direction, hit.normal);
-		scattered = Ray(hit.pos, reflected + RandomPointInUnitSphere() * (1.f - metallic));
+		scattered = Ray(hit.pos, reflected + UniforSampleInHemisphere(hit.normal) * (1.f - metallic));
 		attenuation = (hit.material->*shading)(scene, hit.pos, hit.normal);
 		return (Vector3::Dot(scattered.direction, hit.normal) > 0);
 	}
@@ -59,7 +60,7 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Vector3& attenu
 	default:
 	{
 		//TODO fix proper attenuation and color model to avoid canceling colors
-		Vector3 target = hit.pos + hit.normal + RandomPointInUnitSphere();
+		Vector3 target = hit.pos + UniforSampleInHemisphere(hit.normal);
 		scattered = Ray(hit.pos, target - hit.pos);
 		attenuation = (hit.material->*shading)(scene, hit.pos, hit.normal);
 		return true;
@@ -92,18 +93,32 @@ Color Material::LitShading(const World & scene, const Vector3 & pos, const Vecto
 
 std::random_device rd;
 std::default_random_engine engine(rd());
-std::normal_distribution<float> gaussian(0.5f, 1.0f);
+std::uniform_real_distribution<float> uniformDist(0, 1);
 
-Vector3 RandomPointInUnitSphere()
+Vector3 UniforSampleInHemisphere(const Vector3& normal)
 {
-	float x = gaussian(engine);
-	float y = gaussian(engine);
-	float z = gaussian(engine);
-
-	if (x <= 0.f && y <= 0.f && z <= 0.f)
+	Vector3 nt, nb;
+	if (std::fabs(normal.x) > std::fabs(normal.y))
 	{
-		y = 1.0f;
+		nt = Vector3(normal.z, 0.f, -normal.x) / sqrtf(normal.x * normal.x + normal.z * normal.z);
 	}
+	else
+	{
+		nt = Vector3(0.f, -normal.z, normal.y) / sqrtf(normal.y * normal.y + normal.z * normal.z);
+	}
+	nb = Vector3::CrossProduct(normal, nt);
 
-	return Vector3(x, y, z).Normalize();
+	float r1 = uniformDist(engine);
+	float r2 = uniformDist(engine);
+	float sinTheta = sqrtf(1.f - r1 * r1);
+	float phi = 2.f * PI * r2;
+	float x = sinTheta * cosf(phi);
+	float z = sinTheta * sinf(phi);
+	Vector3 sample = Vector3(x, r1, z);
+	
+	return {
+		sample.x * nb.x + sample.y * normal.x + sample.z * nt.x,
+		sample.x * nb.y + sample.y * normal.y + sample.z * nt.y,
+		sample.x * nb.z + sample.y * normal.z + sample.z * nt.z
+	};
 }

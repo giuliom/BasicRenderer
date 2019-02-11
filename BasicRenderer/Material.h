@@ -42,7 +42,7 @@ public:
 	}
 };
 
-Vector3 RandomPointInUnitSphere();
+Vector3 UniforSampleInHemisphere(const Vector3& normal);
 
 //Returns a random float between 0 and 1
 inline float UnitRandf()
