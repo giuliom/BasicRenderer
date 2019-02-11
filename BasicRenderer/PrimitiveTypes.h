@@ -8,7 +8,8 @@
 #include "Ray.h"
 #include "Hitable.h"
 
-const float PI = 3.1415926f;
+constexpr float PI = 3.1415926f;
+constexpr float PDF = 1.f / (2.f * PI);
 
 class Material;
 
