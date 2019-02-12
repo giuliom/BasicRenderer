@@ -17,6 +17,9 @@ std::unique_ptr<World> SetScene(const char* filename)
 	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
 	scene->sun.intensity = 1.f;
 
+	Material* emissive = new Material({ 1.0f, 1.0f, 1.0f });
+	emissive->emissive = 1.f;
+
 	Material* white = new Material({ 1.0f, 1.0f, 1.0f });
 	Material* red = new Material({ 1.0f, 0.0f, 0.0f });
 	Material* green = new Material({ 0.0f, 1.0f, 0.0f });
@@ -44,12 +47,12 @@ std::unique_ptr<World> SetScene(const char* filename)
 	scene.get()->hierarchy.push_back(bunny2);
 
 	Sphere* sp = new Sphere({ -0.25f, -0.1f, -1.0f }, 0.2f, silver);
-	Sphere* sp2 = new Sphere({ 0.25f, -0.1f, -0.50f }, 0.2f, gold);
+	Sphere* sp2 = new Sphere({ 0.25f, -0.1f, -0.8f }, 0.2f, gold);
 	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, chromium);
 	Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);
 
 	Plane* floor = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, white);
-	Plane* ceiling = new Plane({ 0.f, 0.5f, 0.0f }, { 0.f, -1.f, 0.f }, white);
+	Plane* ceiling = new Plane({ 0.f, 0.5f, 0.0f }, { 0.f, -1.f, 0.f }, emissive);
 	Plane* back = new Plane({ 0.f, 0.0f, -1.5f }, { 0.f, 0.f, 1.f }, white);
 	Plane* left = new Plane({ -0.5f, 0.0f, 0.f }, { 1.f, 0.f, 0.f }, green);
 	Plane* right = new Plane({ 0.5f, 0.0f, 0.f }, { -1.f, 0.f, 0.f }, red);
@@ -59,7 +62,7 @@ std::unique_ptr<World> SetScene(const char* filename)
 	//scene.get()->hierarchy.push_back(sp3);
 	//scene.get()->hierarchy.push_back(sp4);
 	scene.get()->hierarchy.push_back(floor);
-	//scene.get()->hierarchy.push_back(ceiling);
+	scene.get()->hierarchy.push_back(ceiling);
 	scene.get()->hierarchy.push_back(back);
 	scene.get()->hierarchy.push_back(left);
 	scene.get()->hierarchy.push_back(right);

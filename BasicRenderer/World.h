@@ -9,7 +9,7 @@ class World
 public:
 
 	DirectionalLight sun;
-	float ambientLightIntensity = 0.1f;
+	float ambientLightIntensity = 1.0f;
 	Color ambientLightColor{ 1.f, 1.f, 1.f };
 
 	//TODO implement it properly

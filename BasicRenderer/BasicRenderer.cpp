@@ -21,7 +21,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 		camera.SetAspectRatio(width, height);
 	}
 
-	fBuffer->Fill(fillColor);
+	fBuffer->Fill(scene.ambientLightColor);
 
 	auto shadingFunc = &Material::LitShading;
 	int bounces = maxBounces;
@@ -104,93 +104,89 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 		Ray scattered;
 		Material mat = *hit.material;
 		Color albedo;
-		Color directLight;
+		bool success = false;
+
 		if (bounces > 0)
 		{
-			bool success = false;
-
 			switch (mat.type)
 			{
-			case Material::Type::METALLIC:
-			{
-				Vector3 reflected = Vector3::Reflect(ray.direction, hit.normal);
-				scattered = Ray(hit.pos, reflected + UniforSampleInHemisphere(hit.normal) * (1.f - mat.metallic));
-				albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
-				success = (Vector3::Dot(scattered.direction, hit.normal) > 0);
-			}
-			break;
-			case Material::Type::DIELECTRIC:
-			{
-				Vector3 outNormal;
-				Vector3 reflected = Vector3::Reflect(ray.direction, hit.normal);
-				float ni_nt;
-				albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
-				Vector3 refracted;
-				float reflectionProb;
-				float cos;
-				if (Vector3::Dot(ray.direction, hit.normal) > 0.f)
+				case Material::Type::METALLIC:
 				{
-					outNormal = hit.normal * -1.f;
-					ni_nt = mat.refractiveIndex;
-					cos = (Vector3::Dot(ray.direction, hit.normal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
+					Vector3 reflected = Vector3::Reflect(ray.direction, hit.normal);
+					scattered = Ray(hit.pos, reflected + UniforSampleInHemisphere(hit.normal) * (1.f - mat.metallic));
+					albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
+					success = (Vector3::Dot(scattered.direction, hit.normal) > 0);
 				}
-				else
-				{
-					outNormal = hit.normal;
-					ni_nt = 1.f / mat.refractiveIndex;
-					cos = -(Vector3::Dot(ray.direction, hit.normal)); // / rayIn.direction.Length(); == 1.f
-				}
+				break;
 
-				if (Material::Refract(ray.direction, outNormal, ni_nt, refracted))
+				case Material::Type::DIELECTRIC:
 				{
-					reflectionProb = Material::Schlick(cos, mat.refractiveIndex);
-				}
-				else
-				{
-					reflectionProb = 1.f;
-				}
+					Vector3 outNormal;
+					Vector3 reflected = Vector3::Reflect(ray.direction, hit.normal);
+					float ni_nt;
+					albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
+					Vector3 refracted;
+					float reflectionProb;
+					float cos;
+					if (Vector3::Dot(ray.direction, hit.normal) > 0.f)
+					{
+						outNormal = hit.normal * -1.f;
+						ni_nt = mat.refractiveIndex;
+						cos = (Vector3::Dot(ray.direction, hit.normal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
+					}
+					else
+					{
+						outNormal = hit.normal;
+						ni_nt = 1.f / mat.refractiveIndex;
+						cos = -(Vector3::Dot(ray.direction, hit.normal)); // / rayIn.direction.Length(); == 1.f
+					}
 
-				if (UnitRandf() < reflectionProb)
-				{
-					scattered = Ray(hit.pos, reflected);
-				}
-				else
-				{
-					scattered = Ray(hit.pos, refracted);
-				}
+					if (Material::Refract(ray.direction, outNormal, ni_nt, refracted))
+					{
+						reflectionProb = Material::Schlick(cos, mat.refractiveIndex);
+					}
+					else
+					{
+						reflectionProb = 1.f;
+					}
 
-				success = true;
-			}
-			break;
-			default:
-			{
-				//TODO fix proper attenuation and color model to avoid canceling colors
-				Vector3 target = hit.pos + UniforSampleInHemisphere(hit.normal);
-				scattered = Ray(hit.pos, target - hit.pos);
-				albedo = mat.baseColor;
-				HitResult shadowHit;
-				if (!scene.GetHit(Ray(hit.pos, scene.sun.GetDirection() * -1.f), 0.0001f, 999999.99f, shadowHit))
-				{
-					directLight = (hit.material->*shading)(scene, hit.pos, hit.normal);
-				}
-				success = true;
-			}
-			break;
-			}
+					if (UnitRandf() < reflectionProb)
+					{
+						scattered = Ray(hit.pos, reflected);
+					}
+					else
+					{
+						scattered = Ray(hit.pos, refracted);
+					}
 
-			if (success)
-			{
-				//TODO use proper formula and only for diffuse
-				return (directLight + RayTrace(scattered, scene, bounces - 1, shading)) * 0.5f * albedo;
+					success = true;
+				}
+				break;
+
+				default:
+				{
+					Vector3 target = hit.pos + UniforSampleInHemisphere(hit.normal);
+					scattered = Ray(hit.pos, target - hit.pos);
+					albedo = mat.baseColor;
+					success = true;
+				}
+				break;
 			}
+		}
+
+		if (success)
+		{
+			return RayTrace(scattered, scene, bounces - 1, shading) * albedo + mat.emissive;
 		}
 		else
 		{
-			return scene.ambientLightColor;
+			return Vector3(mat.emissive, mat.emissive, mat.emissive);
 		}
 	}
-
-	return fillColor;
+	else
+	{
+		return scene.ambientLightColor * scene.ambientLightIntensity;
+	}
 }
 
 void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))

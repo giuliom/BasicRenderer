@@ -21,6 +21,7 @@ public:
 	Type type;
 
 	Color baseColor;
+	float emissive = 0.0f;
 	float metallic = 1.0f;
 	float roughness = 0.0f;
 	float refractiveIndex = 1.5f;
