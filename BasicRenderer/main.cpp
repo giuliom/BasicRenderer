@@ -23,7 +23,7 @@ std::unique_ptr<World> SetScene(const char* filename)
 	Material* blue = new Material({ 0.0f, 0.1f, 1.0f });
 
 	Material* silver = new Material({ 0.972f, 0.960f, 0.915f }, Material::Type::METALLIC);
-	silver->metallic = 0.5f;
+	silver->metallic = 0.8f;
 	Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
 	Material* gold = new Material({ 1.0f, 0.766f, 0.336f });
 	Material* chromium = new Material({ .550f, 0.556f, 0.554f });//, Material::Type::DIELECTRIC);
