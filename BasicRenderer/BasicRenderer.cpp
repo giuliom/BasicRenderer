@@ -102,12 +102,87 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 		}
 
 		Ray scattered;
+		Material mat = *hit.material;
 		Color albedo;
 		Color directLight;
-		if (bounces > 0 && hit.material->Scatter(ray, hit, albedo, directLight, scattered, scene, shading))
+		if (bounces > 0)
 		{
-			//TODO use proper formula and only for diffuse
-			return (directLight + RayTrace(scattered, scene, bounces - 1, shading)) * 0.5f * albedo;
+			bool success = false;
+
+			switch (mat.type)
+			{
+			case Material::Type::METALLIC:
+			{
+				Vector3 reflected = Vector3::Reflect(ray.direction, hit.normal);
+				scattered = Ray(hit.pos, reflected + UniforSampleInHemisphere(hit.normal) * (1.f - mat.metallic));
+				albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
+				success = (Vector3::Dot(scattered.direction, hit.normal) > 0);
+			}
+			break;
+			case Material::Type::DIELECTRIC:
+			{
+				Vector3 outNormal;
+				Vector3 reflected = Vector3::Reflect(ray.direction, hit.normal);
+				float ni_nt;
+				albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
+				Vector3 refracted;
+				float reflectionProb;
+				float cos;
+				if (Vector3::Dot(ray.direction, hit.normal) > 0.f)
+				{
+					outNormal = hit.normal * -1.f;
+					ni_nt = mat.refractiveIndex;
+					cos = (Vector3::Dot(ray.direction, hit.normal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
+				}
+				else
+				{
+					outNormal = hit.normal;
+					ni_nt = 1.f / mat.refractiveIndex;
+					cos = -(Vector3::Dot(ray.direction, hit.normal)); // / rayIn.direction.Length(); == 1.f
+				}
+
+				if (Material::Refract(ray.direction, outNormal, ni_nt, refracted))
+				{
+					reflectionProb = Material::Schlick(cos, mat.refractiveIndex);
+				}
+				else
+				{
+					reflectionProb = 1.f;
+				}
+
+				if (UnitRandf() < reflectionProb)
+				{
+					scattered = Ray(hit.pos, reflected);
+				}
+				else
+				{
+					scattered = Ray(hit.pos, refracted);
+				}
+
+				success = true;
+			}
+			break;
+			default:
+			{
+				//TODO fix proper attenuation and color model to avoid canceling colors
+				Vector3 target = hit.pos + UniforSampleInHemisphere(hit.normal);
+				scattered = Ray(hit.pos, target - hit.pos);
+				albedo = mat.baseColor;
+				HitResult shadowHit;
+				if (!scene.GetHit(Ray(hit.pos, scene.sun.GetDirection() * -1.f), 0.0001f, 999999.99f, shadowHit))
+				{
+					directLight = (hit.material->*shading)(scene, hit.pos, hit.normal);
+				}
+				success = true;
+			}
+			break;
+			}
+
+			if (success)
+			{
+				//TODO use proper formula and only for diffuse
+				return (directLight + RayTrace(scattered, scene, bounces - 1, shading)) * 0.5f * albedo;
+			}
 		}
 		else
 		{

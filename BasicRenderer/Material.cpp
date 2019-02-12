@@ -38,7 +38,7 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Color& outColor
 
 		if (Refract(rayIn.direction, outNormal, ni_nt, refracted))
 		{
-			reflectionProb = Schlick(cos);
+			reflectionProb = Schlick(cos, refractiveIndex);
 		}
 		else
 		{
@@ -70,18 +70,7 @@ bool Material::Scatter(const Ray & rayIn, const HitResult & hit, Color& outColor
 	}
 }
 
-bool Material::Refract(const Vector3 & v, const Vector3 & normal, float ni_nt, Vector3 & refracted) const
-{
-	Vector3 uv = v.Normalize();
-	float dt = Vector3::Dot(uv, normal);
-	float discriminant = 1.f - ni_nt * ni_nt * (1.f - dt * dt);
-	if (discriminant > 0.f)
-	{
-		refracted = (uv - normal * dt) * ni_nt - normal * sqrtf(discriminant);
-		return true;
-	}
-	return false;
-}
+
 
 //TODO Use variadic functions for shading?
 Color Material::NormalShading(const World & scene, const Vector3 & pos, const Vector3 & normal)

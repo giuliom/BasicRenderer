@@ -29,12 +29,24 @@ public:
 
 	virtual bool Scatter(const Ray& rayIn, const HitResult& hit, Color& outColor, Color& directLight, Ray& scattered, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml)) const;
 
-	bool Refract(const Vector3& v, const Vector3& normal, float ni_nt, Vector3& refracted) const;
+	static inline bool Refract(const Vector3& v, const Vector3& normal, float ni_nt, Vector3& refracted)
+	{
+		Vector3 uv = v.Normalize();
+		float dt = Vector3::Dot(uv, normal);
+		float discriminant = 1.f - ni_nt * ni_nt * (1.f - dt * dt);
+		if (discriminant > 0.f)
+		{
+			refracted = (uv - normal * dt) * ni_nt - normal * sqrtf(discriminant);
+			return true;
+		}
+		return false;
+	}
+
 
 	Color NormalShading(const World& scene, const Vector3& pos, const Vector3& normal);
 	Color LitShading(const World& scene, const Vector3& pos, const Vector3& normal);
 
-	inline float Schlick(float cos) const
+	static inline float Schlick(float cos, float refractiveIndex)
 	{
 		float r0 = (1.f - refractiveIndex) / (1.f + refractiveIndex);
 		r0 *= r0;
