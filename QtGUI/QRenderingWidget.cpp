@@ -28,16 +28,16 @@ void QRenderingWidget::SetScene(const char* filename)
 	scene = std::make_unique<World>();
 
 	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
-	scene->sun.intensity = 1.f;
+	scene->sun.intensity = 1.0f;
 
 	Material* red = new Material({ 1.0f, 0.01f, 0.01f });
 	Material* green = new Material({ 0.01f, 1.0f, 0.01f });
 	Material* blue = new Material({ 0.01f, 0.01f, 1.0f });
 
-	Material* silver = new Material({ 0.972f, 0.960f, 0.915f }, Material::Type::METALLIC);
+	Material* silver = new Material({ 0.972f, 0.960f, 0.915f });//, Material::Type::METALLIC);
 	Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
 	Material* gold = new Material({ 1.0f, 0.766f, 0.336f });
-	Material* chromium = new Material({ .550f, 0.556f, 0.554f }, Material::Type::DIELECTRIC);
+	Material* chromium = new Material({ .550f, 0.556f, 0.554f });//, Material::Type::DIELECTRIC);
 
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename)); 
@@ -57,7 +57,7 @@ void QRenderingWidget::SetScene(const char* filename)
 	Sphere* sp = new Sphere({ -0.8f, 0.0f, -1.5f }, 0.4f, silver);
 	Sphere* sp2 = new Sphere({ 0.0f, 0.0f, -1.5f }, 0.4f, gold);
 	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, chromium);
-	Sphere* sp4 = new Sphere({ 0.0f, -50.4f, -1.5f }, 50.0f, copper);
+	Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);
 
 	Plane* pl = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, copper);
 

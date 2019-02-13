@@ -2,6 +2,9 @@
 
 #include "Vertex.h"
 
+class Ray;
+struct HitResult;
+
 struct FaceIndices
 {
 public:
@@ -27,6 +30,8 @@ public:
 
 	Face& operator=(const Face& f);
 	Face& operator=(Face&& f);
+
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const;
 
 	inline Face ToMatrixSpace(const Matrix4& m) const
 	{

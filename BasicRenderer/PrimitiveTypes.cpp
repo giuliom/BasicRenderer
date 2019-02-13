@@ -53,3 +53,10 @@ bool Plane::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) co
 
 	return false;
 }
+
+bool Quad::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
+{
+	result.material = this->GetMaterial();
+	//TODO change vertcies based on transform
+	return f0.GetHit(r, tMin, tMax, result) || f1.GetHit(r, tMin, tMax, result);
+}

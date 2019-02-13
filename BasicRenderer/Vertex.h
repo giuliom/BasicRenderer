@@ -21,6 +21,7 @@ public:
 
 	Vertex() : pos(Position::Zero()), nrml(Normal::Zero()), uv(UV::Zero()) {}
 	Vertex(const Position& pos_, const Normal& nrml_, const UV& uv_) : pos(pos_), nrml(nrml_), uv(uv_) {}
+	Vertex(const Vector3& pos_v3, const Vector3& nrml_v3, const UV& uv_) : pos(pos_v3.x, pos_v3.y, pos_v3.z, 1.f), nrml(nrml_v3.x, nrml_v3.y, nrml_v3.z, 1.f), uv(uv_) {}
 	Vertex(const Vertex& v) : pos(v.pos), nrml(v.nrml), uv(v.uv) {}
 	Vertex(Vertex&& v) : pos(v.pos), nrml(v.nrml), uv(v.uv) {}
 	~Vertex() {}

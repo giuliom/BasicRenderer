@@ -6,7 +6,7 @@
 #include "Transform.h"
 #include "Vertex.h"
 #include "Ray.h"
-#include "Hitable.h"
+#include "SceneObject.h"
 
 constexpr float PI = 3.1415926f;
 constexpr float PDF = 1.f / (2.f * PI);
@@ -35,6 +35,22 @@ class Plane : public Hitable
 public:
 	Plane() = delete;
 	Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Hitable(mat), centre(centre), normal(normal.Normalize()) {}
+
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+
+};
+
+class Quad : public SceneObject
+{
+public:
+	Face f0 = Face(Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
+	Face f1 = Face(Vertex({ -0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
+
+	Quad(std::shared_ptr<Mesh> mesh_) = delete;
+	Quad(std::shared_ptr<Mesh> mesh_, Material* mat) = delete;
+	Quad(const SceneObject& obj) = delete;
+	Quad(const Quad& quad) : SceneObject(quad) {}
+	virtual ~Quad() {}
 
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 

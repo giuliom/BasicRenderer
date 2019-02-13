@@ -21,12 +21,11 @@ public:
 	SceneObject(std::shared_ptr<Mesh> mesh_) : mesh(mesh_) {};
 	SceneObject(std::shared_ptr<Mesh> mesh_, Material* mat) : Hitable(mat), mesh(mesh_) {} ;
 	SceneObject(const SceneObject& obj) : Hitable(obj), mesh(obj.mesh), transform(obj.transform) {}
-	~SceneObject();
+	virtual ~SceneObject();
 
 	inline std::shared_ptr<Mesh> const GetMesh() const { return mesh; } 
 	Transform& UpdateWorldTransform() const;
 
-	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override { return false; }
-
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 };
 

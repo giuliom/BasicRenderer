@@ -28,3 +28,9 @@ Transform& SceneObject::UpdateWorldTransform() const
 
 	return worldTransform;
 }
+
+bool SceneObject::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
+{
+	//TODO implement
+	return false;
+}
