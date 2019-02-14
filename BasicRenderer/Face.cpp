@@ -24,49 +24,56 @@ Face & Face::operator=(Face && f)
 	return *this;
 }
 
+//Möller–Trumbore intersection algorithm
 bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
-	//Face normal
-	Vector3 N = Vector3::CrossProduct(v1.pos - v0.pos, v2.pos - v0.pos).Normalize();
+	const float EPSILON = 0.0000001;
+	Vector3 faceNormal = Vector3::CrossProduct(v1.pos - v0.pos, v2.pos - v0.pos).Normalize();
 
-	//Parallel check
-	float NdotRayDirection = Vector3::Dot(N, r.direction);
-	if (fabs(NdotRayDirection) < 0.0001f) 
-		return false; 
-
-	float d = Vector3::Dot(N, v0.pos);
-
-	//Behind check
-	float t = (Vector3::Dot(N, r.origin) + d) / NdotRayDirection;
-	if (t < 0) return false;
-
-	Vector3 P = r.origin + r.direction * t;
-
-	Vector3 C;
-
-	//Edge 0
-	Vector3 edge0 = v1.pos - v0.pos;
-	Vector3 vp0 = P - v0.pos;
-	C = Vector3::CrossProduct(edge0, vp0);
-	if (Vector3::Dot(N, C) < 0) return false;
-
-	//Edge 1
-	Vector3 edge1 = v2.pos - v1.pos;
-	Vector3 vp1 = P - v1.pos;
-	C = Vector3::CrossProduct(edge1, vp1);
-	if (Vector3::Dot(N, C) < 0)  return false;
-
-	//Edge 2
-	Vector3 edge2 = v0.pos - v2.pos;
-	Vector3 vp2 = P - v2.pos;
-	C = Vector3::CrossProduct(edge2, vp2);
-	if (Vector3::Dot(N, C) < 0) return false;
-
-	result.t = t;
-	result.pos = r.GetPoint(result.t);
-	result.normal = N;
-
-	return true; 
+	Vector3 edge1, edge2, h, s, q;
+	float a, f, u, v;
+	edge1 = v1.pos - v0.pos;
+	edge2 = v2.pos - v0.pos;
+	h = Vector3::CrossProduct(r.direction, edge2);
+	a = Vector3::Dot(edge1, h);
+	
+	if (a > -EPSILON && a < EPSILON)
+	{
+		return false;    // This ray is parallel to this triangle.
+	}
+	
+	f = 1.0 / a;
+	s = r.origin - v0.pos;
+	u = f * Vector3::Dot(s, h);
+	
+	if (u < 0.0 || u > 1.0)
+	{
+		return false;
+	}
+	
+	q = Vector3::CrossProduct(s, edge1);
+	v = f * Vector3::Dot(r.direction, q);
+	
+	if (v < 0.0 || u + v > 1.0)
+	{
+		return false;
+	}
+	
+	// At this stage we can compute t to find out where the intersection point is on the line.
+	float t = f * Vector3::Dot(edge2, q);
+	
+	if (t > EPSILON) // ray intersection
+	{
+		result.t = t;
+		result.pos = r.GetPoint(result.t);
+		result.normal = faceNormal;
+		return true;
+	}
+	else // This means that there is a line intersection but not a ray intersection.
+	{
+		return false;
+	}
+	
 }
 
 

@@ -16,10 +16,10 @@ std::unique_ptr<World> SetScene(const char* filename)
 
 	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
 	scene->sun.intensity = 0.f;
-	scene->ambientLightIntensity = 1.f;
+	scene->ambientLightIntensity = 0.0f;
 
 	Material* emissive = new Material({ 1.0f, 1.0f, 1.0f });
-	emissive->emissive = 1.f;
+	emissive->emissive = 10.f;
 
 	Material* white = new Material({ 1.0f, 1.0f, 1.0f });
 	Material* red = new Material({ 1.0f, 0.0f, 0.0f });
@@ -85,6 +85,7 @@ std::unique_ptr<World> SetScene(const char* filename)
 	scene.get()->hierarchy.push_back(back);
 	scene.get()->hierarchy.push_back(left);
 	scene.get()->hierarchy.push_back(right);
+	scene.get()->hierarchy.push_back(light);
 
 	return scene;
 }
