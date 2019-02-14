@@ -27,10 +27,7 @@ Face & Face::operator=(Face && f)
 bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
 	//Face normal
-	Vector3 v0v1 = v1.pos - v0.pos;
-	Vector3 v0v2 = v2.pos - v0.pos;
-	Vector3 N = Vector3::CrossProduct(v0v1, v0v2); //TODO check CalculateNormal()
-	float area2 = N.Length();
+	Vector3 N = Vector3::CrossProduct(v1.pos - v0.pos, v2.pos - v0.pos).Normalize();
 
 	//Parallel check
 	float NdotRayDirection = Vector3::Dot(N, r.direction);

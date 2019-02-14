@@ -105,7 +105,7 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 		Material mat = *hit.material;
 		Color albedo;
 		bool success = false;
-
+		//return hit.normal; // TODO to show normals
 		if (bounces > 0)
 		{
 			switch (mat.type)
