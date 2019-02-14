@@ -136,15 +136,25 @@ void Transform::Scale(float x, float y, float z)
 	Scale(Vector3(x, y, z));
 }
 
-void Transform::Rotate(const Vector3& rotation_)
+void Transform::Rotate(const Vector3& radRotation_)
 {
-	rotation = rotation + rotation_;
+	rotation = rotation + radRotation_;
 	UpdateTransform();
 }
 
-void Transform::Rotate(float roll, float yaw, float pitch)
+void Transform::RotateDeg(const Vector3 & rotation_)
 {
-	Rotate(Vector3(roll, yaw, pitch));
+	Rotate(rotation_ * TO_RADIANS);
+}
+
+void Transform::Rotate(float radRoll, float radYaw, float radPitch)
+{
+	Rotate(Vector3(radRoll, radYaw, radPitch));
+}
+
+void Transform::RotateDeg(float roll, float yaw, float pitch)
+{
+	Rotate(Vector3(roll, yaw, pitch)* TO_RADIANS);
 }
 
 void Transform::SetParent(Transform * par)
