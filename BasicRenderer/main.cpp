@@ -53,11 +53,11 @@ std::unique_ptr<World> SetScene(const char* filename)
 	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, chromium);
 	Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);
 
-	Quad* floor = new Quad(copper);
+	Quad* floor = new Quad(white);
 	floor->transform.SetPosition({ 0.f, -0.5f, -1.0f });
 	floor->transform.RotateDeg(-90.f, 0.f, 0.f);
 	
-	Quad* ceiling = new Quad(gold);
+	Quad* ceiling = new Quad(white);
 	ceiling->transform.SetPosition({ 0.f, 0.5f, -1.0f });
 	ceiling->transform.RotateDeg(90.f, 0.f, 0.f);
 	
@@ -74,7 +74,7 @@ std::unique_ptr<World> SetScene(const char* filename)
 	right->transform.RotateDeg(0.f, -90.f, 0.f);
 
 	Quad* light = new Quad(emissive);
-	light->transform.SetPosition({ 0.f, 0.49f, -1.0f });
+	light->transform.SetPosition({ 0.f, 0.4999f, -1.0f });
 	light->transform.RotateDeg(90.f, 0.f, 0.f);
 	light->transform.SetScale({ 0.3, 0.3f, 0.3f });
 
