@@ -16,6 +16,7 @@ struct HitResult
 
 class Hitable
 {
+protected:
 	//TODO temporary implementation
 	Material* material = nullptr;
 
