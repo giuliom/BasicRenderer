@@ -57,6 +57,10 @@ bool Plane::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) co
 bool Quad::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
 	result.material = this->GetMaterial();
-	//TODO change vertcies based on transform
-	return f0.GetHit(r, tMin, tMax, result) || f1.GetHit(r, tMin, tMax, result);
+	
+	Matrix4 m = transform.GetMatrix();
+	Face f0WS = f0.ToMatrixSpace(m);
+	Face f1WS = f1.ToMatrixSpace(m);
+
+	return f0WS.GetHit(r, tMin, tMax, result) || f1WS.GetHit(r, tMin, tMax, result);
 }
