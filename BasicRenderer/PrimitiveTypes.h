@@ -8,9 +8,6 @@
 #include "Ray.h"
 #include "SceneObject.h"
 
-constexpr float PI = 3.1415926f;
-constexpr float PDF = 1.f / (2.f * PI);
-
 class Material;
 
 //TODO World space assumed for all these primitives
@@ -43,9 +40,10 @@ public:
 class Quad : public SceneObject
 {
 public:
-	Face f0 = Face(Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
+	Face f0 = Face(Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
 	Face f1 = Face(Vertex({ -0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
 
+	Quad(Material* mat) : SceneObject(mat) {}
 	Quad(std::shared_ptr<Mesh> mesh_) = delete;
 	Quad(std::shared_ptr<Mesh> mesh_, Material* mat) = delete;
 	Quad(const SceneObject& obj) = delete;
