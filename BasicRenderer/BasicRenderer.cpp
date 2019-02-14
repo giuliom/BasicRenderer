@@ -40,7 +40,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 		for (auto& obj : scene.hierarchy)
 		{
 			SceneObject* sceneObj = dynamic_cast<SceneObject*>(obj);
-			if (sceneObj != nullptr)
+			if (sceneObj != nullptr && sceneObj->GetMesh() != nullptr)
 			{
 				DrawObject(*sceneObj, scene, shadingFunc);
 			}
