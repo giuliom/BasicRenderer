@@ -18,6 +18,7 @@ public:
 	bool dirty = true;
 
 public:
+	SceneObject() : Hitable() {}
 	SceneObject(Material* mat) : Hitable(mat) {}
 	SceneObject(std::shared_ptr<Mesh> mesh_) : mesh(mesh_) {};
 	SceneObject(std::shared_ptr<Mesh> mesh_, Material* mat) : Hitable(mat), mesh(mesh_) {} ;

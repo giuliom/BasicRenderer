@@ -39,10 +39,11 @@ public:
 
 class Quad : public SceneObject
 {
-public:
 	Face f0 = Face(Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
 	Face f1 = Face(Vertex({ -0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
 
+public:
+	Quad() {}
 	Quad(Material* mat) : SceneObject(mat) {}
 	Quad(std::shared_ptr<Mesh> mesh_) = delete;
 	Quad(std::shared_ptr<Mesh> mesh_, Material* mat) = delete;
@@ -55,13 +56,51 @@ public:
 };
 
 
-struct Cube : public Hitable
+struct Cube : public SceneObject
 {
+	Vector3 topN = { 0.f, 1.f, 0.f };
+	Vector3 bottomN = { 0.f, -1.f, 0.f };
+	Vector3 backN = { 0.f, 0.f, -1.f };
+	Vector3 frontN = { 0.f, 0.f, 1.f };
+	Vector3 leftN = { -1.f, 0.f, 0.f };
+	Vector3 rightN = { 1.f, 0.f, 0.f };
+
+	Vector3 topFrontLeft = { -0.5f, 0.5f, 0.5f };
+	Vector3 topFrontRight = { 0.5f, 0.5f, 0.5f };
+	Vector3 topBackLeft = { -0.5f, 0.5f, -0.5f };
+	Vector3 topBackRight = { 0.5f, 0.5f, -0.5f };
+
+	Vector3 bottomFrontLeft = { -0.5f, -0.5f, 0.5f };
+	Vector3 bottomFrontRight = { 0.5f, -0.5f, 0.5f };
+	Vector3 bottomBackLeft = { -0.5f, -0.5f, -0.5f };
+	Vector3 bottomBackRight = { 0.5f, -0.5f, -0.5f };
+
+
+	Face back_f0 = Face(Vertex(bottomBackRight, backN, {}), Vertex(topBackLeft, backN, {}), Vertex(topBackRight, backN, {}));
+	Face back_f1 = Face(Vertex(bottomBackLeft, backN, {}), Vertex(bottomBackRight, backN, {}), Vertex(topBackLeft, backN, {}));
+
+	Face front_f0 = Face(Vertex(topFrontLeft, frontN, {}), Vertex(topFrontRight, frontN, {}), Vertex(bottomFrontRight, frontN, {}));
+	Face front_f1 = Face(Vertex(bottomFrontLeft, frontN, {}), Vertex(topFrontLeft, frontN, {}), Vertex(bottomFrontRight, frontN, {}));
+
+	Face top_f0 = Face(Vertex(topBackLeft, topN, {}), Vertex(topFrontRight, topN, {}), Vertex(topBackRight, topN, {}));
+	Face top_f1 = Face(Vertex(topFrontLeft, topN, {}), Vertex(topFrontRight, topN, {}), Vertex(topBackRight, topN, {}));
+
+	Face bottom_f0 = Face(Vertex(bottomFrontLeft, bottomN, {}), Vertex(bottomBackLeft, bottomN, {}), Vertex(bottomFrontRight, bottomN, {}));
+	Face bottom_f1 = Face(Vertex(bottomBackLeft, bottomN, {}), Vertex(bottomBackRight, bottomN, {}), Vertex(bottomFrontRight, bottomN, {}));
+
+	Face left_f0 = Face(Vertex(topFrontLeft, leftN, {}), Vertex(bottomBackLeft, leftN, {}), Vertex(topBackLeft, leftN, {}));
+	Face left_f1 = Face(Vertex(bottomFrontLeft, leftN, {}), Vertex(bottomBackLeft, leftN, {}), Vertex(topFrontLeft, leftN, {}));
+
+	Face right_f0 = Face(Vertex(topFrontRight, rightN, {}), Vertex(bottomBackRight, rightN, {}), Vertex(topBackRight, rightN, {}));
+	Face right_f1 = Face(Vertex(bottomBackRight, rightN, {}), Vertex(topFrontRight, rightN, {}), Vertex(bottomFrontRight, rightN, {}));
+
 public:
-	Vector3 pos;
-	float sideSize;
+	Cube(Material* mat);
+	Cube(std::shared_ptr<Mesh> mesh_) = delete;
+	Cube(std::shared_ptr<Mesh> mesh_, Material* mat) = delete;
+	Cube(const SceneObject& obj) = delete;
+	Cube(const Cube& cube) : SceneObject(cube) {}
+	virtual ~Cube() {}
 
-	Cube(Vector3 pos_, float sideSize_) : pos(pos_), sideSize(sideSize_) {}
-
-	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override { return false; }
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 };

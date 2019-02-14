@@ -61,11 +61,18 @@ void QRenderingWidget::SetScene(const char* filename)
 
 	Plane* pl = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, copper);
 
-	scene.get()->hierarchy.push_back(sp);
-	scene.get()->hierarchy.push_back(sp2);
-	scene.get()->hierarchy.push_back(sp3);
+	Cube* cube = new Cube(gold);
+	cube->transform.SetPosition({ 0.25f, -0.3f, -2.0f });
+	cube->transform.Scale(0.2f, 0.2f, 0.2f);
+
+	//scene.get()->hierarchy.push_back(sp);
+	//scene.get()->hierarchy.push_back(sp2);
+	//scene.get()->hierarchy.push_back(sp3);
 	//scene.get()->hierarchy.push_back(sp4);
+
 	scene.get()->hierarchy.push_back(pl);
+
+	scene.get()->hierarchy.push_back(cube);
 }
 
 void QRenderingWidget::SaveFrame(const char* path)

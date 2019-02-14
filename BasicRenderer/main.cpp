@@ -29,7 +29,8 @@ std::unique_ptr<World> SetScene(const char* filename)
 	Material* silver = new Material({ 0.972f, 0.960f, 0.915f }, Material::Type::METALLIC);
 	silver->metallic = 1.0f;
 	Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
-	Material* gold = new Material({ 1.0f, 0.766f, 0.336f });
+	Material* gold = new Material({ 1.0f, 0.766f, 0.336f }, Material::Type::METALLIC);
+	gold->metallic = 0.5f;
 	Material* chromium = new Material({ .550f, 0.556f, 0.554f });//, Material::Type::DIELECTRIC);
 
 	//TODO resource manager needed
@@ -48,7 +49,7 @@ std::unique_ptr<World> SetScene(const char* filename)
 	scene.get()->hierarchy.push_back(bunny2);
 
 	Sphere* sp = new Sphere({ -0.25f, -0.1f, -1.0f }, 0.2f, silver);
-	Sphere* sp2 = new Sphere({ 0.25f, -0.1f, -0.8f }, 0.2f, gold);
+	Sphere* sp2 = new Sphere({ 0.25f, -0.3f, -0.8f }, 0.15f, gold);
 	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, chromium);
 	Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);
 
@@ -77,6 +78,11 @@ std::unique_ptr<World> SetScene(const char* filename)
 	light->transform.RotateDeg(90.f, 0.f, 0.f);
 	light->transform.SetScale({ 0.3, 0.3f, 0.3f });
 
+	Cube* cube = new Cube(white);
+	cube->transform.SetPosition({ 0.25f, -0.3f, -2.0f });
+	cube->transform.Scale(0.2f, 0.2f, 0.2f);
+	cube->transform.RotateDeg(0.f, 0.f, 0.f);
+
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
 
@@ -86,6 +92,8 @@ std::unique_ptr<World> SetScene(const char* filename)
 	scene.get()->hierarchy.push_back(left);
 	scene.get()->hierarchy.push_back(right);
 	scene.get()->hierarchy.push_back(light);
+
+	//scene.get()->hierarchy.push_back(cube);
 
 	return scene;
 }

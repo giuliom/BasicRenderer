@@ -3,5 +3,5 @@
 
 Hitable::Hitable()
 {
-	material = new Material(Vector3::One()); //TODO remove
+	//material = new Material(Vector3::One()); //TODO remove
 }
