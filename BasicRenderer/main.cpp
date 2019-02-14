@@ -15,7 +15,8 @@ std::unique_ptr<World> SetScene(const char* filename)
 	std::unique_ptr<World> scene = std::make_unique<World>();
 
 	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
-	scene->sun.intensity = 1.f;
+	scene->sun.intensity = 0.f;
+	scene->ambientLightIntensity = 1.f;
 
 	Material* emissive = new Material({ 1.0f, 1.0f, 1.0f });
 	emissive->emissive = 1.f;
@@ -26,7 +27,7 @@ std::unique_ptr<World> SetScene(const char* filename)
 	Material* blue = new Material({ 0.0f, 0.1f, 1.0f });
 
 	Material* silver = new Material({ 0.972f, 0.960f, 0.915f }, Material::Type::METALLIC);
-	silver->metallic = 0.8f;
+	silver->metallic = 1.0f;
 	Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
 	Material* gold = new Material({ 1.0f, 0.766f, 0.336f });
 	Material* chromium = new Material({ .550f, 0.556f, 0.554f });//, Material::Type::DIELECTRIC);
@@ -51,16 +52,34 @@ std::unique_ptr<World> SetScene(const char* filename)
 	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, chromium);
 	Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);
 
-	Plane* floor = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, white);
-	Plane* ceiling = new Plane({ 0.f, 0.5f, 0.0f }, { 0.f, -1.f, 0.f }, emissive);
-	Plane* back = new Plane({ 0.f, 0.0f, -1.5f }, { 0.f, 0.f, 1.f }, white);
-	Plane* left = new Plane({ -0.5f, 0.0f, 0.f }, { 1.f, 0.f, 0.f }, green);
-	Plane* right = new Plane({ 0.5f, 0.0f, 0.f }, { -1.f, 0.f, 0.f }, red);
+	Quad* floor = new Quad(copper);
+	floor->transform.SetPosition({ 0.f, -0.5f, -1.0f });
+	floor->transform.RotateDeg(-90.f, 0.f, 0.f);
+	
+	Quad* ceiling = new Quad(gold);
+	ceiling->transform.SetPosition({ 0.f, 0.5f, -1.0f });
+	ceiling->transform.RotateDeg(90.f, 0.f, 0.f);
+	
+	Quad* back = new Quad(white);
+	back->transform.SetPosition({ 0.f, 0.f, -1.5f });
+	back->transform.RotateDeg(0.f, 0.f, 0.f);
+	
+	Quad* left = new Quad(green);
+	left->transform.SetPosition({ -0.5f, 0.f, -1.0f });
+	left->transform.RotateDeg(0.f, 90.f, 0.f);
+	
+	Quad* right = new Quad(red);
+	right->transform.SetPosition({ 0.5f, 0.f, -1.0f });
+	right->transform.RotateDeg(0.f, -90.f, 0.f);
+
+	Quad* light = new Quad(emissive);
+	light->transform.SetPosition({ 0.f, 0.49f, -1.0f });
+	light->transform.RotateDeg(90.f, 0.f, 0.f);
+	light->transform.SetScale({ 0.3, 0.3f, 0.3f });
 
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
-	//scene.get()->hierarchy.push_back(sp3);
-	//scene.get()->hierarchy.push_back(sp4);
+
 	scene.get()->hierarchy.push_back(floor);
 	scene.get()->hierarchy.push_back(ceiling);
 	scene.get()->hierarchy.push_back(back);
