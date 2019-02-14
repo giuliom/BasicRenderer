@@ -5,6 +5,10 @@
 
 class SceneObject;
 
+constexpr float PI = 3.1415926f;
+constexpr float PDF = 1.f / (2.f * PI);
+constexpr float TO_RADIANS = PI / 180.f;
+
 // TODO Quaternions
 class Transform
 {
@@ -69,8 +73,10 @@ public:
 	void Translate(float x, float y, float z);
 	void Scale(const Vector3& scale_);
 	void Scale(float x, float y, float z);
-	void Rotate(const Vector3& rotation_);
-	void Rotate(float roll, float yaw, float pitch);
+	void Rotate(const Vector3& radRotation_);
+	void RotateDeg(const Vector3& rotation_);
+	void Rotate(float radRoll, float radYaw, float radPitch);
+	void RotateDeg(float roll, float yaw, float pitch);
 
 	Transform* GetParent() const { return parent; }
 	void SetParent(Transform* par);
