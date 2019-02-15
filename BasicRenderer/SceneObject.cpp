@@ -31,6 +31,31 @@ Transform& SceneObject::UpdateWorldTransform() const
 
 bool SceneObject::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
-	//TODO implement
-	return false;
+	Matrix4 m = transform.GetMatrix();
+	result.t = tMax;
+	HitResult test;
+	bool hit = false;
+
+	if (mesh != nullptr)
+	{
+		const auto faces = mesh->GetFaces();
+		int nfaces = mesh->GetFacesCount();
+
+		for (int i = 0; i < nfaces; i++)
+		{
+			Face f = faces[i].ToMatrixSpace(m);
+			if (f.GetHit(r, tMin, tMax, test))
+			{
+				hit = true;
+				if (test.t < result.t)
+				{
+					result = test;
+				}
+			}
+		}
+	}
+
+	result.material = this->GetMaterial();
+
+	return hit;
 }

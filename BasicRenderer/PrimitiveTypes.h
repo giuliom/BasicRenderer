@@ -46,12 +46,12 @@ public:
 	Quad() {}
 	Quad(Material* mat) : SceneObject(mat) {}
 	Quad(std::shared_ptr<Mesh> mesh_) = delete;
-	Quad(std::shared_ptr<Mesh> mesh_, Material* mat) = delete;
+	Quad(std::shared_ptr<Mesh> mesh_, Material* mat) :SceneObject(mesh_, mat) {}
 	Quad(const SceneObject& obj) = delete;
 	Quad(const Quad& quad) : SceneObject(quad) {}
 	virtual ~Quad() {}
 
-	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+	//virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 
 };
 
@@ -97,10 +97,10 @@ struct Cube : public SceneObject
 public:
 	Cube(Material* mat);
 	Cube(std::shared_ptr<Mesh> mesh_) = delete;
-	Cube(std::shared_ptr<Mesh> mesh_, Material* mat) = delete;
+	Cube(std::shared_ptr<Mesh> mesh_, Material* mat) : SceneObject(mesh_, mat) {}
 	Cube(const SceneObject& obj) = delete;
 	Cube(const Cube& cube) : SceneObject(cube) {}
 	virtual ~Cube() {}
 
-	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+	//virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 };

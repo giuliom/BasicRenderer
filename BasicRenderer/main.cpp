@@ -31,57 +31,57 @@ std::unique_ptr<World> SetScene(const char* filename)
 	Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
 	Material* gold = new Material({ 1.0f, 0.766f, 0.336f }, Material::Type::METALLIC);
 	gold->metallic = 0.5f;
-	Material* chromium = new Material({ .550f, 0.556f, 0.554f });//, Material::Type::DIELECTRIC);
+	Material* chromium = new Material({ .550f, 0.556f, 0.554f }, Material::Type::DIELECTRIC);
 
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename));
+	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("../../Assets/cube.obj"));
+	std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../Assets/quad.obj"));
 
 	SceneObject* bunny = new SceneObject(bunnyMesh, red);
 	bunny->transform.SetScale(10.f, 10.f, 10.f);
 	bunny->transform.SetPosition(1.0f, -1.0f, -5.0f);
 	//bunny->transform.Rotate(0.0f, 0.01f, 0.0f);
-	scene.get()->hierarchy.push_back(bunny);
 
 	SceneObject* bunny2 = new SceneObject(bunnyMesh);
 	bunny2->transform.SetScale(10.f, 10.f, 10.f);
 	bunny2->transform.SetPosition(-0.5f, -1.0f, -5.0f);
 	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
-	scene.get()->hierarchy.push_back(bunny2);
 
 	Sphere* sp = new Sphere({ -0.25f, -0.1f, -1.0f }, 0.2f, silver);
-	Sphere* sp2 = new Sphere({ 0.25f, -0.3f, -0.8f }, 0.15f, gold);
-	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, chromium);
+	Sphere* sp2 = new Sphere({ 0.25f, -0.25f, -0.9f }, 0.1f, chromium);
+	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, gold);
 	Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);
 
-	Quad* floor = new Quad(white);
+	Quad* floor = new Quad(quadMesh, white);
 	floor->transform.SetPosition({ 0.f, -0.5f, -1.0f });
 	floor->transform.RotateDeg(-90.f, 0.f, 0.f);
 	
-	Quad* ceiling = new Quad(white);
+	Quad* ceiling = new Quad(quadMesh, white);
 	ceiling->transform.SetPosition({ 0.f, 0.5f, -1.0f });
 	ceiling->transform.RotateDeg(90.f, 0.f, 0.f);
 	
-	Quad* back = new Quad(white);
+	Quad* back = new Quad(quadMesh, white);
 	back->transform.SetPosition({ 0.f, 0.f, -1.5f });
 	back->transform.RotateDeg(0.f, 0.f, 0.f);
 	
-	Quad* left = new Quad(green);
+	Quad* left = new Quad(quadMesh, green);
 	left->transform.SetPosition({ -0.5f, 0.f, -1.0f });
 	left->transform.RotateDeg(0.f, 90.f, 0.f);
 	
-	Quad* right = new Quad(red);
+	Quad* right = new Quad(quadMesh, red);
 	right->transform.SetPosition({ 0.5f, 0.f, -1.0f });
 	right->transform.RotateDeg(0.f, -90.f, 0.f);
 
-	Quad* light = new Quad(emissive);
+	Quad* light = new Quad(quadMesh, emissive);
 	light->transform.SetPosition({ 0.f, 0.4999f, -1.0f });
 	light->transform.RotateDeg(90.f, 0.f, 0.f);
 	light->transform.SetScale({ 0.3, 0.3f, 0.3f });
 
-	Cube* cube = new Cube(white);
-	cube->transform.SetPosition({ 0.25f, -0.3f, -2.0f });
-	cube->transform.Scale(0.2f, 0.2f, 0.2f);
-	cube->transform.RotateDeg(0.f, 0.f, 0.f);
+	Cube* cube = new Cube(cubeMesh, white);
+	cube->transform.SetPosition({ 0.15f, -0.2f, -1.2f });
+	cube->transform.SetScale(0.3f, 0.6f, 0.3f);
+	cube->transform.RotateDeg(0.f, 60.f, 0.f);
 
 	scene.get()->hierarchy.push_back(sp);
 	scene.get()->hierarchy.push_back(sp2);
@@ -93,7 +93,7 @@ std::unique_ptr<World> SetScene(const char* filename)
 	scene.get()->hierarchy.push_back(right);
 	scene.get()->hierarchy.push_back(light);
 
-	//scene.get()->hierarchy.push_back(cube);
+	scene.get()->hierarchy.push_back(cube);
 
 	return scene;
 }

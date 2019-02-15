@@ -54,6 +54,7 @@ bool Plane::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) co
 	return false;
 }
 
+/*
 bool Quad::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
 	result.material = this->GetMaterial();
@@ -64,6 +65,7 @@ bool Quad::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 
 	return f0WS.GetHit(r, tMin, tMax, result) || f1WS.GetHit(r, tMin, tMax, result);
 }
+*/
 
 Cube::Cube(Material * mat)
 {
@@ -71,6 +73,7 @@ Cube::Cube(Material * mat)
 
 }
 
+/*
 bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
 	Matrix4 m = transform.GetMatrix();
@@ -97,7 +100,7 @@ bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 	HitResult test;
 	bool hit = false;
 
-	if (back_f0WS.GetHit(r, tMin, tMax, result) || back_f1WS.GetHit(r, tMin, tMax, test))
+	if (back_f0WS.GetHit(r, tMin, tMax, test) || back_f1WS.GetHit(r, tMin, tMax, test))
 	{
 		hit = true;
 		if (test.t < result.t)
@@ -105,7 +108,7 @@ bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 			result = test;
 		}
 	}
-	if (front_f0WS.GetHit(r, tMin, tMax, result) || front_f1WS.GetHit(r, tMin, tMax, test))
+	if (front_f0WS.GetHit(r, tMin, tMax, test) || front_f1WS.GetHit(r, tMin, tMax, test))
 	{
 		hit = true;
 		if (test.t < result.t)
@@ -113,7 +116,7 @@ bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 			result = test;
 		}
 	}
-	if (top_f0WS.GetHit(r, tMin, tMax, result) || top_f1WS.GetHit(r, tMin, tMax, test))
+	if (top_f0WS.GetHit(r, tMin, tMax, test) || top_f1WS.GetHit(r, tMin, tMax, test))
 	{
 		hit = true;
 		if (test.t < result.t)
@@ -121,7 +124,7 @@ bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 			result = test;
 		}
 	}
-	if (top_f0WS.GetHit(r, tMin, tMax, result) || top_f1WS.GetHit(r, tMin, tMax, test))
+	if (top_f0WS.GetHit(r, tMin, tMax, test) || top_f1WS.GetHit(r, tMin, tMax, test))
 	{
 		hit = true;
 		if (test.t < result.t)
@@ -129,7 +132,7 @@ bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 			result = test;
 		}
 	}
-	if (top_f0WS.GetHit(r, tMin, tMax, result) || top_f1WS.GetHit(r, tMin, tMax, test))
+	if (top_f0WS.GetHit(r, tMin, tMax, test) || top_f1WS.GetHit(r, tMin, tMax, test))
 	{
 		hit = true;
 		if (test.t < result.t)
@@ -137,7 +140,7 @@ bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 			result = test;
 		}
 	}
-	if (top_f0WS.GetHit(r, tMin, tMax, result) || top_f1WS.GetHit(r, tMin, tMax, test))
+	if (top_f0WS.GetHit(r, tMin, tMax, test) || top_f1WS.GetHit(r, tMin, tMax, test))
 	{
 		hit = true;
 		if (test.t < result.t)
@@ -150,3 +153,4 @@ bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 
 	return hit;
 }
+*/
