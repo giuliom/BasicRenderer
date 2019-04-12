@@ -42,7 +42,7 @@ bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 		return false;    // This ray is parallel to this triangle.
 	}
 	
-	f = 1.0 / a;
+	f = 1.0f / a;
 	s = r.origin - v0.pos;
 	u = f * Vector3::Dot(s, h);
 	

@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cmath>
 #include "BasicRenderer.h"
 #include "ObjLoader.h"
 #include "Ray.h"
