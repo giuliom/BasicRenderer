@@ -113,7 +113,13 @@ int main(int argc, char *argv[])
 	BasicRenderer::RenderingMode renderingMode = BasicRenderer::RenderingMode::RASTERIZER;
 	BasicRenderer::ShadingMode shadingMode = BasicRenderer::ShadingMode::LIT;
 
-	if (argc == 2)
+	int pixelSamples = 4;
+	int maxBounces = 3;
+
+	std::cout << std::endl << "Pressy any key to start" << std::endl;
+	std::cin.get();
+
+	if (argc <= 2)
 	{
 		if (std::strcmp(argv[1], "help") == 0)
 		{
@@ -124,6 +130,8 @@ int main(int argc, char *argv[])
 			<< "-h output image height" << std::endl
 			<< "-r rendering mode" << std::endl
 			<< "-s shading mode" << std::endl
+			<< "-p pixel samples" << std::endl
+			<< "-b max bounces" << std::endl
 			<< std::endl;
 		}
 		else
@@ -170,6 +178,14 @@ int main(int argc, char *argv[])
 		{
 			file = argv[an + 1];
 		}
+		else if (std::strcmp(argv[an], "-p") == 0)
+		{
+			pixelSamples = atoi(argv[an + 1]);
+		}
+		else if (std::strcmp(argv[an], "-b") == 0)
+		{
+			maxBounces = atoi(argv[an + 1]);
+		}
 		else
 		{
 			if (std::strcmp(argv[an], "help") != 0) std::cout << std::string(argv[an]) + " is not valid.";
@@ -186,6 +202,8 @@ int main(int argc, char *argv[])
 	std::cout << "Height: " << height << std::endl;
 	std::cout << "Rendering: " + renderingModeName << std::endl;
 	std::cout << "Shading: " + shadingModeName << std::endl;
+	std::cout << "Pixel Samples: " << pixelSamples << std::endl;
+	std::cout << "Max Bounces: " << maxBounces << std::endl;
 	std::cout << "\n----- RENDERING -----\n"<<std::endl;
 
 	
@@ -194,7 +212,7 @@ int main(int argc, char *argv[])
 
 	auto beginClock = clock();
 	
-	std::shared_ptr<const FrameBuffer> frame = renderer.Render(width, height, *scene, renderingMode, shadingMode);
+	std::shared_ptr<const FrameBuffer> frame = renderer.Render(width, height, *scene, renderingMode, shadingMode, pixelSamples, maxBounces);
 	
 	auto endClock = clock();
 
@@ -221,7 +239,7 @@ int main(int argc, char *argv[])
 	}
 	*/
 	
-	//getchar();
+	//std::cin.get();
 	
 }
 

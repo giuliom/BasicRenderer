@@ -6,7 +6,7 @@
 #include "World.h"
 #include "Material.h"
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, World& scene, RenderingMode mode, ShadingMode shading)
+const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int height, World& scene, RenderingMode mode, ShadingMode shading, int samplesPerPixel, int maxBounces)
 {
 	assert(width > 0 && height > 0);
 
@@ -25,12 +25,11 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	fBuffer->Fill(scene.ambientLightColor);
 
 	auto shadingFunc = &Material::LitShading;
-	int bounces = maxBounces;
 
 	switch (shading)
 	{
 	case ShadingMode::NORMAL:
-		bounces = 1;
+		maxBounces = 1;
 		shadingFunc = &Material::NormalShading;
 		break;
 	}
@@ -48,7 +47,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 		}
 		break;
 	case RenderingMode::RAYTRACER:
-		RayTracing(width, height, scene,bounces, shadingFunc);
+		RayTracing(width, height, scene, samplesPerPixel, maxBounces, shadingFunc);
 		break;
 	}
 	
@@ -56,7 +55,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	return fBuffer;
 }
 
-const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, int height, World & scene, int bounces, Color (Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, int height, World & scene, int pixelSamples, int bounces, Color (Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	const float camW = camera.GetHalfWidth() * 2.f;
 	const float camH = camera.GetHalfHeight() * 2.f;
