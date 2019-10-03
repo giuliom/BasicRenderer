@@ -47,7 +47,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 		}
 		break;
 	case RenderingMode::RAYTRACER:
-		RayTracing(width, height, scene, samplesPerPixel, maxBounces, shadingFunc);
+		return RayTracing(width, height, scene, samplesPerPixel, maxBounces, shadingFunc);
 		break;
 	}
 	
@@ -61,13 +61,17 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 	const float camH = camera.GetHalfHeight() * 2.f;
 	const float aspectRatio = camera.GetAspectRatio();
 
+	const float inverseWidth = 1.0f / fwidth;
+	const float inverseHeight = 1.0f / fheight;
+	const float fInversePixelSameples = 1.0f / (float)pixelSamples;
+
 	//Top-left
 	for (float y = 0.f; y < fheight; y++)
 	{
 		for (float x = 0.f; x < fwidth; x++)
 		{
-			float u = x / fwidth;
-			float v = y / fheight;
+			const float u = x * inverseWidth;
+			const float v = y * inverseHeight;
 
 			Ray r = camera.GetCameraRay(u, v);
 			
@@ -77,7 +81,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 				c = c + RayTrace(r, scene, bounces, shading);
 			}
 
-			c = c / (float) pixelSamples;
+			c = c * fInversePixelSameples;
 			c.x = c.x > 1.f ? 1.f : c.x;
 			c.y = c.y > 1.f ? 1.f : c.y;
 			c.z = c.z > 1.f ? 1.f : c.z;

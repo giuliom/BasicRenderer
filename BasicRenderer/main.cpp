@@ -35,8 +35,8 @@ std::unique_ptr<World> SetScene(const char* filename)
 
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename));
-	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("../../Assets/cube.obj"));
-	std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../Assets/quad.obj"));
+	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("../../../Assets/cube.obj"));
+	std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../../Assets/quad.obj"));
 
 	SceneObject* bunny = new SceneObject(bunnyMesh, red);
 	bunny->transform.SetScale(10.f, 10.f, 10.f);
@@ -100,12 +100,12 @@ std::unique_ptr<World> SetScene(const char* filename)
 
 int main(int argc, char *argv[])
 {
-	std::string file = "../../Assets/bunny.obj";
+	std::string file = "../../../Assets/bunny.obj";
 
-	int width = 1920;
-	int height = 1080;
+	int width = 720;
+	int height = 480;
 
-	std::string outputFile = "./b";
+	std::string outputFile = "./";
 
 	std::string renderingModeName = "rasterizer";
 	std::string shadingModeName = "lit";
@@ -116,14 +116,17 @@ int main(int argc, char *argv[])
 	int pixelSamples = 4;
 	int maxBounces = 3;
 
-	std::cout << std::endl << "Pressy any key to start" << std::endl;
-	std::cin.get();
-
-	if (argc <= 2)
+	if (argc < 2)
+	{
+		std::cout << "Digit 'help' to show the available options" << std::endl;
+		std::cin.get();
+		return 0;
+	}
+	else
 	{
 		if (std::strcmp(argv[1], "help") == 0)
 		{
-		std::cout << "The following options are available:" << std::endl << std::endl
+			std::cout << "The following options are available:" << std::endl << std::endl
 			<< "-n output image name and path" << std::endl
 			<< "-f input obj file name and path" << std::endl
 			<< "-w output image width" << std::endl
@@ -133,13 +136,11 @@ int main(int argc, char *argv[])
 			<< "-p pixel samples" << std::endl
 			<< "-b max bounces" << std::endl
 			<< std::endl;
+			std::cin.get();
+			return 0;
 		}
-		else
-		{
-			std::cout << "Digit 'help' to show the available options" << std::endl;
-		}	
-		return 0;
 	}
+
 
 	for (int an = 1; an < argc -1;)
 	{
@@ -190,13 +191,15 @@ int main(int argc, char *argv[])
 		{
 			if (std::strcmp(argv[an], "help") != 0) std::cout << std::string(argv[an]) + " is not valid.";
 			std::cout<< "Digit 'help' to show the available options" << std::endl;
+			std::cin.get();
 			return 0;
 		}
 
 		an += 2;
 	}
 
-	std::cout << "\nOutput: " + outputFile << std::endl;
+	std::cout << "\n----- PARAMETERS -----" << std::endl;
+	std::cout << "Output: " + outputFile << std::endl;
 	std::cout << "Input: " + file << std::endl;
 	std::cout << "Width: " << width << std::endl;
 	std::cout << "Height: " << height << std::endl;
@@ -204,6 +207,10 @@ int main(int argc, char *argv[])
 	std::cout << "Shading: " + shadingModeName << std::endl;
 	std::cout << "Pixel Samples: " << pixelSamples << std::endl;
 	std::cout << "Max Bounces: " << maxBounces << std::endl;
+
+	std::cout << std::endl << "Pressy any key to start" << std::endl;
+	std::cin.get();
+
 	std::cout << "\n----- RENDERING -----\n"<<std::endl;
 
 	
@@ -221,25 +228,9 @@ int main(int argc, char *argv[])
 	//Saving Image
 	ImageExporter::ExportToBMP(outputFile.c_str(), frame);
 
-	std::cout << "Rendering Time: " <<rt.substr(0, rt.length() - 7).append("ms ").c_str() << "\n\n";
-
-	/*
-	int i = 0;
-	while (i < 10)
-	{
-		beginClock = clock();
-
-		renderer.Render(width, height, *scene, renderingMode, shadingMode);
-
-		endClock = clock();
-
-		rt = std::to_string(endClock - beginClock);
-		std::cout << "Rendering Time: " << rt.substr(0, rt.length() - 6).append("ms ").c_str() << "\n";
-		++i;
-	}
-	*/
+	std::cout <<std::endl << "Rendering Time: " <<rt.substr(0, rt.length() - 7).append(" ms ").c_str() << "\n\n";
 	
-	//std::cin.get();
+	std::cin.get();
 	
 }
 
