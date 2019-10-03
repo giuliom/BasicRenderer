@@ -32,6 +32,7 @@
 *.app
 
 # Builds
+Binaries/
 debug/
 release/
 LibDebug/
@@ -47,7 +48,6 @@ LibRelease/
 
 # Visual Studio 2017 Settings
 .vs
-QtGUI/render.bmp
-QtGUI/render.ppm
 render.bmp
-BasicRenderer/brender.bmp
+render.ppm
+render.bmp
