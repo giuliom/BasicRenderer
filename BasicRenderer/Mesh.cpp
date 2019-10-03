@@ -19,6 +19,7 @@ Mesh::Mesh(int nfaces, Face faces[])
 Mesh::Mesh(const Mesh & m)
 {
 	nfaces = m.nfaces;
+	delete[] faces;
 	faces = new Face[nfaces];
 	memcpy(faces, m.faces, sizeof(Face) * nfaces);
 }
@@ -26,6 +27,7 @@ Mesh::Mesh(const Mesh & m)
 Mesh::Mesh(Mesh && m)
 {
 	nfaces = m.nfaces;
+	delete[] faces;
 	faces = m.faces;
 	m.faces = nullptr;
 }

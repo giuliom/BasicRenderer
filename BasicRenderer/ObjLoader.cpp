@@ -107,5 +107,7 @@ Mesh* ObjLoader::Load(const char* path_name_extension)
 
 	std::cout << "Loaded .obj file: " << path_name_extension << std::endl;
 
+	file.close();
+
 	return new Mesh((int) faces.size(), faces.data()); ;
 }
