@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 	renderView = ui->renderWidget;
-	renderView->SetScene("C:/BasicRenderer/Assets/bunny.obj"); //"../../Assets/bunny.obj");
+	renderView->SetScene("TODO");
 	renderView->setFocus();
 
 	widthLineEdit = ui->widthEdit;

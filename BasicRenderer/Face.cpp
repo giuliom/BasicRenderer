@@ -27,8 +27,8 @@ Face & Face::operator=(Face && f)
 //Möller–Trumbore intersection algorithm
 bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
-	const float EPSILON = 0.0000001;
-	Vector3 faceNormal = Vector3::CrossProduct(v1.pos - v0.pos, v2.pos - v0.pos).Normalize();
+	const float EPSILON = 0.0000001f;
+	const Vector3 faceNormal = Vector3::CrossProduct(v1.pos - v0.pos, v2.pos - v0.pos).Normalize();
 
 	Vector3 edge1, edge2, h, s, q;
 	float a, f, u, v;
@@ -46,7 +46,7 @@ bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 	s = r.origin - v0.pos;
 	u = f * Vector3::Dot(s, h);
 	
-	if (u < 0.0 || u > 1.0)
+	if (u < 0.0f || u > 1.0f)
 	{
 		return false;
 	}
@@ -54,13 +54,13 @@ bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 	q = Vector3::CrossProduct(s, edge1);
 	v = f * Vector3::Dot(r.direction, q);
 	
-	if (v < 0.0 || u + v > 1.0)
+	if (v < 0.0f || u + v > 1.0f)
 	{
 		return false;
 	}
 	
 	// At this stage we can compute t to find out where the intersection point is on the line.
-	float t = f * Vector3::Dot(edge2, q);
+	const float t = f * Vector3::Dot(edge2, q);
 	
 	if (t > EPSILON) // ray intersection
 	{

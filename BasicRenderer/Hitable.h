@@ -26,6 +26,7 @@ public:
 	Hitable(Material* mat) : material(mat) {}
 	Hitable(const Hitable& other) : material(other.GetMaterial()) {}
 
+	virtual void ProcessForRendering() const = 0;
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const = 0;
 	inline Material* GetMaterial() const { return material; }
 };

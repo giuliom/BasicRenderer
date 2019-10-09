@@ -6,7 +6,7 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Binaries\$(Platform)\$(Configuration)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>-r raytracer -w 1280 -h 720 -p 2 -b 2</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-r raytracer -w 1280 -h 720 -p 2 -b 1</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)Binaries\$(Platform)\$(Configuration)\</LocalDebuggerWorkingDirectory>
   </PropertyGroup>

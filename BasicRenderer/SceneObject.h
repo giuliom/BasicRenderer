@@ -10,6 +10,7 @@ class SceneObject : public Hitable
 {
 protected:
 	std::shared_ptr<Mesh> mesh;
+	Face* transformedFaces = nullptr;
 	mutable Transform worldTransform;
 	std::vector<Transform*> children; //TODO Move to Transform?
 
@@ -18,16 +19,20 @@ public:
 	bool dirty = true;
 
 public:
-	SceneObject() : Hitable() {}
-	SceneObject(Material* mat) : Hitable(mat) {}
-	SceneObject(std::shared_ptr<Mesh> mesh_) : mesh(mesh_) {};
-	SceneObject(std::shared_ptr<Mesh> mesh_, Material* mat) : Hitable(mat), mesh(mesh_) {} ;
-	SceneObject(const SceneObject& obj) : Hitable(obj), mesh(obj.mesh), transform(obj.transform) {}
+	SceneObject() = delete;
+	SceneObject(Material* mat) = delete;
+	SceneObject(std::shared_ptr<Mesh> mesh_);
+	SceneObject(std::shared_ptr<Mesh> mesh_, Material* mat);
+	SceneObject(const SceneObject& obj);
+	SceneObject(SceneObject&& obj);
 	virtual ~SceneObject();
 
-	inline std::shared_ptr<Mesh> const GetMesh() const { return mesh; } 
-	Transform& UpdateWorldTransform() const;
+	//TODO define assigments
 
+	inline std::shared_ptr<Mesh> const GetMesh() const { return mesh; }
+	inline const Transform& GetWorldTransform() const { return worldTransform; }
+
+	void ProcessForRendering() const;
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 };
 

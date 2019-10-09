@@ -21,6 +21,6 @@ public:
 	Mesh& operator=(Mesh&& m);
 	
 	int GetFacesCount() const { return nfaces; }
-	const Face* const GetFaces() const;
+	const Face* const GetFaces() const { return faces; }
 };
 

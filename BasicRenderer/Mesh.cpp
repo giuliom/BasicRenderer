@@ -48,9 +48,4 @@ Mesh & Mesh::operator=(Mesh && m)
 }
 
 
-const Face* const Mesh::GetFaces() const
-{
-	return faces;
-}
-
 

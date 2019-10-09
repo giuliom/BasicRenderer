@@ -15,5 +15,6 @@ public:
 	//TODO implement it properly
 	std::vector<class Hitable*> hierarchy;
 
+	void ProcessForRendering();
 	bool GetHit(const class Ray& r, float tMin, float tMax, struct HitResult& hit) const;
 };

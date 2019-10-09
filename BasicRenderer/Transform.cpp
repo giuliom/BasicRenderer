@@ -67,6 +67,7 @@ Transform & Transform::operator=(const Transform & t)
 	scale = t.scale;
 	rotation = t.rotation;
 	object = t.object;
+	UpdateTransform();
 	return *this;
 }
 
@@ -78,6 +79,7 @@ Transform & Transform::operator=(Transform && t)
 	scale = t.scale;
 	rotation = t.rotation;
 	object = t.object;
+	UpdateTransform();
 	return *this;
 }
 

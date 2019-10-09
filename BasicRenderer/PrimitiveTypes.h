@@ -18,10 +18,11 @@ public:
 	Vector3 pos;
 	float radius;
 
-	Sphere() {}
+	Sphere() : radius(1.f) {}
 	Sphere(Vector3 pos_, float radius_) : pos(pos_), radius(radius_) {}
 	Sphere(Vector3 pos_, float radius_, Material* mat) : Hitable(mat), pos(pos_), radius(radius_) {}
 
+	virtual void ProcessForRendering() const {}
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 };
 
@@ -33,6 +34,7 @@ public:
 	Plane() = delete;
 	Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Hitable(mat), centre(centre), normal(normal.Normalize()) {}
 
+	virtual void ProcessForRendering() const {}
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
 
 };
@@ -43,8 +45,6 @@ class Quad : public SceneObject
 	Face f1 = Face(Vertex({ -0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
 
 public:
-	Quad() {}
-	Quad(Material* mat) : SceneObject(mat) {}
 	Quad(std::shared_ptr<Mesh> mesh_) = delete;
 	Quad(std::shared_ptr<Mesh> mesh_, Material* mat) :SceneObject(mesh_, mat) {}
 	Quad(const SceneObject& obj) = delete;
@@ -95,7 +95,6 @@ struct Cube : public SceneObject
 	Face right_f1 = Face(Vertex(bottomBackRight, rightN, {}), Vertex(topFrontRight, rightN, {}), Vertex(bottomFrontRight, rightN, {}));
 
 public:
-	Cube(Material* mat);
 	Cube(std::shared_ptr<Mesh> mesh_) = delete;
 	Cube(std::shared_ptr<Mesh> mesh_, Material* mat) : SceneObject(mesh_, mat) {}
 	Cube(const SceneObject& obj) = delete;

@@ -208,8 +208,8 @@ int main(int argc, char *argv[])
 	std::cout << "Pixel Samples: " << pixelSamples << std::endl;
 	std::cout << "Max Bounces: " << maxBounces << std::endl;
 
-	std::cout << std::endl << "Pressy any key to start" << std::endl;
-	std::cin.get();
+	//std::cout << std::endl << "Press any key to start" << std::endl;
+	//std::cin.get();
 
 	std::cout << "\n----- RENDERING -----\n"<<std::endl;
 

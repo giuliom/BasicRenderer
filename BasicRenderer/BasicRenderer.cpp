@@ -24,6 +24,8 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 	fBuffer->Fill(scene.ambientLightColor);
 
+	scene.ProcessForRendering();
+
 	auto shadingFunc = &Material::LitShading;
 
 	switch (shading)
@@ -198,14 +200,14 @@ void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene, Color
 	Matrix4 view = camera.GetViewMatrix();
 	Matrix4 projection = camera.GetProjectionMatrix();
 
-	Matrix4 mvp = projection * view * obj.UpdateWorldTransform().m;
+	Matrix4 mvp = projection * view * obj.GetWorldTransform().m;
 
 	const int nfaces = obj.GetMesh()->GetFacesCount();
 	const auto faces = obj.GetMesh()->GetFaces();
 
 	for (int i = 0; i < nfaces; i++)
 	{
-		Face face = faces[i].ToMatrixSpace(mvp);
+		Face face = faces[i].ToMatrixSpace(mvp); //TODO optimize for not moving objects
 
 		Vector3 faceNormal = Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize();
 

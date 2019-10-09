@@ -3,48 +3,88 @@
 
 
 
-SceneObject::~SceneObject()
+SceneObject::SceneObject(std::shared_ptr<Mesh> mesh_)
+	: mesh(mesh_)
 {
-	
+	transformedFaces = new Face[mesh->GetFacesCount()];
 }
 
-Transform& SceneObject::UpdateWorldTransform() const
+SceneObject::SceneObject(std::shared_ptr<Mesh> mesh_, Material* mat) 
+	: Hitable(mat)
+	, mesh(mesh_)
+{
+	transformedFaces = new Face[mesh->GetFacesCount()];
+}
+
+SceneObject::SceneObject(const SceneObject& obj)
+	: mesh(obj.mesh)
+	, worldTransform(obj.worldTransform)
+	, children(obj.children)
+	, transform(transform)
+{
+	delete[] transformedFaces;
+	transformedFaces = new Face[mesh->GetFacesCount()];
+	memcpy(transformedFaces, obj.transformedFaces, sizeof(Face) * mesh->GetFacesCount());
+}
+
+SceneObject::SceneObject(SceneObject&& obj)
+	: mesh(obj.mesh)
+	, worldTransform(obj.worldTransform)
+	, children(obj.children)
+	, transform(transform)
+{
+	delete[] transformedFaces;
+	transformedFaces = obj.transformedFaces;
+	obj.transformedFaces = nullptr;
+}
+
+SceneObject::~SceneObject()
+{
+	delete[] transformedFaces;
+}
+
+void SceneObject::ProcessForRendering() const
 {
 	Transform* parent = transform.GetParent();
+	bool updateFaces = false;
 
 	if (parent == nullptr)
 	{ 
 		worldTransform = transform; 
 	}
-	else if (transform.dirty)
+	else
 	{
-		worldTransform = transform.Combine(*parent);
-		transform.dirty = false;
-		for (auto t : children)
+		if (transform.dirty)
 		{
-			t->dirty = true;
+			worldTransform = transform.Combine(*parent);
+			transform.dirty = false;
+			for (auto t : children)
+			{
+				t->dirty = true;
+			}
 		}
 	}
 
-	return worldTransform;
+	if (transform.dirty)
+	{
+		for (int i = 0; i < mesh->GetFacesCount(); ++i)
+		{
+			transformedFaces[i] = mesh->GetFaces()[i].ToMatrixSpace(worldTransform.m);
+		}
+	}
 }
 
 bool SceneObject::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
-	Matrix4 m = transform.GetMatrix();
 	result.t = tMax;
 	HitResult test;
 	bool hit = false;
 
 	if (mesh != nullptr)
 	{
-		const auto faces = mesh->GetFaces();
-		int nfaces = mesh->GetFacesCount();
-
-		for (int i = 0; i < nfaces; i++)
+		for (int i = 0; i < mesh->GetFacesCount(); i++)
 		{
-			Face f = faces[i].ToMatrixSpace(m);
-			if (f.GetHit(r, tMin, tMax, test))
+			if (transformedFaces[i].GetHit(r, tMin, tMax, test))
 			{
 				hit = true;
 				if (test.t < result.t)
@@ -55,7 +95,7 @@ bool SceneObject::GetHit(const Ray & r, float tMin, float tMax, HitResult & resu
 		}
 	}
 
-	result.material = this->GetMaterial();
+	result.material = material;
 
 	return hit;
 }

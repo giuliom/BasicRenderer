@@ -67,11 +67,6 @@ bool Quad::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 }
 */
 
-Cube::Cube(Material * mat)
-{
-	material = mat;
-
-}
 
 /*
 bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const

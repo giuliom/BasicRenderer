@@ -2,6 +2,14 @@
 #include "Ray.h"
 #include "Hitable.h"
 
+void World::ProcessForRendering()
+{
+	for (auto obj : hierarchy)
+	{
+		obj->ProcessForRendering();
+	}
+}
+
 bool World::GetHit(const Ray & r, float tMin, float tMax, HitResult & hit) const
 {
 	HitResult tempHit;
