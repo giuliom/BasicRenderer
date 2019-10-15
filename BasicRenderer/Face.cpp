@@ -1,11 +1,12 @@
 #include "Face.h"
-#include "Hitable.h"
+#include "Primitive.h"
 
 Face::Face(const Position& p0, const Position& p1, const  Position& p2, const Face& face)
 {
 	v0 = Vertex(p0, face.v0.nrml, face.v0.uv);
 	v1 = Vertex(p1, face.v1.nrml, face.v1.uv);
 	v2 = Vertex(p2, face.v2.nrml, face.v2.uv);
+	normal = CalculateNormal();
 }
 
 Face & Face::operator=(const Face & f)
@@ -13,6 +14,7 @@ Face & Face::operator=(const Face & f)
 	v0 = f.v0;
 	v1 = f.v1;
 	v2 = f.v2;
+	normal = f.normal;
 	return *this;
 }
 
@@ -21,6 +23,7 @@ Face & Face::operator=(Face && f)
 	v0 = f.v0;
 	v1 = f.v1;
 	v2 = f.v2;
+	normal = f.normal;
 	return *this;
 }
 
@@ -28,8 +31,6 @@ Face & Face::operator=(Face && f)
 bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
 {
 	const float EPSILON = 0.0000001f;
-	const Vector3 faceNormal = Vector3::CrossProduct(v1.pos - v0.pos, v2.pos - v0.pos).Normalize();
-
 	Vector3 edge1, edge2, h, s, q;
 	float a, f, u, v;
 	edge1 = v1.pos - v0.pos;
@@ -66,7 +67,7 @@ bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 	{
 		result.t = t;
 		result.pos = r.GetPoint(result.t);
-		result.normal = faceNormal;
+		result.normal = normal;
 		return true;
 	}
 	else // This means that there is a line intersection but not a ray intersection.
@@ -74,12 +75,4 @@ bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 		return false;
 	}
 	
-}
-
-
-Vector3 Face::CalculateNormal() const
-{
-	return Vector3((v0.nrml.x + v1.nrml.x + v2.nrml.x) * 0.333333f,
-		(v0.nrml.y + v1.nrml.y + v2.nrml.y) * 0.333333f,
-		(v0.nrml.z + v1.nrml.z + v2.nrml.z) * 0.333333f);
 }

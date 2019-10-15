@@ -19,7 +19,7 @@ std::uniform_real_distribution<float> uniformDist(0, 1);
 
 Vector3 UniforSampleInHemisphere(const Vector3& normal)
 {
-	Vector3 nt, nb;
+	Vector3 nt;
 	if (std::fabs(normal.x) > std::fabs(normal.y))
 	{
 		nt = Vector3(normal.z, 0.f, -normal.x) / sqrtf(normal.x * normal.x + normal.z * normal.z);
@@ -28,7 +28,8 @@ Vector3 UniforSampleInHemisphere(const Vector3& normal)
 	{
 		nt = Vector3(0.f, -normal.z, normal.y) / sqrtf(normal.y * normal.y + normal.z * normal.z);
 	}
-	nb = Vector3::CrossProduct(normal, nt);
+
+	Vector3 nb = Vector3::CrossProduct(normal, nt);
 
 	float r1 = uniformDist(engine);
 	float r2 = uniformDist(engine);
@@ -36,7 +37,7 @@ Vector3 UniforSampleInHemisphere(const Vector3& normal)
 	float phi = 2.f * PI * r2;
 	float x = sinTheta * cosf(phi);
 	float z = sinTheta * sinf(phi);
-	Vector3 sample = Vector3(x, r1, z);
+	Vector3 sample(x, r1, z);
 	
 	return {
 		sample.x * nb.x + sample.y * normal.x + sample.z * nt.x,

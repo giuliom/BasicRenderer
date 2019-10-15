@@ -20,10 +20,9 @@ public:
 
 	inline Vector3 Normalize() const
 	{
-		float l = Length();
+		const float l = Length();
 		if (l == 0) return { 0.f, 0.f, 0.f };
-		l = 1.0f / l;
-		return (*this) * l;
+		return (*this)  / l;
 	}
 
 	inline float Length() const	{ return sqrtf((x * x) + (y * y) + (z * z)); }

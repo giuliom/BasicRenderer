@@ -1,7 +1,7 @@
-#include "Hitable.h"
+#include "Primitive.h"
 #include "Material.h"
 
-Hitable::Hitable()
+Primitive::Primitive()
 {
 	//material = new Material(Vector3::One()); //TODO remove
 }

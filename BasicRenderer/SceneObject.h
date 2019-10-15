@@ -3,10 +3,10 @@
 #include <vector>
 #include <memory>
 #include "Transform.h"
-#include "Hitable.h"
+#include "Primitive.h"
 #include "Mesh.h"
 
-class SceneObject : public Hitable
+class SceneObject : public Primitive
 {
 protected:
 	std::shared_ptr<Mesh> mesh;

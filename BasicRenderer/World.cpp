@@ -1,6 +1,6 @@
 #include "World.h"
 #include "Ray.h"
-#include "Hitable.h"
+#include "Primitive.h"
 
 void World::ProcessForRendering()
 {

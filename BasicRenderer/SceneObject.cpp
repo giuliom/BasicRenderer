@@ -10,7 +10,7 @@ SceneObject::SceneObject(std::shared_ptr<Mesh> mesh_)
 }
 
 SceneObject::SceneObject(std::shared_ptr<Mesh> mesh_, Material* mat) 
-	: Hitable(mat)
+	: Primitive(mat)
 	, mesh(mesh_)
 {
 	transformedFaces = new Face[mesh->GetFacesCount()];

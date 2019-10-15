@@ -14,7 +14,7 @@ struct HitResult
 	Material* material = nullptr;
 };
 
-class Hitable
+class Primitive
 {
 protected:
 	//TODO temporary implementation
@@ -22,9 +22,9 @@ protected:
 
 public:
 
-	Hitable();
-	Hitable(Material* mat) : material(mat) {}
-	Hitable(const Hitable& other) : material(other.GetMaterial()) {}
+	Primitive();
+	Primitive(Material* mat) : material(mat) {}
+	Primitive(const Primitive& other) : material(other.GetMaterial()) {}
 
 	virtual void ProcessForRendering() const = 0;
 	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const = 0;

@@ -2,7 +2,7 @@
 
 #include "Ray.h"
 #include "Vector3.h"
-#include "Hitable.h"
+#include "Primitive.h"
 #include "World.h"
 
 using Color = Vector3;

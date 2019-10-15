@@ -13,7 +13,7 @@ public:
 	Color ambientLightColor{ 1.f, 1.f, 1.f };
 
 	//TODO implement it properly
-	std::vector<class Hitable*> hierarchy;
+	std::vector<class Primitive*> hierarchy;
 
 	void ProcessForRendering();
 	bool GetHit(const class Ray& r, float tMin, float tMax, struct HitResult& hit) const;
