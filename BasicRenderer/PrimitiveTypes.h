@@ -23,7 +23,7 @@ public:
 	Sphere(Vector3 pos_, float radius_, Material* mat) : Primitive(mat), pos(pos_), radius(radius_) {}
 
 	virtual void ProcessForRendering() const {}
-	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
 };
 
 class Plane : public Primitive
@@ -35,7 +35,7 @@ public:
 	Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Primitive(mat), centre(centre), normal(normal.Normalize()) {}
 
 	virtual void ProcessForRendering() const {}
-	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
 
 };
 
@@ -51,7 +51,7 @@ public:
 	Quad(const Quad& quad) : SceneObject(quad) {}
 	virtual ~Quad() {}
 
-	//virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+	//virtual bool GetHit(const Ray& r, float tMin, float tMax, HitHit& result) const override;
 
 };
 
@@ -101,5 +101,5 @@ public:
 	Cube(const Cube& cube) : SceneObject(cube) {}
 	virtual ~Cube() {}
 
-	//virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+	//virtual bool GetHit(const Ray& r, float tMin, float tMax, HitHit& result) const override;
 };

@@ -33,6 +33,6 @@ public:
 	inline const Transform& GetWorldTransform() const { return worldTransform; }
 
 	void ProcessForRendering() const;
-	virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const override;
+	virtual bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
 };
 

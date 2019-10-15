@@ -74,10 +74,10 @@ void SceneObject::ProcessForRendering() const
 	}
 }
 
-bool SceneObject::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
+bool SceneObject::GetHit(const Ray & r, float tMin, float tMax, float& tHit, Vector3& normalHit) const
 {
-	result.t = tMax;
-	HitResult test;
+	tHit = tMax;
+	float test;
 	bool hit = false;
 
 	if (mesh != nullptr)
@@ -87,15 +87,14 @@ bool SceneObject::GetHit(const Ray & r, float tMin, float tMax, HitResult & resu
 			if (transformedFaces[i].GetHit(r, tMin, tMax, test))
 			{
 				hit = true;
-				if (test.t < result.t)
+				if (test < tHit)
 				{
-					result = test;
+					tHit = test;
+					normalHit = transformedFaces[i].normal;
 				}
 			}
 		}
 	}
-
-	result.material = material;
 
 	return hit;
 }

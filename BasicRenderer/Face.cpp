@@ -28,32 +28,30 @@ Face & Face::operator=(Face && f)
 }
 
 //Möller–Trumbore intersection algorithm
-bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
+bool Face::GetHit(const Ray & r, float tMin, float tMax, float& tHit) const
 {
 	const float EPSILON = 0.0000001f;
-	Vector3 edge1, edge2, h, s, q;
-	float a, f, u, v;
-	edge1 = v1.pos - v0.pos;
-	edge2 = v2.pos - v0.pos;
-	h = Vector3::CrossProduct(r.direction, edge2);
-	a = Vector3::Dot(edge1, h);
+	const Vector3 edge1 = v1.pos - v0.pos;
+	const Vector3 edge2 = v2.pos - v0.pos;
+	const Vector3 h = Vector3::CrossProduct(r.direction, edge2);
+	const float a = Vector3::Dot(edge1, h);
 	
 	if (a > -EPSILON && a < EPSILON)
 	{
 		return false;    // This ray is parallel to this triangle.
 	}
 	
-	f = 1.0f / a;
-	s = r.origin - v0.pos;
-	u = f * Vector3::Dot(s, h);
+	const float f = 1.0f / a;
+	const Vector3 s = r.origin - v0.pos;
+	const float u = f * Vector3::Dot(s, h);
 	
 	if (u < 0.0f || u > 1.0f)
 	{
 		return false;
 	}
 	
-	q = Vector3::CrossProduct(s, edge1);
-	v = f * Vector3::Dot(r.direction, q);
+	const Vector3 q = Vector3::CrossProduct(s, edge1);
+	const float v = f * Vector3::Dot(r.direction, q);
 	
 	if (v < 0.0f || u + v > 1.0f)
 	{
@@ -65,9 +63,7 @@ bool Face::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 	
 	if (t > EPSILON) // ray intersection
 	{
-		result.t = t;
-		result.pos = r.GetPoint(result.t);
-		result.normal = normal;
+		tHit = t;
 		return true;
 	}
 	else // This means that there is a line intersection but not a ray intersection.

@@ -1,7 +1,7 @@
 #include "PrimitiveTypes.h"
 
 //TODO check bug
-bool Sphere::GetHit(const Ray& r, float tMin, float tMax, HitResult& result) const
+bool Sphere::GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const
 {
 	Vector3 oc = r.origin - pos;
 	float a = Vector3::Dot(r.direction, r.direction);
@@ -14,26 +14,22 @@ bool Sphere::GetHit(const Ray& r, float tMin, float tMax, HitResult& result) con
 		float temp = (-b - sqDiscr) / a;
 		if (temp > tMin && temp < tMax)
 		{
-			result.t = temp;
-			result.pos = r.GetPoint(result.t);
-			result.normal = ((result.pos - pos) / radius);
-			result.material = GetMaterial();
+			tHit = temp;
+			normalHit = ((r.GetPoint(temp) - pos) / radius);
 			return true;
 		}
 		temp = (-b + sqDiscr) / a;
 		if (temp > tMin && temp < tMax)
 		{
-			result.t = temp;
-			result.pos = r.GetPoint(result.t);
-			result.normal = ((result.pos - pos) / radius);
-			result.material = GetMaterial();
+			tHit = temp;
+			normalHit = ((r.GetPoint(temp) - pos) / radius);
 			return true;
 		}
 	}
 	return false;
 }
 
-bool Plane::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
+bool Plane::GetHit(const Ray & r, float tMin, float tMax, float& tHit, Vector3& normalHit) const
 {
 	float div = Vector3::Dot(normal, r.direction);
 
@@ -43,10 +39,8 @@ bool Plane::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) co
 
 		if (t >= 0.0001f)
 		{
-			result.t = t;
-			result.pos = r.GetPoint(result.t);
-			result.normal = normal;
-			result.material = GetMaterial();
+			tHit = t;
+			normalHit = normal;
 			return true;
 		}
 	}
@@ -55,7 +49,7 @@ bool Plane::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) co
 }
 
 /*
-bool Quad::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
+bool Quad::GetHit(const Ray & r, float tMin, float tMax, HitHit & result) const
 {
 	result.material = this->GetMaterial();
 	
@@ -69,7 +63,7 @@ bool Quad::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 
 
 /*
-bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) const
+bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitHit & result) const
 {
 	Matrix4 m = transform.GetMatrix();
 
@@ -92,7 +86,7 @@ bool Cube::GetHit(const Ray & r, float tMin, float tMax, HitResult & result) con
 	Face right_f1WS = right_f1.ToMatrixSpace(m);
 
 	result.t = tMax;
-	HitResult test;
+	HitHit test;
 	bool hit = false;
 
 	if (back_f0WS.GetHit(r, tMin, tMax, test) || back_f1WS.GetHit(r, tMin, tMax, test))

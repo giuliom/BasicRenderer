@@ -99,16 +99,17 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 
 Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
-	HitResult hit;
-	if (scene.GetHit(ray, 0.0001f, 999999.99f, hit))
+	Vector3 hitPosition, hitNormal;
+	const Primitive* hitObject = nullptr;
+	if ((hitObject = scene.GetHit(ray, 0.0001f, 999999.99f, hitPosition, hitNormal)) != nullptr)
 	{
-		if (hit.material == nullptr)
+		if (hitObject->GetMaterial() == nullptr)
 		{
 			return missingMaterialColor;
 		}
 
 		Ray scattered;
-		Material mat = *hit.material;
+		const Material mat = *hitObject->GetMaterial();
 		Color albedo;
 		bool success = false;
 		//return hit.normal; // TODO to show normals
@@ -118,33 +119,33 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 			{
 				case Material::Type::METALLIC:
 				{
-					Vector3 reflected = Vector3::Reflect(ray.direction, hit.normal);
-					scattered = Ray(hit.pos, reflected + UniforSampleInHemisphere(hit.normal) * (1.f - mat.metallic));
+					Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
+					scattered = Ray(hitPosition, reflected + UniforSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
 					albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
-					success = (Vector3::Dot(scattered.direction, hit.normal) > 0);
+					success = (Vector3::Dot(scattered.direction, hitNormal) > 0);
 				}
 				break;
 
 				case Material::Type::DIELECTRIC:
 				{
 					Vector3 outNormal;
-					Vector3 reflected = Vector3::Reflect(ray.direction, hit.normal);
+					Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
 					float ni_nt;
 					albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
 					Vector3 refracted;
 					float reflectionProb;
 					float cos;
-					if (Vector3::Dot(ray.direction, hit.normal) > 0.f)
+					if (Vector3::Dot(ray.direction, hitNormal) > 0.f)
 					{
-						outNormal = hit.normal * -1.f;
+						outNormal = hitNormal * -1.f;
 						ni_nt = mat.refractiveIndex;
-						cos = (Vector3::Dot(ray.direction, hit.normal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
+						cos = (Vector3::Dot(ray.direction, hitNormal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
 					}
 					else
 					{
-						outNormal = hit.normal;
+						outNormal = hitNormal;
 						ni_nt = 1.f / mat.refractiveIndex;
-						cos = -(Vector3::Dot(ray.direction, hit.normal)); // / rayIn.direction.Length(); == 1.f
+						cos = -(Vector3::Dot(ray.direction, hitNormal)); // / rayIn.direction.Length(); == 1.f
 					}
 
 					if (Material::Refract(ray.direction, outNormal, ni_nt, refracted))
@@ -158,11 +159,11 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 
 					if (UnitRandf() < reflectionProb)
 					{
-						scattered = Ray(hit.pos, reflected);
+						scattered = Ray(hitPosition, reflected);
 					}
 					else
 					{
-						scattered = Ray(hit.pos, refracted);
+						scattered = Ray(hitPosition, refracted);
 					}
 
 					success = true;
@@ -171,8 +172,8 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 
 				default:
 				{
-					Vector3 target = hit.pos + UniforSampleInHemisphere(hit.normal);
-					scattered = Ray(hit.pos, target - hit.pos);
+					Vector3 target = hitPosition + UniforSampleInHemisphere(hitNormal);
+					scattered = Ray(hitPosition, target - hitPosition);
 					albedo = mat.baseColor;
 					success = true;
 				}

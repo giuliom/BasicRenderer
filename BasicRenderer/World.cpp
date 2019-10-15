@@ -10,23 +10,28 @@ void World::ProcessForRendering()
 	}
 }
 
-bool World::GetHit(const Ray & r, float tMin, float tMax, HitResult & hit) const
+const Primitive* World::GetHit(const Ray & r, float tMin, float tMax, Vector3 & hitPosition, Vector3& hitNormal) const
 {
-	HitResult tempHit;
-	bool anyHit = false;
+	Primitive* anyHit = nullptr;
 	float closestHit = tMax;
+	float tempHit = tMax;
+	Vector3 tempNormal;
 
 	for (auto& obj : hierarchy)
 	{
-		if (obj->GetHit(r, tMin, tMax, tempHit))
+		if (obj->GetHit(r, tMin, tMax, tempHit, tempNormal))
 		{
-			anyHit = true;
-			if (tempHit.t < closestHit)
+			
+			if (tempHit < closestHit)
 			{
-				closestHit = tempHit.t;
-				hit = tempHit;
+				closestHit = tempHit;
+				hitNormal = tempNormal;
+				anyHit = obj;
 			}
 		}
 	}
+
+	hitPosition = r.GetPoint(closestHit);
+
 	return anyHit;
 }
