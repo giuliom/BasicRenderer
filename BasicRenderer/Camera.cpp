@@ -17,8 +17,14 @@ Camera::~Camera()
 void Camera::SetAspectRatio(int w, int h)
 {
 	aspectRatio = (float)w / (float)h;
-	float theta = (fov * PI) / 180.f;
-	halfHeight =  tanf(theta / 2.0f);
+	SetFov(fov);
+}
+
+void Camera::SetFov(float f)
+{
+	fov = f;
+	const float theta = (fov * PI) / 180.f;
+	halfHeight = tanf(theta / 2.0f);
 	fovFactor = 1.0f / halfHeight;
 	halfWidth = aspectRatio * halfHeight;
 }
