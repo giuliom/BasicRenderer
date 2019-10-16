@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include <iostream>
 #include "BasicRenderer.h"
 #include "ObjLoader.h"
 #include "Ray.h"
@@ -92,7 +93,11 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 			fBuffer->WriteToColor((int) (y * fwidth + x), c);
 			
 		}
+
+		std::cout << "Progress: " << static_cast<int>((y / fheight) * 100.f + 1.f) << "% \r";
 	}
+
+
 
 	return fBuffer;
 }
