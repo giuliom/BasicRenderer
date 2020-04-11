@@ -14,7 +14,7 @@ void World::Add(Primitive* obj)
 {
 	if (obj != nullptr)
 	{
-		hierarchy.push_back(obj);
+		hierarchy.emplace_back(obj);
 	}
 }
 

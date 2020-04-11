@@ -40,14 +40,14 @@ bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const F
 	uint32_t width = fBuf->GetWidth();
 	uint32_t height = fBuf->GetHeight();
 
-	bmpData.push_back(0x42);
-	bmpData.push_back(0x4D);
+	bmpData.emplace_back(0x42);
+	bmpData.emplace_back(0x4D);
 	size_t fileSize_offset = bmpData.size();
 	Fill4Bytes(bmpData, 0xFFFFFFFF); //Size, to be filled later 
-	bmpData.push_back(0x00); //Reserved data
-	bmpData.push_back(0x00);
-	bmpData.push_back(0x00);
-	bmpData.push_back(0x00);
+	bmpData.emplace_back(0x00); //Reserved data
+	bmpData.emplace_back(0x00);
+	bmpData.emplace_back(0x00);
+	bmpData.emplace_back(0x00);
 	size_t pixelInfo_offset = bmpData.size();
 	Fill4Bytes(bmpData, 0x00); //Pixel offset filled later
 	Fill4Bytes(bmpData, 40); //BITMAPINFOHEADER
@@ -66,7 +66,7 @@ bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const F
 	uint32_t headerPadding = bmpData.size() % 4;
 	for (uint32_t p = 0; p < headerPadding; p++)
 	{
-		bmpData.push_back(0);
+		bmpData.emplace_back(0);
 	}
 	size_t headerSize = bmpData.size();
 	memcpy(&bmpData[pixelInfo_offset], &headerSize, 4);
@@ -81,15 +81,15 @@ bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const F
 			//BGR
 			uint32_t index = (height - j - 1) * width + i;
 			Color c = cBuf[index];
-			bmpData.push_back((uint8_t) (c.z * 255.99f));
-			bmpData.push_back((uint8_t) (c.y * 255.99f));
-			bmpData.push_back((uint8_t) (c.x * 255.99f));
+			bmpData.emplace_back((uint8_t) (c.z * 255.99f));
+			bmpData.emplace_back((uint8_t) (c.y * 255.99f));
+			bmpData.emplace_back((uint8_t) (c.x * 255.99f));
 		}
 
 		uint32_t padding = bmpData.size() % 4;
 		for (uint32_t p=0; p < padding; p++)
 		{
-			bmpData.push_back(0);
+			bmpData.emplace_back(0);
 		}
 	}
 
@@ -109,17 +109,17 @@ bool ImageExporter::ExportToBMP(const char * path, const std::shared_ptr<const F
 void ImageExporter::Fill4Bytes(std::vector<uint8_t>& dest, const uint32_t value)
 {
 	uint8_t* temp = (uint8_t*) &value;
-	dest.push_back(temp[0]);
-	dest.push_back(temp[1]);
-	dest.push_back(temp[2]);
-	dest.push_back(temp[3]);
+	dest.emplace_back(temp[0]);
+	dest.emplace_back(temp[1]);
+	dest.emplace_back(temp[2]);
+	dest.emplace_back(temp[3]);
 }
 
 void ImageExporter::Fill2Bytes(std::vector<uint8_t>& dest, const uint16_t value)
 {
 	uint8_t* temp = (uint8_t*)&value;
-	dest.push_back(temp[0]);
-	dest.push_back(temp[1]);
+	dest.emplace_back(temp[0]);
+	dest.emplace_back(temp[1]);
 }
 
 

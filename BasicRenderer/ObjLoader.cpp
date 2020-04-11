@@ -66,12 +66,12 @@ Mesh* ObjLoader::Load(const char* path_name_extension)
 
 			if (matches >= 3) // .obj indices start from 1
 			{
-				vIndices.push_back(FaceIndices(vIndex[0]-1, vIndex[1]-1, vIndex[2]-1));
+				vIndices.emplace_back(FaceIndices(vIndex[0]-1, vIndex[1]-1, vIndex[2]-1));
 			}
 			if (matches >= 9)
 			{
-				nIndices.push_back(FaceIndices(nIndex[0]-1, nIndex[1]-1, nIndex[2]-1));
-				tIndices.push_back(FaceIndices(tIndex[0]-1, tIndex[1]-1, tIndex[2]-1));
+				nIndices.emplace_back(FaceIndices(nIndex[0]-1, nIndex[1]-1, nIndex[2]-1));
+				tIndices.emplace_back(FaceIndices(tIndex[0]-1, tIndex[1]-1, tIndex[2]-1));
 			}
 		}
 
@@ -82,9 +82,9 @@ Mesh* ObjLoader::Load(const char* path_name_extension)
 	{
 		for (int i = 0; i < vIndices.size(); ++i)
 		{
-			Vertex v0 = Vertex(vertices[vIndices[i].i0], normals[nIndices[i].i0], uvs[tIndices[i].i0]);
-			Vertex v1 = Vertex(vertices[vIndices[i].i1], normals[nIndices[i].i1], uvs[tIndices[i].i1]);
-			Vertex v2 = Vertex(vertices[vIndices[i].i2], normals[nIndices[i].i2], uvs[tIndices[i].i2]);
+			Vertex v0(vertices[vIndices[i].i0], normals[nIndices[i].i0], uvs[tIndices[i].i0]);
+			Vertex v1(vertices[vIndices[i].i1], normals[nIndices[i].i1], uvs[tIndices[i].i1]);
+			Vertex v2(vertices[vIndices[i].i2], normals[nIndices[i].i2], uvs[tIndices[i].i2]);
 			
 			faces.push_back(Face(v0, v1, v2));
 		}
@@ -93,9 +93,9 @@ Mesh* ObjLoader::Load(const char* path_name_extension)
 	{
 		for (int i = 0; i < vIndices.size(); ++i)
 		{
-			Vertex v0 = Vertex(vertices[vIndices[i].i0], Vector4::Zero(), Vector2::Zero());
-			Vertex v1 = Vertex(vertices[vIndices[i].i1], Vector4::Zero(), Vector2::Zero());
-			Vertex v2 = Vertex(vertices[vIndices[i].i2], Vector4::Zero(), Vector2::Zero());
+			Vertex v0(vertices[vIndices[i].i0], Vector4::Zero(), Vector2::Zero());
+			Vertex v1(vertices[vIndices[i].i1], Vector4::Zero(), Vector2::Zero());
+			Vertex v2(vertices[vIndices[i].i2], Vector4::Zero(), Vector2::Zero());
 
 			faces.push_back(Face(v0, v1, v2));
 		}

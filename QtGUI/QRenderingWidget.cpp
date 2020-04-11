@@ -66,10 +66,10 @@ void QRenderingWidget::SetScene(const char* filename)
 	cube->transform.SetPosition({ 0.25f, -0.3f, -2.0f });
 	cube->transform.Scale(0.2f, 0.2f, 0.2f);
 
-	//scene.get()->hierarchy.push_back(sp);
-	//scene.get()->hierarchy.push_back(sp2);
-	//scene.get()->hierarchy.push_back(sp3);
-	//scene.get()->hierarchy.push_back(sp4);
+	//scene.get()->Add(sp);
+	//scene.get()->Add(sp2);
+	//scene.get()->Add(sp3);
+	//scene.get()->Add(sp4);
 
 	scene.get()->Add(pl);
 
