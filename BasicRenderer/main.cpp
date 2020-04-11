@@ -92,20 +92,20 @@ std::unique_ptr<World> SetScene(const char* filename)
 	cube2->transform.SetScale(0.25f, 0.25f, 0.25f);
 	cube2->transform.RotateDeg(0.f, -25.f, 0.f);
 
-	scene.get()->hierarchy.push_back(sp);
-	//scene.get()->hierarchy.push_back(sp2);
+	scene.get()->Add(sp);
+	//scene.get()->Ad(sp2);
 
-	scene.get()->hierarchy.push_back(floor);
-	scene.get()->hierarchy.push_back(ceiling);
-	scene.get()->hierarchy.push_back(back);
-	scene.get()->hierarchy.push_back(front);
-	scene.get()->hierarchy.push_back(left);
-	scene.get()->hierarchy.push_back(right);
+	scene.get()->Add(floor);
+	scene.get()->Add(ceiling);
+	scene.get()->Add(back);
+	scene.get()->Add(front);
+	scene.get()->Add(left);
+	scene.get()->Add(right);
 
-	scene.get()->hierarchy.push_back(light);
+	scene.get()->Add(light);
 
-	scene.get()->hierarchy.push_back(cube);
-	scene.get()->hierarchy.push_back(cube2);
+	scene.get()->Add(cube);
+	scene.get()->Add(cube2);
 
 	return scene;
 }

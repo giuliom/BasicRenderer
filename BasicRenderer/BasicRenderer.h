@@ -51,7 +51,7 @@ protected:
 
 	Color RayTrace(const Ray& ray, World& scene, int bounces, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
-	void DrawObject(const SceneObject& objl, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
+	void DrawObject(const Primitive* primitive, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 	inline Face PerspectiveDivide(Face& f) const;
 	inline Face NormalizedToScreenSpace(Face& f) const;

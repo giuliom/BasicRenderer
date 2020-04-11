@@ -40,13 +40,9 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	switch (mode)
 	{
 	default:
-		for (auto& obj : scene.hierarchy)
+		for (auto* obj : scene.GetHierarchy())
 		{
-			SceneObject* sceneObj = dynamic_cast<SceneObject*>(obj);
-			if (sceneObj != nullptr && sceneObj->GetMesh() != nullptr)
-			{
-				DrawObject(*sceneObj, scene, shadingFunc);
-			}
+			DrawObject(obj, scene, shadingFunc);
 		}
 		break;
 	case RenderingMode::RAYTRACER:
@@ -201,75 +197,79 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 	}
 }
 
-void BasicRenderer::DrawObject(const SceneObject& obj, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+void BasicRenderer::DrawObject(const Primitive* primitive, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
 	Matrix4 view = camera.GetViewMatrix();
 	Matrix4 projection = camera.GetProjectionMatrix();
 
-	Matrix4 mvp = projection * view * obj.GetWorldTransform().m;
+	const SceneObject* obj = dynamic_cast<const SceneObject*>(primitive);
 
-	const int nfaces = obj.GetMesh()->GetFacesCount();
-	const auto faces = obj.GetMesh()->GetFaces();
-
-	for (int i = 0; i < nfaces; i++)
+	if (obj != nullptr)
 	{
-		Face face = faces[i].ToMatrixSpace(mvp); //TODO optimize for not moving objects
+		Matrix4 mvp = projection * view * obj->GetWorldTransform().m;
 
-		Vector3 faceNormal = Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize();
+		const int nfaces = obj->GetMesh()->GetFacesCount();
+		const auto faces = obj->GetMesh()->GetFaces();
 
-		Material* mat = obj.GetMaterial();
-		Color c;
-		if (mat)
+		for (int i = 0; i < nfaces; i++)
 		{
-			c = (obj.GetMaterial()->*shading)(scene, Vector3::Zero(), faceNormal);
-		}
-		else
-		{
-			c = missingMaterialColor;
-		}
+			Face face = faces[i].ToMatrixSpace(mvp); //TODO optimize for not moving objects
 
-		c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
+			Vector3 faceNormal = Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize();
 
-		face = PerspectiveDivide(face);
-		face = NormalizedToScreenSpace(face);
-
-		Face clippedFaces[4];
-		int nClippedFaces = Clip(face, clippedFaces);
-
-		for (int j = 0; j < nClippedFaces; j++)
-		{
-			face = clippedFaces[j];
-
-			if (CullFace(face)) continue;
-
-			Vector4 bbox = BoundingBox(face);
-			int bbz = (int)bbox.z;
-			int bbw = (int)bbox.w;
-
-			for (int x = (int)bbox.x; x < bbz; ++x)
+			Material* mat = obj->GetMaterial();
+			Color c;
+			if (mat)
 			{
-				for (int y = (int)bbox.y; y < bbw; ++y)
+				c = (obj->GetMaterial()->*shading)(scene, Vector3::Zero(), faceNormal);
+			}
+			else
+			{
+				c = missingMaterialColor;
+			}
+
+			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
+
+			face = PerspectiveDivide(face);
+			face = NormalizedToScreenSpace(face);
+
+			Face clippedFaces[4];
+			int nClippedFaces = Clip(face, clippedFaces);
+
+			for (int j = 0; j < nClippedFaces; j++)
+			{
+				face = clippedFaces[j];
+
+				if (CullFace(face)) continue;
+
+				Vector4 bbox = BoundingBox(face);
+				int bbz = (int)bbox.z;
+				int bbw = (int)bbox.w;
+
+				for (int x = (int)bbox.x; x < bbz; ++x)
 				{
-					Vector3 bary = Barycentre((float)x, (float)y, face);
-
-					if (bary.x < 0.0f || bary.y < 0.0f || bary.z < 0.0f) continue;
-
-					float z = face.v0.pos.z * bary.x + face.v1.pos.z * bary.y + face.v2.pos.z * bary.z;
-
-					//Because of the Pinhole model
-					int index = width * (height - y - 1) + x;
-
-					if (z < fBuffer->GetDepth(index))
+					for (int y = (int)bbox.y; y < bbw; ++y)
 					{
-						fBuffer->WriteToColor(index, c);
-						fBuffer->WriteToDepth(index, z);
-					}
+						Vector3 bary = Barycentre((float)x, (float)y, face);
 
+						if (bary.x < 0.0f || bary.y < 0.0f || bary.z < 0.0f) continue;
+
+						float z = face.v0.pos.z * bary.x + face.v1.pos.z * bary.y + face.v2.pos.z * bary.z;
+
+						//Because of the Pinhole model
+						int index = width * (height - y - 1) + x;
+
+						if (z < fBuffer->GetDepth(index))
+						{
+							fBuffer->WriteToColor(index, c);
+							fBuffer->WriteToDepth(index, z);
+						}
+
+					}
 				}
 			}
 		}
-	} 
-	
+	}
 }
 
 inline Face BasicRenderer::PerspectiveDivide(Face& f) const

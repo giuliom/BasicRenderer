@@ -47,13 +47,13 @@ void QRenderingWidget::SetScene(const char* filename)
 	bunny->transform.SetScale(10.f, 10.f, 10.f);
 	bunny->transform.SetPosition(1.0f, -1.0f, -5.0f);
 	//bunny->transform.Rotate(0.0f, 0.01f, 0.0f);
-	scene.get()->hierarchy.push_back(bunny);
+	scene.get()->Add(bunny);
 
 	SceneObject* bunny2 = new SceneObject(bunnyMesh);
 	bunny2->transform.SetScale(10.f, 10.f, 10.f);
 	bunny2->transform.SetPosition(-0.5f, -1.0f, -5.0f);
 	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
-	scene.get()->hierarchy.push_back(bunny2);
+	scene.get()->Add(bunny2);
 
 	Sphere* sp = new Sphere({ -0.8f, 0.0f, -1.5f }, 0.4f, silver);
 	Sphere* sp2 = new Sphere({ 0.0f, 0.0f, -1.5f }, 0.4f, gold);
@@ -71,9 +71,9 @@ void QRenderingWidget::SetScene(const char* filename)
 	//scene.get()->hierarchy.push_back(sp3);
 	//scene.get()->hierarchy.push_back(sp4);
 
-	scene.get()->hierarchy.push_back(pl);
+	scene.get()->Add(pl);
 
-	scene.get()->hierarchy.push_back(cube);
+	scene.get()->Add(cube);
 }
 
 void QRenderingWidget::SaveFrame(const char* path)

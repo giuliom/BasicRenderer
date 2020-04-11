@@ -2,9 +2,25 @@
 #include "Ray.h"
 #include "Primitive.h"
 
+World::~World()
+{
+	for (auto* obj : hierarchy)
+	{
+		delete obj;
+	}
+}
+
+void World::Add(Primitive* obj)
+{
+	if (obj != nullptr)
+	{
+		hierarchy.push_back(obj);
+	}
+}
+
 void World::ProcessForRendering()
 {
-	for (auto obj : hierarchy)
+	for (auto& obj : hierarchy)
 	{
 		obj->ProcessForRendering();
 	}
@@ -12,7 +28,7 @@ void World::ProcessForRendering()
 
 const Primitive* World::GetHit(const Ray & r, float tMin, float tMax, Vector3 & hitPosition, Vector3& hitNormal) const
 {
-	Primitive* anyHit = nullptr;
+	const Primitive* anyHit = nullptr;
 	float closestHit = tMax;
 	float tempHit = tMax;
 	Vector3 tempNormal;

@@ -7,17 +7,26 @@
 class Primitive;
 class Ray;
 
+typedef std::vector<Primitive*> Hierarchy;
+
 class World
 {
+protected:
+	//TODO implement it properly
+	Hierarchy hierarchy;
+
 public:
+
+	World() {}
+	~World();
 
 	DirectionalLight sun;
 	float ambientLightIntensity = 1.0f;
 	Color ambientLightColor{ 1.f, 1.f, 1.f };
 
-	//TODO implement it properly
-	std::vector<Primitive*> hierarchy;
+	inline const Hierarchy& GetHierarchy() const { return hierarchy; }
 
+	void Add(Primitive* obj);
 	void ProcessForRendering();
 	const Primitive* GetHit(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
 };
