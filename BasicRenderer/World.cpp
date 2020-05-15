@@ -4,10 +4,7 @@
 
 World::~World()
 {
-	for (auto* obj : hierarchy)
-	{
-		delete obj;
-	}
+
 }
 
 void World::Add(Primitive* obj)
@@ -42,7 +39,7 @@ const Primitive* World::GetHit(const Ray & r, float tMin, float tMax, Vector3 & 
 			{
 				closestHit = tempHit;
 				hitNormal = tempNormal;
-				anyHit = obj;
+				anyHit = obj.get();
 			}
 		}
 	}

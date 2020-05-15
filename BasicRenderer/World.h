@@ -1,17 +1,19 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "Vertex.h"
 #include "DirectionalLight.h"
 
 class Primitive;
 class Ray;
 
-typedef std::vector<Primitive*> Hierarchy;
+typedef std::vector<std::shared_ptr<Primitive>> Hierarchy;
 
 class World
 {
 protected:
+
 	//TODO implement it properly
 	Hierarchy hierarchy;
 

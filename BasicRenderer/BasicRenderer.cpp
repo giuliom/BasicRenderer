@@ -40,9 +40,9 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	switch (mode)
 	{
 	default:
-		for (auto* obj : scene.GetHierarchy())
+		for (const std::shared_ptr<Primitive> obj : scene.GetHierarchy())
 		{
-			DrawObject(obj, scene, shadingFunc);
+			DrawObject(obj.get(), scene, shadingFunc);
 		}
 		break;
 	case RenderingMode::RAYTRACER:

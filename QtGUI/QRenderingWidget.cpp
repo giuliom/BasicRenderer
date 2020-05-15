@@ -40,8 +40,8 @@ void QRenderingWidget::SetScene(const char* filename)
 	Material* chromium = new Material({ .550f, 0.556f, 0.554f });//, Material::Type::DIELECTRIC);
 
 	//TODO resource manager needed
-	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load("C:/BasicRenderer/Assets/bunny.obj")); //TODO fix paths in QT project
-	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("C:/BasicRenderer/Assets/bunny.obj"));
+	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load("C:/BasicRenderer/assets/bunny.obj")); //TODO fix paths in QT project
+	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("C:/BasicRenderer/assets/bunny.obj"));
 
 	SceneObject* bunny = new SceneObject(bunnyMesh, red);
 	bunny->transform.SetScale(10.f, 10.f, 10.f);

@@ -35,8 +35,8 @@ std::unique_ptr<World> SetScene(const char* filename)
 
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load(filename));
-	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("../../../Assets/cube.obj"));
-	std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../../Assets/quad.obj"));
+	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("../../../assets/cube.obj"));
+	std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../../assets/quad.obj"));
 
 	SceneObject* bunny = new SceneObject(bunnyMesh, red);
 	bunny->transform.SetScale(10.f, 10.f, 10.f);
@@ -112,12 +112,12 @@ std::unique_ptr<World> SetScene(const char* filename)
 
 int main(int argc, char *argv[])
 {
-	std::string file = "../../../Assets/bunny.obj";
+	std::string file = "../../../assets/bunny.obj";
 
 	int width = 720;
 	int height = 480;
 
-	std::string outputFile = "./";
+	std::string outputFile = "../../../output/";
 
 	std::string renderingModeName = "rasterizer";
 	std::string shadingModeName = "lit";
@@ -129,12 +129,6 @@ int main(int argc, char *argv[])
 	int maxBounces = 3;
 
 	if (argc < 2)
-	{
-		std::cout << "Digit 'help' to show the available options" << std::endl;
-		std::cin.get();
-		return 0;
-	}
-	else
 	{
 		if (std::strcmp(argv[1], "help") == 0)
 		{

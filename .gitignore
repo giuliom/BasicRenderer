@@ -32,7 +32,9 @@
 *.app
 
 # Builds
-Binaries/
+bin/
+intermediate/
+output/
 debug/
 release/
 LibDebug/
