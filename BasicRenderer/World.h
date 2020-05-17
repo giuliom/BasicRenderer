@@ -29,6 +29,6 @@ public:
 	inline const Hierarchy& GetHierarchy() const { return hierarchy; }
 
 	void Add(Primitive* obj);
-	void ProcessForRendering();
-	const Primitive* GetHit(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
+	void ProcessForRendering(const Matrix4& projection, const Matrix4& view);
+	const Primitive* Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
 };

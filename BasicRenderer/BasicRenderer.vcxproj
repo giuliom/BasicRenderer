@@ -280,6 +280,7 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="Global.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="ImageExporter.h" />
     <ClInclude Include="ImageFormats.h" />

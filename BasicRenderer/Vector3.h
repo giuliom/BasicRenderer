@@ -71,3 +71,5 @@ public:
 	inline static Vector3 One() { return Vector3(1.0f, 1.0f, 1.0f); }
 
 };
+
+inline Vector3 CalculateNormal(const Vector3& v0, const Vector3& v1, const Vector3& v2) { return Vector3::CrossProduct(v1 - v0, v2 - v0).Normalize(); }

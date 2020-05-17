@@ -1,6 +1,9 @@
 #include "World.h"
 #include "Ray.h"
 #include "Primitive.h"
+#include "PrimitiveTypes.h"
+#include "Face.h"
+#include "SceneObject.h"
 
 World::~World()
 {
@@ -15,15 +18,15 @@ void World::Add(Primitive* obj)
 	}
 }
 
-void World::ProcessForRendering()
+void World::ProcessForRendering(const Matrix4& projection, const Matrix4& view)
 {
 	for (auto& obj : hierarchy)
 	{
-		obj->ProcessForRendering();
+		obj->ProcessForRendering(projection, view);
 	}
 }
 
-const Primitive* World::GetHit(const Ray & r, float tMin, float tMax, Vector3 & hitPosition, Vector3& hitNormal) const
+const Primitive* World::Raycast(const Ray & r, float tMin, float tMax, Vector3 & hitPosition, Vector3& hitNormal) const
 {
 	const Primitive* anyHit = nullptr;
 	float closestHit = tMax;
@@ -33,8 +36,7 @@ const Primitive* World::GetHit(const Ray & r, float tMin, float tMax, Vector3 & 
 	for (auto& obj : hierarchy)
 	{
 		if (obj->GetHit(r, tMin, tMax, tempHit, tempNormal))
-		{
-			
+		{			
 			if (tempHit < closestHit)
 			{
 				closestHit = tempHit;

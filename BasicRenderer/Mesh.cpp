@@ -3,47 +3,36 @@
 #include <cassert>
 
 
-Mesh::Mesh(int nfaces, Face faces[])
+Mesh::Mesh(uint nVertices, const Vertex vertices[], uint nFaces, const Face faces[])
 {
-	assert(nfaces >= 0 && faces != nullptr);
+	assert(nFaces >= 0 && faces != nullptr);
 
-	this->nfaces = nfaces;
-	this->faces = new Face[nfaces];
-
-	for (int i = 0; i < nfaces; ++i)
+	for (uint i = 0; i < nFaces; ++i)
 	{
-		this->faces[i] = faces[i];
+		m_faces.emplace_back(faces[i]);
 	}
 }
 
 Mesh::Mesh(const Mesh & m)
 {
-	nfaces = m.nfaces;
-	delete[] faces;
-	faces = new Face[nfaces];
-	memcpy(faces, m.faces, sizeof(Face) * nfaces);
+	m_faces = m.m_faces;
 }
 
 Mesh::Mesh(Mesh && m)
 {
-	nfaces = m.nfaces;
-	delete[] faces;
-	faces = m.faces;
-	m.faces = nullptr;
+	m_faces = m.m_faces;
 }
 
 
 Mesh::~Mesh()
 {
-	delete[] faces;
+
 }
 
 
 Mesh & Mesh::operator=(Mesh && m)
 {
-	nfaces = m.nfaces;
-	faces = m.faces;
-	m.faces = nullptr;
+	m_faces = m.m_faces;
 	return *this;
 }
 

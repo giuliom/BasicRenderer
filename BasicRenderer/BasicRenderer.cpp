@@ -25,8 +25,6 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 	fBuffer->Fill(scene.ambientLightColor);
 
-	scene.ProcessForRendering();
-
 	auto shadingFunc = &Material::LitShading;
 
 	switch (shading)
@@ -40,13 +38,19 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	switch (mode)
 	{
 	default:
+	{
+		scene.ProcessForRendering(camera.GetProjectionMatrix(), camera.GetViewMatrix());
 		for (const std::shared_ptr<Primitive> obj : scene.GetHierarchy())
 		{
 			DrawObject(obj.get(), scene, shadingFunc);
 		}
+	}
 		break;
 	case RenderingMode::RAYTRACER:
+	{
+		scene.ProcessForRendering(Matrix4::Identity(), Matrix4::Identity());
 		return RayTracing(width, height, scene, samplesPerPixel, maxBounces, shadingFunc);
+	}
 		break;
 	}
 	
@@ -67,6 +71,8 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 	//Top-left
 	for (float y = 0.f; y < fheight; y++)
 	{
+		std::cout << "Progress: " << static_cast<int>((y / fheight) * 100.f + 1.f) << "% \r";
+
 		for (float x = 0.f; x < fwidth; x++)
 		{
 			const float u = x * inverseWidth;
@@ -89,8 +95,6 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::RayTracing(int width, in
 			fBuffer->WriteToColor((int) (y * fwidth + x), c);
 			
 		}
-
-		std::cout << "Progress: " << static_cast<int>((y / fheight) * 100.f + 1.f) << "% \r";
 	}
 
 
@@ -102,7 +106,7 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 {
 	Vector3 hitPosition, hitNormal;
 	const Primitive* hitObject = nullptr;
-	if ((hitObject = scene.GetHit(ray, 0.0001f, 999999.99f, hitPosition, hitNormal)) != nullptr)
+	if ((hitObject = scene.Raycast(ray, 0.0001f, 999999.99f, hitPosition, hitNormal)) != nullptr)
 	{
 		if (hitObject->GetMaterial() == nullptr)
 		{
@@ -199,50 +203,36 @@ Color BasicRenderer::RayTrace(const Ray & ray, World& scene, int bounces, Color(
 
 void BasicRenderer::DrawObject(const Primitive* primitive, const World& scene, Color(Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 {
-	Matrix4 view = camera.GetViewMatrix();
-	Matrix4 projection = camera.GetProjectionMatrix();
-
 	const SceneObject* obj = dynamic_cast<const SceneObject*>(primitive);
 
 	if (obj != nullptr)
 	{
-		Matrix4 mvp = projection * view * obj->GetWorldTransform().m;
+		Material* mat = obj->GetMaterial();
+		Color c = missingMaterialColor;
 
-		const int nfaces = obj->GetMesh()->GetFacesCount();
-		const auto faces = obj->GetMesh()->GetFaces();
-
-		for (int i = 0; i < nfaces; i++)
+		for (uint i = 0; i < obj->NumFaces(); i++)
 		{
-			Face face = faces[i].ToMatrixSpace(mvp); //TODO optimize for not moving objects
+			Face f = obj->GetTransformedFace(i);
 
-			Vector3 faceNormal = Vector3::CrossProduct(face.v1.pos - face.v0.pos, face.v2.pos - face.v0.pos).Normalize();
-
-			Material* mat = obj->GetMaterial();
-			Color c;
 			if (mat)
 			{
-				c = (obj->GetMaterial()->*shading)(scene, Vector3::Zero(), faceNormal);
+				c = (obj->GetMaterial()->*shading)(scene, Vector3::Zero(), f.normal);
 			}
-			else
-			{
-				c = missingMaterialColor;
-			}
-
 			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
 
-			face = PerspectiveDivide(face);
-			face = NormalizedToScreenSpace(face);
+			PerspectiveDivide(f);
+			NormalizedToScreenSpace(f);
 
 			Face clippedFaces[4];
-			int nClippedFaces = Clip(face, clippedFaces);
+			int nClippedFaces = Clip(f, clippedFaces);
 
 			for (int j = 0; j < nClippedFaces; j++)
 			{
-				face = clippedFaces[j];
+				f = clippedFaces[j];
 
-				if (CullFace(face)) continue;
+				if (CullFace(f)) continue;
 
-				Vector4 bbox = BoundingBox(face);
+				Vector4 bbox = BoundingBox(f);
 				int bbz = (int)bbox.z;
 				int bbw = (int)bbox.w;
 
@@ -250,11 +240,11 @@ void BasicRenderer::DrawObject(const Primitive* primitive, const World& scene, C
 				{
 					for (int y = (int)bbox.y; y < bbw; ++y)
 					{
-						Vector3 bary = Barycentre((float)x, (float)y, face);
+						Vector3 bary = Barycentre((float)x, (float)y, f);
 
 						if (bary.x < 0.0f || bary.y < 0.0f || bary.z < 0.0f) continue;
 
-						float z = face.v0.pos.z * bary.x + face.v1.pos.z * bary.y + face.v2.pos.z * bary.z;
+						float z = f.v0.pos.z * bary.x + f.v1.pos.z * bary.y + f.v2.pos.z * bary.z;
 
 						//Because of the Pinhole model
 						int index = width * (height - y - 1) + x;
@@ -272,7 +262,7 @@ void BasicRenderer::DrawObject(const Primitive* primitive, const World& scene, C
 	}
 }
 
-inline Face BasicRenderer::PerspectiveDivide(Face& f) const
+inline void BasicRenderer::PerspectiveDivide(Face& f) const
 {
 	float v0w = 1.0f / f.v0.pos.w;
 	float v1w = 1.0f / f.v1.pos.w;
@@ -290,10 +280,10 @@ inline Face BasicRenderer::PerspectiveDivide(Face& f) const
 						 f.v2.pos.z * v2w,
 						 f.v2.pos.w);
 
-	return Face(v0, v1, v2, f);
+	f = Face(v0, v1, v2, f); // HERE
 }
 
-inline Face BasicRenderer::NormalizedToScreenSpace(Face& f) const
+inline void BasicRenderer::NormalizedToScreenSpace(Face& f) const
 {
 	Vector4 v0 = Vector4(floorf(0.5f * fwidth  * (f.v0.pos.x + 1.0f)),
 						 floorf(0.5f * fheight * (f.v0.pos.y + 1.0f)),
@@ -308,11 +298,11 @@ inline Face BasicRenderer::NormalizedToScreenSpace(Face& f) const
 						 f.v2.pos.z,
 						 f.v2.pos.w);
 
-	return Face(v0, v1, v2, f);
+	f = Face(v0, v1, v2, f); // HERE
 }
 
 //TODO use custom dynamic array
-inline int BasicRenderer::Clip(Face & f, Face (&clippedFaces)[4]) const
+inline int BasicRenderer::Clip(const Face& f, Face(&clippedFaces)[4]) const
 {
 	int nfaces = 0;
 
@@ -356,7 +346,7 @@ inline int BasicRenderer::Clip(Face & f, Face (&clippedFaces)[4]) const
 	return nfaces;
 }
 
-inline int BasicRenderer::ClipEdge(Vertex & v0, Vertex & v1, Vertex (&vertices)[6], int index) const
+inline int BasicRenderer::ClipEdge(const Vertex & v0, const Vertex & v1, Vertex (&vertices)[6], int index) const
 {
 	assert(index < 5);
 

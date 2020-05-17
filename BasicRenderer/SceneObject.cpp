@@ -1,96 +1,98 @@
 #include "SceneObject.h"
+#include "Face.h"
 
 
 
-
-SceneObject::SceneObject(std::shared_ptr<Mesh> mesh_)
-	: mesh(mesh_)
+SceneObject::SceneObject(std::shared_ptr<Mesh> mesh)
+	: m_mesh(mesh)
+	, m_transformedFaces(m_mesh ? m_mesh->NumFaces() : 0)
 {
-	transformedFaces = new Face[mesh->GetFacesCount()];
+
 }
 
-SceneObject::SceneObject(std::shared_ptr<Mesh> mesh_, Material* mat) 
+SceneObject::SceneObject(std::shared_ptr<Mesh> mesh, Material* mat) 
 	: Primitive(mat)
-	, mesh(mesh_)
+	, m_mesh(mesh)
+	, m_transformedFaces(m_mesh ? m_mesh->NumFaces() : 0)
 {
-	transformedFaces = new Face[mesh->GetFacesCount()];
+
 }
 
 SceneObject::SceneObject(const SceneObject& obj)
-	: mesh(obj.mesh)
-	, worldTransform(obj.worldTransform)
-	, children(obj.children)
-	, transform(transform)
+	: m_worldTransform(obj.m_worldTransform)
+	, m_transform(obj.m_transform)
+	, m_children(obj.m_children)
+	, m_mesh(obj.m_mesh)
+	, m_transformedFaces(obj.m_transformedFaces)
 {
-	delete[] transformedFaces;
-	transformedFaces = new Face[mesh->GetFacesCount()];
-	memcpy(transformedFaces, obj.transformedFaces, sizeof(Face) * mesh->GetFacesCount());
 }
 
 SceneObject::SceneObject(SceneObject&& obj)
-	: mesh(obj.mesh)
-	, worldTransform(obj.worldTransform)
-	, children(obj.children)
-	, transform(transform)
+	: m_worldTransform(obj.m_worldTransform)
+	, m_transform(obj.m_transform)
+	, m_children(obj.m_children)
+	, m_mesh(obj.m_mesh)
+	, m_transformedFaces(obj.m_transformedFaces)
 {
-	delete[] transformedFaces;
-	transformedFaces = obj.transformedFaces;
-	obj.transformedFaces = nullptr;
 }
 
 SceneObject::~SceneObject()
 {
-	delete[] transformedFaces;
 }
 
-void SceneObject::ProcessForRendering() const
+void SceneObject::ProcessForRendering(const Matrix4& projection, const Matrix4& view)
 {
-	Transform* parent = transform.GetParent();
+	Transform* parent = m_transform.GetParent();
 	bool updateFaces = false;
 
 	if (parent == nullptr)
-	{ 
-		worldTransform = transform; 
+	{
+		m_worldTransform = m_transform;
 	}
 	else
 	{
-		if (transform.dirty)
+		if (m_transform.dirty)
 		{
-			worldTransform = transform.Combine(*parent);
-			transform.dirty = false;
-			for (auto t : children)
+			m_worldTransform = m_transform.Combine(*parent);
+			m_transform.dirty = false;
+			for (auto t : m_children)
 			{
 				t->dirty = true;
 			}
 		}
 	}
 
-	if (transform.dirty)
+	if (m_transform.dirty)
 	{
-		for (int i = 0; i < mesh->GetFacesCount(); ++i)
+		const Matrix4 mvp = projection * view * m_worldTransform.m;
+
+		for (int i = 0; i < NumFaces(); ++i)
 		{
-			transformedFaces[i] = mesh->GetFaces()[i].ToMatrixSpace(worldTransform.m);
+			Face f = m_mesh->GetFace(i);
+			ToMatrixSpace(f, mvp);
+			m_transformedFaces[i] = f;
 		}
 	}
 }
 
-bool SceneObject::GetHit(const Ray & r, float tMin, float tMax, float& tHit, Vector3& normalHit) const
+bool SceneObject::GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const
 {
 	tHit = tMax;
 	float test;
 	bool hit = false;
 
-	if (mesh != nullptr)
+	if (GetMesh() != nullptr)
 	{
-		for (int i = 0; i < mesh->GetFacesCount(); i++)
+		for (int i = 0; i < NumFaces(); i++)
 		{
-			if (transformedFaces[i].GetHit(r, tMin, tMax, test))
+			const Face& f = GetTransformedFace(i);
+			if (f.GetHit(r, tMin, tMax, test))
 			{
 				hit = true;
 				if (test < tHit)
 				{
 					tHit = test;
-					normalHit = transformedFaces[i].normal;
+					normalHit = f.normal;
 				}
 			}
 		}

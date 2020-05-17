@@ -41,39 +41,23 @@ void QRenderingWidget::SetScene(const char* filename)
 
 	//TODO resource manager needed
 	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load("C:/BasicRenderer/assets/bunny.obj")); //TODO fix paths in QT project
-	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("C:/BasicRenderer/assets/bunny.obj"));
+	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("C:/BasicRenderer/assets/cube.obj"));
 
 	SceneObject* bunny = new SceneObject(bunnyMesh, red);
-	bunny->transform.SetScale(10.f, 10.f, 10.f);
-	bunny->transform.SetPosition(1.0f, -1.0f, -5.0f);
-	//bunny->transform.Rotate(0.0f, 0.01f, 0.0f);
+	bunny->GetTransform().SetScale(10.f, 10.f, 10.f);
+	bunny->GetTransform().SetPosition(0.0f, -1.0f, -5.0f);
 	scene.get()->Add(bunny);
 
-	SceneObject* bunny2 = new SceneObject(bunnyMesh);
-	bunny2->transform.SetScale(10.f, 10.f, 10.f);
-	bunny2->transform.SetPosition(-0.5f, -1.0f, -5.0f);
-	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
-	scene.get()->Add(bunny2);
-
 	Sphere* sp = new Sphere({ -0.8f, 0.0f, -1.5f }, 0.4f, silver);
-	Sphere* sp2 = new Sphere({ 0.0f, 0.0f, -1.5f }, 0.4f, gold);
-	Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, chromium);
-	Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);
-
 	Plane* pl = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, copper);
-
 	Cube* cube = new Cube(cubeMesh, gold);
-	cube->transform.SetPosition({ 0.25f, -0.3f, -2.0f });
-	cube->transform.Scale(0.2f, 0.2f, 0.2f);
+
+	cube->GetTransform().SetPosition({ 0.25f, -0.3f, -4.0f });
+	cube->GetTransform().Scale(0.05f, 0.05f, 0.05f);
 
 	//scene.get()->Add(sp);
-	//scene.get()->Add(sp2);
-	//scene.get()->Add(sp3);
-	//scene.get()->Add(sp4);
-
-	scene.get()->Add(pl);
-
-	scene.get()->Add(cube);
+	//scene.get()->Add(pl);
+	//scene.get()->Add(cube);
 }
 
 void QRenderingWidget::SaveFrame(const char* path)

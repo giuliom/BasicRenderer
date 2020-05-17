@@ -22,14 +22,15 @@ Mesh* ObjLoader::Load(const char* path_name_extension)
 		return nullptr;
 	}
 
-	std::vector<Vector4> vertices;
-	std::vector<Vector4> normals;
-	std::vector<Vector2> uvs;
+	std::vector<Vector4> rawVertices;
+	std::vector<Vector4> rawNormals;
+	std::vector<Vector2> rawUVs;
 
 	std::vector<FaceIndices> vIndices;
 	std::vector<FaceIndices> nIndices;
 	std::vector<FaceIndices> tIndices;
 
+	std::vector<Vertex> vertices;
 	std::vector<Face> faces;
 
 	std::string line;
@@ -43,19 +44,19 @@ Mesh* ObjLoader::Load(const char* path_name_extension)
 			Vector4 vertex = Vector4::Zero();
 			vertex.w = 1.0f;
 			sscanf_s(line.c_str(), "v %f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-			vertices.push_back(vertex);
+			rawVertices.push_back(vertex);
 		}
 		else if (sub.compare("vt") == 0) // UV
 		{
 			Vector2 uv;
 			sscanf_s(line.c_str(), "vt %f %f\n", &uv.x, &uv.y);
-			uvs.push_back(uv);
+			rawUVs.push_back(uv);
 		}
 		else if (sub.compare("vn") == 0)  // Normals
 		{
 			Vector4 normal = Vector4::Zero();
 			sscanf_s(line.c_str(), "vn %f %f %f\n", &normal.x, &normal.y, &normal.z);
-			normals.push_back(normal);
+			rawNormals.push_back(normal);
 		}
 		else if (sub.compare("f ") == 0) // Faces
 		{
@@ -78,26 +79,18 @@ Mesh* ObjLoader::Load(const char* path_name_extension)
 	}
 
 	
-	if (vIndices.size() == nIndices.size() && vIndices.size() == tIndices.size() && vIndices.size() > 0)
+	if (rawVertices.size() == rawNormals.size() && rawVertices.size() == rawUVs.size() && rawVertices.size() > 0)
 	{
-		for (int i = 0; i < vIndices.size(); ++i)
+		for (int i = 0; i < rawVertices.size(); ++i)
 		{
-			Vertex v0(vertices[vIndices[i].i0], normals[nIndices[i].i0], uvs[tIndices[i].i0]);
-			Vertex v1(vertices[vIndices[i].i1], normals[nIndices[i].i1], uvs[tIndices[i].i1]);
-			Vertex v2(vertices[vIndices[i].i2], normals[nIndices[i].i2], uvs[tIndices[i].i2]);
-			
-			faces.push_back(Face(v0, v1, v2));
+			vertices.push_back(Vertex(rawVertices[i], rawNormals[i], rawUVs[i]));
 		}
 	}
-	else if (vertices.size() > 3 && vIndices.size() > 1)
+	else if (rawVertices.size() > 3 && vIndices.size() > 1)
 	{
-		for (int i = 0; i < vIndices.size(); ++i)
+		for (int i = 0; i < rawVertices.size(); ++i)
 		{
-			Vertex v0(vertices[vIndices[i].i0], Vector4::Zero(), Vector2::Zero());
-			Vertex v1(vertices[vIndices[i].i1], Vector4::Zero(), Vector2::Zero());
-			Vertex v2(vertices[vIndices[i].i2], Vector4::Zero(), Vector2::Zero());
-
-			faces.push_back(Face(v0, v1, v2));
+			vertices.push_back(Vertex(rawVertices[i], Vector4::Zero(), Vector2::Zero()));
 		}
 	}
 	else {
@@ -105,9 +98,15 @@ Mesh* ObjLoader::Load(const char* path_name_extension)
 		return nullptr;
 	}
 
+	for (int i = 0; i < vIndices.size(); i++)
+	{
+		Face f(vertices[vIndices[i].i0], vertices[vIndices[i].i1], vertices[vIndices[i].i2]);
+		faces.push_back(f);
+	}
+
 	std::cout << "Loaded .obj file: " << path_name_extension << std::endl;
 
 	file.close();
 
-	return new Mesh((int) faces.size(), faces.data()); ;
+	return new Mesh((int) vertices.size(), vertices.data(), (int) faces.size(), faces.data()); ;
 }

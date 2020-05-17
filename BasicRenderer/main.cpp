@@ -39,14 +39,8 @@ std::unique_ptr<World> SetScene(const char* filename)
 	std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../../assets/quad.obj"));
 
 	SceneObject* bunny = new SceneObject(bunnyMesh, red);
-	bunny->transform.SetScale(10.f, 10.f, 10.f);
-	bunny->transform.SetPosition(1.0f, -1.0f, -5.0f);
-	//bunny->transform.Rotate(0.0f, 0.01f, 0.0f);
-
-	SceneObject* bunny2 = new SceneObject(bunnyMesh);
-	bunny2->transform.SetScale(10.f, 10.f, 10.f);
-	bunny2->transform.SetPosition(-0.5f, -1.0f, -5.0f);
-	//bunny2->transform.Rotate(0.0f, 0.01f, 0.0f);
+	bunny->GetTransform().SetScale(10.f, 10.f, 10.f);
+	bunny->GetTransform().SetPosition(0.0f, -1.0f, -5.0f);
 
 	Sphere* sp = new Sphere({ -0.15f, -0.25f, -0.4f }, 0.15f, silver);
 	Sphere* sp2 = new Sphere({ 0.25f, -0.25f, -0.4f }, 0.1f, chromium);
@@ -54,46 +48,47 @@ std::unique_ptr<World> SetScene(const char* filename)
 	Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);
 
 	Quad* floor = new Quad(quadMesh, white);
-	floor->transform.SetPosition({ 0.f, -0.5f, -0.5f });
-	floor->transform.RotateDeg(-90.f, 0.f, 0.f);
+	floor->GetTransform().SetPosition({ 0.f, -0.5f, -0.5f });
+	floor->GetTransform().RotateDeg(-90.f, 0.f, 0.f);
 	
 	Quad* ceiling = new Quad(quadMesh, white);
-	ceiling->transform.SetPosition({ 0.f, 0.5f, -0.5f });
-	ceiling->transform.RotateDeg(90.f, 0.f, 0.f);
+	ceiling->GetTransform().SetPosition({ 0.f, 0.5f, -0.5f });
+	ceiling->GetTransform().RotateDeg(90.f, 0.f, 0.f);
 	
 	Quad* back = new Quad(quadMesh, white);
-	back->transform.SetPosition({ 0.f, 0.f, -1.0f });
-	back->transform.RotateDeg(0.f, 0.f, 0.f);
+	back->GetTransform().SetPosition({ 0.f, 0.f, -1.0f });
+	back->GetTransform().RotateDeg(0.f, 0.f, 0.f);
 
 	Quad* front = new Quad(quadMesh, white);
-	front->transform.SetPosition({ 0.f, 0.f, 0.0001f });
-	front->transform.RotateDeg(0.f, 180.f, 0.f);
+	front->GetTransform().SetPosition({ 0.f, 0.f, 0.0001f });
+	front->GetTransform().RotateDeg(0.f, 180.f, 0.f);
 	
 	Quad* left = new Quad(quadMesh, green);
-	left->transform.SetPosition({ -0.5f, 0.f, -0.5f });
-	left->transform.RotateDeg(0.f, 90.f, 0.f);
+	left->GetTransform().SetPosition({ -0.5f, 0.f, -0.5f });
+	left->GetTransform().RotateDeg(0.f, 90.f, 0.f);
 	
 	Quad* right = new Quad(quadMesh, red);
-	right->transform.SetPosition({ 0.5f, 0.f, -0.5f });
-	right->transform.RotateDeg(0.f, -90.f, 0.f);
+	right->GetTransform().SetPosition({ 0.5f, 0.f, -0.5f });
+	right->GetTransform().RotateDeg(0.f, -90.f, 0.f);
 
 	Quad* light = new Quad(quadMesh, emissive);
-	light->transform.SetPosition({ 0.f, 0.4999f, -0.5f });
-	light->transform.RotateDeg(90.f, 0.f, 0.f);
-	light->transform.SetScale({ 0.3, 0.3f, 0.3f });
+	light->GetTransform().SetPosition({ 0.f, 0.4999f, -0.5f });
+	light->GetTransform().RotateDeg(90.f, 0.f, 0.f);
+	light->GetTransform().SetScale({ 0.3, 0.3f, 0.3f });
 
 	Cube* cube = new Cube(cubeMesh, white);
-	cube->transform.SetPosition({ -0.18f, -0.2f, -0.7f });
-	cube->transform.SetScale(0.3f, 0.8f, 0.3f);
-	cube->transform.RotateDeg(0.f, 120.f, 0.f);
+	cube->GetTransform().SetPosition({ -0.18f, -0.2f, -0.7f });
+	cube->GetTransform().SetScale(0.3f, 0.8f, 0.3f);
+	cube->GetTransform().RotateDeg(0.f, 120.f, 0.f);
 
 	Cube* cube2 = new Cube(cubeMesh, white);
-	cube2->transform.SetPosition({ 0.25f, -0.25f, -0.5f });
-	cube2->transform.SetScale(0.25f, 0.25f, 0.25f);
-	cube2->transform.RotateDeg(0.f, -25.f, 0.f);
+	cube2->GetTransform().SetPosition({ 0.25f, -0.25f, -0.5f });
+	cube2->GetTransform().SetScale(0.25f, 0.25f, 0.25f);
+	cube2->GetTransform().RotateDeg(0.f, -25.f, 0.f);
+
+	//scene.get()->Add(bunny);
 
 	scene.get()->Add(sp);
-	//scene.get()->Ad(sp2);
 
 	scene.get()->Add(floor);
 	scene.get()->Add(ceiling);

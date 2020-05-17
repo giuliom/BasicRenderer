@@ -1,26 +1,26 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include "Face.h"
+
 
 class Mesh
 {
 protected:
-
-	int nfaces = 0;
-	Face* faces = nullptr;
+	std::vector<Face> m_faces;
 
 public:
 	Mesh() = delete;
-	Mesh(int nfaces, Face faces[]);
+	Mesh(uint nVertices, const Vertex vertices[], uint nFaces, const Face faces[]);
 	Mesh(const Mesh& m);
 	Mesh(Mesh&& m);
 	~Mesh();
 
 	Mesh& operator=(const Mesh& m) = delete;
 	Mesh& operator=(Mesh&& m);
-	
-	int GetFacesCount() const { return nfaces; }
-	const Face* const GetFaces() const { return faces; }
+
+	inline size_t NumFaces() const { return m_faces.size(); }
+	inline const Face& GetFace(uint index) const { return m_faces[index]; }
 };
 
