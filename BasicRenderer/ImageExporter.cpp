@@ -4,10 +4,10 @@
 
 namespace BasicRenderer
 {
-	bool ImageExporter::ExportToPPM(const char* path, const std::shared_ptr<const FrameBuffer> fBuf)
+	bool ImageExporter::ExportToPPM(std::string& path, std::string& filename, const std::shared_ptr<const FrameBuffer> fBuf)
 	{
 		std::ofstream outfile;
-		outfile.open(*path + "render.ppm");
+		outfile.open(path + filename + ".ppm");
 
 		int width = fBuf->GetWidth();
 		int height = fBuf->GetHeight();
@@ -30,11 +30,11 @@ namespace BasicRenderer
 		return true;
 	}
 
-	bool ImageExporter::ExportToBMP(const char* path, const std::shared_ptr<const FrameBuffer> fBuf)
+	bool ImageExporter::ExportToBMP(std::string& path, std::string& filename, const std::shared_ptr<const FrameBuffer> fBuf)
 	{
 		std::ofstream outfile;
 		std::string filePath = path;
-		outfile.open((filePath + "render.bmp").c_str(), std::ofstream::binary);
+		outfile.open((filePath + filename + ".bmp").c_str(), std::ofstream::binary);
 
 		if (!outfile.is_open()) return false;
 

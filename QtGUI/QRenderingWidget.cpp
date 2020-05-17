@@ -9,12 +9,14 @@
 #include "BasicRenderer\ObjLoader.h"
 #include "BasicRenderer\ImageExporter.h"
 #include "BasicRenderer\Material.h"
+#include "BasicRenderer\TestScene.h"
 
 QRenderingWidget::QRenderingWidget(QWidget* parent)
 {
 	QOpenGLWidget::QOpenGLWidget(parent);
 	bRenderer = std::make_unique<Renderer>();
 	setMouseTracking(false);
+	SetScene("");
 }
 
 
@@ -24,44 +26,12 @@ QRenderingWidget::~QRenderingWidget()
 
 void QRenderingWidget::SetScene(const char* filename)
 {
-	scene = std::make_unique<World>();
-
-	scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
-	scene->sun.intensity = 1.0f;
-
-	Material* red = new Material({ 1.0f, 0.01f, 0.01f });
-	Material* green = new Material({ 0.01f, 1.0f, 0.01f });
-	Material* blue = new Material({ 0.01f, 0.01f, 1.0f });
-
-	Material* silver = new Material({ 0.972f, 0.960f, 0.915f });//, Material::Type::METALLIC);
-	Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
-	Material* gold = new Material({ 1.0f, 0.766f, 0.336f });
-	Material* chromium = new Material({ .550f, 0.556f, 0.554f });//, Material::Type::DIELECTRIC);
-
-	//TODO resource manager needed
-	std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load("C:/BasicRenderer/assets/bunny.obj")); //TODO fix paths in QT project
-	std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("C:/BasicRenderer/assets/cube.obj"));
-
-	SceneObject* bunny = new SceneObject(bunnyMesh, red);
-	bunny->GetTransform().SetScale(10.f, 10.f, 10.f);
-	bunny->GetTransform().SetPosition(0.0f, -1.0f, -5.0f);
-	scene.get()->Add(bunny);
-
-	Sphere* sp = new Sphere({ -0.8f, 0.0f, -1.5f }, 0.4f, silver);
-	Plane* pl = new Plane({ 0.f, -0.5f, 0.0f }, { 0.f, 1.f, 0.f }, copper);
-	Cube* cube = new Cube(cubeMesh, gold);
-
-	cube->GetTransform().SetPosition({ 0.25f, -0.3f, -4.0f });
-	cube->GetTransform().Scale(0.05f, 0.05f, 0.05f);
-
-	//scene.get()->Add(sp);
-	//scene.get()->Add(pl);
-	//scene.get()->Add(cube);
+	scene.reset(TestScene());
 }
 
 void QRenderingWidget::SaveFrame(const char* path)
 {
-	ImageExporter::ExportToBMP(path, frame);
+	ImageExporter::ExportToBMP(std::string(path), std::string("render"), frame);
 }
 
 void QRenderingWidget::SetRenderingMode(int index)
@@ -137,7 +107,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
-	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode);
+	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, 1, 3);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
 	int size = width() * height();
