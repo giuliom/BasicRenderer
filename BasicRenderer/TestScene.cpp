@@ -39,7 +39,7 @@ namespace BasicRenderer
 		bunny->GetTransform().SetScale(10.f, 10.f, 10.f);
 		bunny->GetTransform().SetPosition(0.0f, -1.0f, -3.0f);
 
-		Sphere* sp = new Sphere({ -0.15f, -0.25f, -0.4f }, 0.15f, silver);
+		Sphere* sp = new Sphere({ -0.15f, -0.25f, -0.4f }, 0.2f, silver);
 		Sphere* sp2 = new Sphere({ 0.25f, -0.25f, -0.4f }, 0.1f, chromium);
 		Sphere* sp3 = new Sphere({ 0.8f, 0.0f, -1.5f }, 0.4f, gold);
 		Sphere* sp4 = new Sphere({ 0.6f, 0.0f, -3.5f }, 1.0f, copper);

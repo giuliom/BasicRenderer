@@ -15,7 +15,7 @@ namespace BasicRenderer
 		Matrix4 view;
 		Matrix4 projection; // MVP = P * V * M
 
-		float fov = 85.0f;
+		float fov = 75.0f;
 		float fovFactor;
 		float aspectRatio = 4.0f / 3.0f;
 		float nearClip = 0.3f;

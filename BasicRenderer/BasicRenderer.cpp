@@ -74,8 +74,8 @@ namespace BasicRenderer
 
 		//Top-left
 		for (float y = 0.f; y < fheight; y++)
-		{
-			std::cout << "Progress: " << static_cast<int>((y / fheight) * 100.f + 1.f) << "% \r";
+		{	
+			std::cout << "Progress: " << static_cast<int>(std::roundf((y / fheight) * 100.f)) << "% \r";
 
 			for (float x = 0.f; x < fwidth; x++)
 			{
@@ -101,7 +101,7 @@ namespace BasicRenderer
 			}
 		}
 
-
+		std::cout << "\nRendering completed";
 
 		return fBuffer;
 	}
