@@ -32,7 +32,7 @@ public:
 	inline size_t NumFaces() const { return m_transformedFaces.size(); }
 	inline const Face& GetTransformedFace(uint index) const { return m_transformedFaces[index]; }
 
-	void ProcessForRendering(const Matrix4& projection, const Matrix4& view) override;
+	void ProcessForRendering() override;
 	bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
 };
 

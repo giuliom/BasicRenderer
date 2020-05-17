@@ -40,7 +40,7 @@ SceneObject::~SceneObject()
 {
 }
 
-void SceneObject::ProcessForRendering(const Matrix4& projection, const Matrix4& view)
+void SceneObject::ProcessForRendering()
 {
 	Transform* parent = m_transform.GetParent();
 	bool updateFaces = false;
@@ -64,12 +64,10 @@ void SceneObject::ProcessForRendering(const Matrix4& projection, const Matrix4& 
 
 	if (m_transform.dirty)
 	{
-		const Matrix4 mvp = projection * view * m_worldTransform.m;
-
 		for (int i = 0; i < NumFaces(); ++i)
 		{
 			Face f = m_mesh->GetFace(i);
-			ToMatrixSpace(f, mvp);
+			ToMatrixSpace(f, m_worldTransform.m);
 			m_transformedFaces[i] = f;
 		}
 	}

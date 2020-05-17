@@ -22,7 +22,7 @@ public:
 	Sphere(Vector3 pos_, float radius_) : pos(pos_), radius(radius_) {}
 	Sphere(Vector3 pos_, float radius_, Material* mat) : Primitive(mat), pos(pos_), radius(radius_) {}
 
-	void ProcessForRendering(const Matrix4& projection, const Matrix4& view) override {}
+	void ProcessForRendering() override {}
 	bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
 };
 
@@ -36,7 +36,7 @@ public:
 	Plane() = delete;
 	Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Primitive(mat), centre(centre), normal(normal.Normalize()) {}
 
-	void ProcessForRendering(const Matrix4& projection, const Matrix4& view) override {}
+	void ProcessForRendering() override {}
 	bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
 };
 

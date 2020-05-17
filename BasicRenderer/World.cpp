@@ -18,11 +18,11 @@ void World::Add(Primitive* obj)
 	}
 }
 
-void World::ProcessForRendering(const Matrix4& projection, const Matrix4& view)
+void World::ProcessForRendering()
 {
 	for (auto& obj : hierarchy)
 	{
-		obj->ProcessForRendering(projection, view);
+		obj->ProcessForRendering();
 	}
 }
 

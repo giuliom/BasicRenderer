@@ -27,12 +27,12 @@ public:
 	bool GetHit(const Ray& r, float tMin, float tMax, float& tHit) const;
 };
 
+inline Vector3 CalculateNormal(const Face& f) { return CalculateNormal(f.v0.pos, f.v1.pos, f.v2.pos); }
+
 inline void ToMatrixSpace(Face& f, const Matrix4& m)
 {
 	f.v0 = { m * f.v0.pos, m * f.v0.nrml, f.v0.uv };
 	f.v1 = { m * f.v1.pos, m * f.v1.nrml, f.v1.uv };
 	f.v2 = { m * f.v2.pos, m * f.v2.nrml, f.v2.uv };
-	f.normal = m * f.normal;
+	f.normal = CalculateNormal(f);
 }
-
-inline Vector3 CalculateNormal(const Face& f) { return Vector3::CrossProduct(f.v1.pos - f.v0.pos, f.v2.pos - f.v0.pos).Normalize(); }

@@ -25,6 +25,8 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 
 	fBuffer->Fill(scene.ambientLightColor);
 
+	scene.ProcessForRendering();
+
 	auto shadingFunc = &Material::LitShading;
 
 	switch (shading)
@@ -39,7 +41,6 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 	{
 	default:
 	{
-		scene.ProcessForRendering(camera.GetProjectionMatrix(), camera.GetViewMatrix());
 		for (const std::shared_ptr<Primitive> obj : scene.GetHierarchy())
 		{
 			DrawObject(obj.get(), scene, shadingFunc);
@@ -48,7 +49,7 @@ const std::shared_ptr<const FrameBuffer> BasicRenderer::Render(int width, int he
 		break;
 	case RenderingMode::RAYTRACER:
 	{
-		scene.ProcessForRendering(Matrix4::Identity(), Matrix4::Identity());
+		
 		return RayTracing(width, height, scene, samplesPerPixel, maxBounces, shadingFunc);
 	}
 		break;
@@ -209,6 +210,7 @@ void BasicRenderer::DrawObject(const Primitive* primitive, const World& scene, C
 	{
 		Material* mat = obj->GetMaterial();
 		Color c = missingMaterialColor;
+		const Matrix4 mvp = camera.GetViewMatrix() * camera.GetProjectionMatrix();
 
 		for (uint i = 0; i < obj->NumFaces(); i++)
 		{
@@ -219,6 +221,8 @@ void BasicRenderer::DrawObject(const Primitive* primitive, const World& scene, C
 				c = (obj->GetMaterial()->*shading)(scene, Vector3::Zero(), f.normal);
 			}
 			c = Color(std::powf(c.x, gammaEncoding), std::powf(c.y, gammaEncoding), std::powf(c.z, gammaEncoding));
+
+			ToMatrixSpace(f, mvp);
 
 			PerspectiveDivide(f);
 			NormalizedToScreenSpace(f);

@@ -44,7 +44,7 @@ public:
 	~BasicRenderer() {}
 
 	//TODO move, and rename
-	const std::shared_ptr<const FrameBuffer> Render(int width, int height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, int samplesPerPixel = 4, int bounces = 3);
+	const std::shared_ptr<const FrameBuffer> Render(int width, int height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, int samplesPerPixel = 1, int bounces = 3);
 	const std::shared_ptr<const FrameBuffer> RayTracing(int width, int height, World& scene, int pixelSamples, int bounces, Color (Material::*shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 	Camera camera;
