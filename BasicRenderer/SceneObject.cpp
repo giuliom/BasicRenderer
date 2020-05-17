@@ -79,20 +79,18 @@ namespace BasicRenderer
 		tHit = tMax;
 		float test;
 		bool hit = false;
+		auto numFaces = m_transformedFaces.size();
 
-		if (GetMesh() != nullptr)
+		for (int i = 0; i < numFaces; i++)
 		{
-			for (int i = 0; i < NumFaces(); i++)
+			const Face& f = GetTransformedFace(i);
+			if (Intersection(f, r, tMin, tMax, test))
 			{
-				const Face& f = GetTransformedFace(i);
-				if (f.GetHit(r, tMin, tMax, test))
+				hit = true;
+				if (test < tHit)
 				{
-					hit = true;
-					if (test < tHit)
-					{
-						tHit = test;
-						normalHit = f.normal;
-					}
+					tHit = test;
+					normalHit = f.normal;
 				}
 			}
 		}

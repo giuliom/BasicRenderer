@@ -64,16 +64,16 @@ namespace BasicRenderer
 
 		inline Vector3 Barycentre(const float x, const float y, const Face& f) const
 		{
-			const Vector4 ab = f.v1.pos - f.v0.pos;
-			const Vector4 ac = f.v2.pos - f.v0.pos;
-			const Vector2 pa = Vector2(f.v0.pos.x - x, f.v0.pos.y - y);
-			const Vector3 uv1 = Vector3::CrossProduct(Vector3(ac.x, ab.x, pa.x), Vector3(ac.y, ab.y, pa.y));
+			const Vector4 ab(f.v1.pos - f.v0.pos);
+			const Vector4 ac(f.v2.pos - f.v0.pos);
+			const Vector2 pa(f.v0.pos.x - x, f.v0.pos.y - y);
+			const Vector3 uv1(Vector3::CrossProduct(Vector3(ac.x, ab.x, pa.x), Vector3(ac.y, ab.y, pa.y)));
 
 			if (abs(uv1.z) < 1e-2f)
 			{
-				return Vector3(-1.0f, 1.0f, 1.0f);
+				return { -1.0f, 1.0f, 1.0f };
 			}
-			return Vector3((uv1.z - (uv1.x + uv1.y)) * (1.0f / uv1.z), uv1.y * (1.0f / uv1.z), uv1.x * (1.0f / uv1.z));
+			return { (uv1.z - (uv1.x + uv1.y)) * (1.0f / uv1.z), uv1.y * (1.0f / uv1.z), uv1.x * (1.0f / uv1.z) };
 		}
 
 		inline Vector2 Clamp(Vector2& v, const Vector2& min, const Vector2& max) const

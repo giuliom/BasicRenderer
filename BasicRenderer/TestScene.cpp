@@ -37,7 +37,7 @@ namespace BasicRenderer
 
 		SceneObject* bunny = new SceneObject(bunnyMesh, red);
 		bunny->GetTransform().SetScale(10.f, 10.f, 10.f);
-		bunny->GetTransform().SetPosition(0.0f, -1.0f, -5.0f);
+		bunny->GetTransform().SetPosition(0.0f, -1.0f, -3.0f);
 
 		Sphere* sp = new Sphere({ -0.15f, -0.25f, -0.4f }, 0.15f, silver);
 		Sphere* sp2 = new Sphere({ 0.25f, -0.25f, -0.4f }, 0.1f, chromium);

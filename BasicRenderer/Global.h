@@ -4,4 +4,7 @@
 
 typedef unsigned int uint;
 
-namespace BasicRenderer {}
+namespace BasicRenderer 
+{
+	const float EPSILON = 0.0000001f;
+}
