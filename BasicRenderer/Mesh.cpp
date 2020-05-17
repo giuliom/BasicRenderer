@@ -2,39 +2,40 @@
 #include "PrimitiveTypes.h"
 #include <cassert>
 
-
-Mesh::Mesh(uint nVertices, const Vertex vertices[], uint nFaces, const Face faces[])
+namespace BasicRenderer
 {
-	assert(nFaces >= 0 && faces != nullptr);
-
-	for (uint i = 0; i < nFaces; ++i)
+	Mesh::Mesh(uint nVertices, const Vertex vertices[], uint nFaces, const Face faces[])
 	{
-		m_faces.emplace_back(faces[i]);
+		assert(nFaces >= 0 && faces != nullptr);
+
+		for (uint i = 0; i < nFaces; ++i)
+		{
+			m_faces.emplace_back(faces[i]);
+		}
+	}
+
+	Mesh::Mesh(const Mesh& m)
+	{
+		m_faces = m.m_faces;
+	}
+
+	Mesh::Mesh(Mesh&& m)
+	{
+		m_faces = m.m_faces;
+	}
+
+
+	Mesh::~Mesh()
+	{
+
+	}
+
+
+	Mesh& Mesh::operator=(Mesh&& m)
+	{
+		m_faces = m.m_faces;
+		return *this;
 	}
 }
-
-Mesh::Mesh(const Mesh & m)
-{
-	m_faces = m.m_faces;
-}
-
-Mesh::Mesh(Mesh && m)
-{
-	m_faces = m.m_faces;
-}
-
-
-Mesh::~Mesh()
-{
-
-}
-
-
-Mesh & Mesh::operator=(Mesh && m)
-{
-	m_faces = m.m_faces;
-	return *this;
-}
-
 
 

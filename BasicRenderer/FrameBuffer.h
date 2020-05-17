@@ -5,82 +5,81 @@
 #include <stdio.h>
 #include "PrimitiveTypes.h"
 
-
-class FrameBuffer
+namespace BasicRenderer
 {
-protected:
-	int width = 640;
-	int height = 480;
-	int size = 640 * 480;
-
-	Color* colorBuffer = nullptr;
-	float* depthBuffer = nullptr;
-
-
-public:
-	FrameBuffer() = delete;
-	FrameBuffer(const FrameBuffer&) = delete;
-	FrameBuffer(int width_ = 640,int height_ = 480) : width(width_), height(height_)
+	class FrameBuffer
 	{
-		assert(width_ > 0 && height > 0);
-		colorBuffer = new Color[width_ * height_];
-		depthBuffer = new float[width_ * height_];
-		size = width_ * height_;
-	} 
-	~FrameBuffer();
+	protected:
+		int width = 640;
+		int height = 480;
+		int size = 640 * 480;
 
-	FrameBuffer& operator==(const FrameBuffer& buf) = delete;
+		Color* colorBuffer = nullptr;
+		float* depthBuffer = nullptr;
 
-	bool WriteToColor(int w, int h, const Color& col);
-	bool WriteToDepth(int w, int h, float col);
-	float GetDepth(int w, int h) const;
-	const Color& GetColor(int w, int h) const;
 
-	Color* GetColorBufferCopy() const;
-	const Color* const GetColorBuffer() const;
-	
-
-	inline int GetWidth() const { return width; }
-	inline int GetHeight() const { return height; }
-
-	inline bool WriteToColor(int index, const Color& col)
-	{
-		assert(index >= 0 && index < size);
-		colorBuffer[index] = col;
-		return true;
-	}
-	inline bool WriteToDepth(int index, float col)
-	{
-		assert(index >= 0 && index < size);
-		depthBuffer[index] = col;
-		return true;
-	}
-	inline float GetDepth(int index) const
-	{
-		assert(index >= 0 && index < size);
-		return depthBuffer[index];
-	}
-	inline const Color& GetColor(int index) const
-	{
-		assert(index >= 0 && index < size);
-		return colorBuffer[index];
-	}
-	
-	inline void Fill(const Color& col)
-	{
-		float x = col.x;
-		float y = col.y;
-		float z = col.z;
-		for (int i = 0; i < size; ++i)
+	public:
+		FrameBuffer() = delete;
+		FrameBuffer(const FrameBuffer&) = delete;
+		FrameBuffer(int width_ = 640, int height_ = 480) : width(width_), height(height_)
 		{
-			colorBuffer[i].x = x;
-			colorBuffer[i].y = y;
-			colorBuffer[i].z = z;
-			depthBuffer[i] = std::numeric_limits<float>::max();
+			assert(width_ > 0 && height > 0);
+			colorBuffer = new Color[width_ * height_];
+			depthBuffer = new float[width_ * height_];
+			size = width_ * height_;
 		}
-	}
-	
-	
+		~FrameBuffer();
 
-};
+		FrameBuffer& operator==(const FrameBuffer& buf) = delete;
+
+		bool WriteToColor(int w, int h, const Color& col);
+		bool WriteToDepth(int w, int h, float col);
+		float GetDepth(int w, int h) const;
+		const Color& GetColor(int w, int h) const;
+
+		Color* GetColorBufferCopy() const;
+		const Color* const GetColorBuffer() const;
+
+
+		inline int GetWidth() const { return width; }
+		inline int GetHeight() const { return height; }
+
+		inline bool WriteToColor(int index, const Color& col)
+		{
+			assert(index >= 0 && index < size);
+			colorBuffer[index] = col;
+			return true;
+		}
+		inline bool WriteToDepth(int index, float col)
+		{
+			assert(index >= 0 && index < size);
+			depthBuffer[index] = col;
+			return true;
+		}
+		inline float GetDepth(int index) const
+		{
+			assert(index >= 0 && index < size);
+			return depthBuffer[index];
+		}
+		inline const Color& GetColor(int index) const
+		{
+			assert(index >= 0 && index < size);
+			return colorBuffer[index];
+		}
+
+		inline void Fill(const Color& col)
+		{
+			float x = col.x;
+			float y = col.y;
+			float z = col.z;
+			for (int i = 0; i < size; ++i)
+			{
+				colorBuffer[i].x = x;
+				colorBuffer[i].y = y;
+				colorBuffer[i].z = z;
+				depthBuffer[i] = std::numeric_limits<float>::max();
+			}
+		}
+	};
+}
 

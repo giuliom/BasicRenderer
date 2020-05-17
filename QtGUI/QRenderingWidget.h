@@ -5,19 +5,21 @@
 #include <QTimer>
 #include "BasicRenderer\BasicRenderer.h"
 
+using namespace BasicRenderer;
+
 class QRenderingWidget : public QOpenGLWidget
 {
 	Q_OBJECT
 
 protected:
-	std::unique_ptr<BasicRenderer> bRenderer;
+	std::unique_ptr<Renderer> bRenderer;
 	std::unique_ptr<QImage> img;
 	std::unique_ptr<QTimer> timer;
 	std::unique_ptr<World> scene;
 	std::shared_ptr<const FrameBuffer> frame;
 
-	BasicRenderer::RenderingMode renderingMode = BasicRenderer::RenderingMode::RASTERIZER;
-	BasicRenderer::ShadingMode shadingMode = BasicRenderer::ShadingMode::LIT;
+	Renderer::RenderingMode renderingMode = Renderer::RenderingMode::RASTERIZER;
+	Renderer::ShadingMode shadingMode = Renderer::ShadingMode::LIT;
 
 	std::string rTime = "";
 

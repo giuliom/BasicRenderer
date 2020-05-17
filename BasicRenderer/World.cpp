@@ -5,48 +5,51 @@
 #include "Face.h"
 #include "SceneObject.h"
 
-World::~World()
+namespace BasicRenderer
 {
-
-}
-
-void World::Add(Primitive* obj)
-{
-	if (obj != nullptr)
+	World::~World()
 	{
-		hierarchy.emplace_back(obj);
+
 	}
-}
 
-void World::ProcessForRendering()
-{
-	for (auto& obj : hierarchy)
+	void World::Add(Primitive* obj)
 	{
-		obj->ProcessForRendering();
-	}
-}
-
-const Primitive* World::Raycast(const Ray & r, float tMin, float tMax, Vector3 & hitPosition, Vector3& hitNormal) const
-{
-	const Primitive* anyHit = nullptr;
-	float closestHit = tMax;
-	float tempHit = tMax;
-	Vector3 tempNormal;
-
-	for (auto& obj : hierarchy)
-	{
-		if (obj->GetHit(r, tMin, tMax, tempHit, tempNormal))
-		{			
-			if (tempHit < closestHit)
-			{
-				closestHit = tempHit;
-				hitNormal = tempNormal;
-				anyHit = obj.get();
-			}
+		if (obj != nullptr)
+		{
+			hierarchy.emplace_back(obj);
 		}
 	}
 
-	hitPosition = r.GetPoint(closestHit);
+	void World::ProcessForRendering()
+	{
+		for (auto& obj : hierarchy)
+		{
+			obj->ProcessForRendering();
+		}
+	}
 
-	return anyHit;
+	const Primitive* World::Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const
+	{
+		const Primitive* anyHit = nullptr;
+		float closestHit = tMax;
+		float tempHit = tMax;
+		Vector3 tempNormal;
+
+		for (auto& obj : hierarchy)
+		{
+			if (obj->GetHit(r, tMin, tMax, tempHit, tempNormal))
+			{
+				if (tempHit < closestHit)
+				{
+					closestHit = tempHit;
+					hitNormal = tempNormal;
+					anyHit = obj.get();
+				}
+			}
+		}
+
+		hitPosition = r.GetPoint(closestHit);
+
+		return anyHit;
+	}
 }

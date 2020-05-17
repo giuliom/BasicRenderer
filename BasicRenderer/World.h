@@ -5,30 +5,33 @@
 #include "Vertex.h"
 #include "DirectionalLight.h"
 
-class Primitive;
-class Ray;
-
-typedef std::vector<std::shared_ptr<Primitive>> Hierarchy;
-
-class World
+namespace BasicRenderer
 {
-protected:
+	class Primitive;
+	class Ray;
 
-	//TODO implement it properly
-	Hierarchy hierarchy;
+	typedef std::vector<std::shared_ptr<Primitive>> Hierarchy;
 
-public:
+	class World
+	{
+	protected:
 
-	World() {}
-	~World();
+		//TODO implement it properly
+		Hierarchy hierarchy;
 
-	DirectionalLight sun;
-	float ambientLightIntensity = 1.0f;
-	Color ambientLightColor{ 1.f, 1.f, 1.f };
+	public:
 
-	inline const Hierarchy& GetHierarchy() const { return hierarchy; }
+		World() {}
+		~World();
 
-	void Add(Primitive* obj);
-	void ProcessForRendering();
-	const Primitive* Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
-};
+		DirectionalLight sun;
+		float ambientLightIntensity = 1.0f;
+		Color ambientLightColor{ 1.f, 1.f, 1.f };
+
+		inline const Hierarchy& GetHierarchy() const { return hierarchy; }
+
+		void Add(Primitive* obj);
+		void ProcessForRendering();
+		const Primitive* Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
+	};
+}

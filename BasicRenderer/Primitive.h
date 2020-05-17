@@ -5,23 +5,26 @@
 #include "Ray.h"
 #include "Matrix4.h"
 
-class Material;
-
-class Primitive
+namespace BasicRenderer
 {
-protected:
-	//TODO temporary implementation
-	Material* material = nullptr;
+	class Material;
 
-public:
+	class Primitive
+	{
+	protected:
+		//TODO temporary implementation
+		Material* material = nullptr;
 
-	Primitive();
-	Primitive(Material* mat) : material(mat) {}
-	Primitive(const Primitive& other) : material(other.GetMaterial()) {}
+	public:
 
-	virtual void ProcessForRendering() = 0;
-	virtual bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const = 0;
+		Primitive();
+		Primitive(Material* mat) : material(mat) {}
+		Primitive(const Primitive& other) : material(other.GetMaterial()) {}
 
-	inline Material* GetMaterial() const { return material; }
+		virtual void ProcessForRendering() = 0;
+		virtual bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const = 0;
 
-};
+		inline Material* GetMaterial() const { return material; }
+
+	};
+}

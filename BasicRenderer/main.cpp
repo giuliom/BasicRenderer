@@ -1,14 +1,17 @@
-#include "BasicRenderer.h"
-#include "ObjLoader.h"
+
 #include <iostream>
 #include <ctime>
 #include <string>
+#include "Global.h"
+#include "BasicRenderer.h"
+#include "ObjLoader.h"
 #include "SceneObject.h"
 #include "Material.h"
 #include "ImageExporter.h"
 
 #if !LIB_DEBUG && !LIB_RELEASE
 
+using namespace BasicRenderer;
 
 std::unique_ptr<World> SetScene(const char* filename)
 {
@@ -117,8 +120,8 @@ int main(int argc, char *argv[])
 	std::string renderingModeName = "rasterizer";
 	std::string shadingModeName = "lit";
 
-	BasicRenderer::RenderingMode renderingMode = BasicRenderer::RenderingMode::RASTERIZER;
-	BasicRenderer::ShadingMode shadingMode = BasicRenderer::ShadingMode::LIT;
+	Renderer::RenderingMode renderingMode = Renderer::RenderingMode::RASTERIZER;
+	Renderer::ShadingMode shadingMode = Renderer::ShadingMode::LIT;
 
 	int pixelSamples = 4;
 	int maxBounces = 3;
@@ -163,7 +166,7 @@ int main(int argc, char *argv[])
 			if (std::strcmp(argv[an + 1], "raytracer") == 0)
 			{
 				renderingModeName = argv[an + 1];
-				renderingMode = BasicRenderer::RenderingMode::RAYTRACER;
+				renderingMode = Renderer::RenderingMode::RAYTRACER;
 			}
 		
 		}
@@ -173,7 +176,7 @@ int main(int argc, char *argv[])
 			if (std::strcmp(argv[an + 1], "normal") == 0)
 			{
 				shadingModeName = argv[an + 1];
-				shadingMode = BasicRenderer::ShadingMode::NORMAL;
+				shadingMode = Renderer::ShadingMode::NORMAL;
 			}
 		}
 		else if (std::strcmp(argv[an], "-f") == 0)
@@ -215,7 +218,7 @@ int main(int argc, char *argv[])
 	std::cout << "\n----- RENDERING -----\n"<<std::endl;
 
 	
-	BasicRenderer renderer;
+	Renderer renderer;
 	std::unique_ptr<World> scene = SetScene(file.c_str());
 	renderer.camera.SetFov(85.f);
 

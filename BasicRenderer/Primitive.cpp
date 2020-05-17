@@ -1,6 +1,9 @@
 #include "Primitive.h"
 #include "Material.h"
 
-Primitive::Primitive()
+namespace BasicRenderer
 {
+	Primitive::Primitive()
+	{
+	}
 }

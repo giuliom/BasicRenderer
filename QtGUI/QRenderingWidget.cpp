@@ -10,11 +10,10 @@
 #include "BasicRenderer\ImageExporter.h"
 #include "BasicRenderer\Material.h"
 
-
 QRenderingWidget::QRenderingWidget(QWidget* parent)
 {
 	QOpenGLWidget::QOpenGLWidget(parent);
-	bRenderer = std::make_unique<BasicRenderer>();
+	bRenderer = std::make_unique<Renderer>();
 	setMouseTracking(false);
 }
 
@@ -70,10 +69,10 @@ void QRenderingWidget::SetRenderingMode(int index)
 	switch (index)
 	{
 	case 1:
-		renderingMode = BasicRenderer::RenderingMode::RAYTRACER;
+		renderingMode = Renderer::RenderingMode::RAYTRACER;
 		break;
 	default:
-		renderingMode = BasicRenderer::RenderingMode::RASTERIZER;
+		renderingMode = Renderer::RenderingMode::RASTERIZER;
 		break;
 	}
 }
@@ -83,10 +82,10 @@ void QRenderingWidget::SetShadingMode(int index)
 	switch (index)
 	{
 	case 1:
-		shadingMode = BasicRenderer::ShadingMode::NORMAL;
+		shadingMode = Renderer::ShadingMode::NORMAL;
 		break;
 	default:
-		shadingMode = BasicRenderer::ShadingMode::LIT;
+		shadingMode = Renderer::ShadingMode::LIT;
 		break;
 	}
 }
