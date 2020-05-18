@@ -77,11 +77,11 @@ namespace BasicRenderer
 	bool SceneObject::GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const
 	{
 		tHit = tMax;
-		float test;
+		float test = 0.f;
 		bool hit = false;
-		auto numFaces = m_transformedFaces.size();
+		const auto numFaces = m_transformedFaces.size();
 
-		for (int i = 0; i < numFaces; i++)
+		for (uint i = 0; i < numFaces; i++)
 		{
 			const Face& f = GetTransformedFace(i);
 			if (Intersection(f, r, tMin, tMax, test))

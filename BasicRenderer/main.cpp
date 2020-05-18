@@ -133,12 +133,13 @@ int main(int argc, char *argv[])
 	
 	auto endClock = clock();
 
-	std::string rt = std::to_string(endClock - beginClock);
+	double diff = endClock - beginClock;
+	double ms = diff / (CLOCKS_PER_SEC / 1000);
 
 	//Saving Image
 	ImageExporter::ExportToBMP(outputFile, renderingModeName,frame);
 
-	std::cout <<std::endl << "Rendering Time: " <<rt.substr(0, rt.length() - 7).append(" ms ").c_str() << "\n\n";
+	std::cout <<std::endl << "Rendering Time: " << ms << " ms " << "\n\n";
 	
 	std::cin.get();
 	

@@ -35,7 +35,7 @@ namespace BasicRenderer
 		float tempHit = tMax;
 		Vector3 tempNormal;
 
-		for (auto& obj : hierarchy)
+		for (const auto& obj : hierarchy)
 		{
 			if (obj->GetHit(r, tMin, tMax, tempHit, tempNormal))
 			{
