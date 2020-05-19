@@ -266,7 +266,9 @@
     <ClCompile Include="ObjLoader.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="PrimitiveTypes.cpp" />
+    <ClCompile Include="Rasterizer.cpp" />
     <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="Raytracer.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Transform.cpp" />
@@ -282,6 +284,7 @@
     <ClInclude Include="Face.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="Raytracer.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="ImageExporter.h" />
     <ClInclude Include="ImageFormats.h" />
@@ -292,6 +295,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="PrimitiveTypes.h" />
     <ClInclude Include="BasicRenderer.h" />
+    <ClInclude Include="Rasterizer.h" />
     <ClInclude Include="Ray.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="TestScene.h" />

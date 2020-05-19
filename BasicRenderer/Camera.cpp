@@ -19,6 +19,7 @@ namespace BasicRenderer
 	{
 		aspectRatio = (float)w / (float)h;
 		SetFov(fov);
+		projection = GetProjectionMatrix();
 	}
 
 	void Camera::SetFov(float f)

@@ -4,6 +4,8 @@
 
 namespace BasicRenderer
 {
+	const Color Material::MissingMaterialColor = { 1.0f, 0.0f, 1.0f };
+
 	//TODO Use variadic functions for shading?
 	Color Material::NormalShading(const World& scene, const Vector3& pos, const Vector3& normal)
 	{

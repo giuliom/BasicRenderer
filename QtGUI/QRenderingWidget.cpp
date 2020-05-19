@@ -86,12 +86,14 @@ void QRenderingWidget::RenderFrame()
 	float deltaMs = (clock() - renderingTime) * 0.001f;
 	renderingTime = clock();
 
-	bRenderer->camera.transform.Rotate(cameraRot.y * deltaMs, cameraRot.x * deltaMs, 0.0f);
+	Camera& camera = bRenderer->GetCamera();
 
-	Vector3 forward = bRenderer->camera.transform.right * cameraPos.z;
-	Vector3 right = bRenderer->camera.transform.forward * cameraPos.x;
-	Vector3 up = bRenderer->camera.transform.up * cameraPos.y;
-	bRenderer->camera.transform.Translate((forward + right + up) * deltaMs);
+	camera.transform.Rotate(cameraRot.y * deltaMs, cameraRot.x * deltaMs, 0.0f);
+
+	Vector3 forward = camera.transform.right * cameraPos.z;
+	Vector3 right = camera.transform.forward * cameraPos.x;
+	Vector3 up = camera.transform.up * cameraPos.y;
+	camera.transform.Translate((forward + right + up) * deltaMs);
 
 	
 	cameraPos = Vector3::Zero();
@@ -107,7 +109,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
-	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, 1, 3);
+	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, 1, 1);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
 	int size = width() * height();
