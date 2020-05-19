@@ -71,7 +71,7 @@ namespace BasicRenderer
 
 		inline void Fill(const Color& col)
 		{
-			const float d = std::numeric_limits<float>::max();
+			constexpr float d = std::numeric_limits<float>::max();
 			for (uint i = 0; i < size; ++i)
 			{
 				colorBuffer[i] = col;

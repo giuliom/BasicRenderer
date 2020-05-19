@@ -11,9 +11,8 @@
 #include "BasicRenderer\Material.h"
 #include "BasicRenderer\TestScene.h"
 
-QRenderingWidget::QRenderingWidget(QWidget* parent)
+QRenderingWidget::QRenderingWidget(QWidget* parent) : QOpenGLWidget(parent)
 {
-	QOpenGLWidget::QOpenGLWidget(parent);
 	bRenderer = std::make_unique<Renderer>();
 	setMouseTracking(false);
 	SetScene("");
