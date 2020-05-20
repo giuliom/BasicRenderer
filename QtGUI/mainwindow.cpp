@@ -59,7 +59,7 @@ void MainWindow::RenderImage()
 
 void MainWindow::SaveImage()
 {
-	renderView->SaveFrame("../");
+	renderView->SaveFrame("../../../output/");
 }
 
 void MainWindow::OpenFile()

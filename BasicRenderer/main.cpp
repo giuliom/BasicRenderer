@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 	double ms = diff / (CLOCKS_PER_SEC / 1000);
 
 	//Saving Image
-	ImageExporter::ExportToBMP(outputFile, renderingModeName,frame);
+	ImageExporter::ExportToBMP(outputFile, renderingModeName, frame);
 
 	std::cout <<std::endl << "Rendering Time: " << ms << " ms " << "\n\n";
 	

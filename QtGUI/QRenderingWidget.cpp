@@ -29,7 +29,7 @@ void QRenderingWidget::SetScene(const char* filename)
 
 void QRenderingWidget::SaveFrame(const char* path)
 {
-	ImageExporter::ExportToBMP(std::string(path), std::string("render"), frame);
+	ImageExporter::ExportToBMP(std::string(path), std::string("saved_render"), frame);
 }
 
 void QRenderingWidget::SetRenderingMode(int index)

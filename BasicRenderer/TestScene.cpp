@@ -7,6 +7,7 @@
 
 namespace BasicRenderer
 {
+	// TODO move to file
 	World* TestScene()
 	{
 		World* scene = new World();
@@ -83,7 +84,7 @@ namespace BasicRenderer
 		cube2->GetTransform().SetScale(0.25f, 0.25f, 0.25f);
 		cube2->GetTransform().RotateDeg(0.f, -25.f, 0.f);
 
-		//scene->Add(bunny);
+		scene->Add(bunny);
 
 		scene->Add(sp);
 
