@@ -6,7 +6,7 @@
 
 namespace BasicRenderer
 {
-	void Rasterizer::Rasterize(FrameBuffer& fBuffer, const World& scene, Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	void Rasterizer::Rasterize(FrameBuffer& fBuffer, const World& scene, const Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 	{
 		const uint width = fBuffer.GetWidth();
 		const uint height = fBuffer.GetHeight();
@@ -17,7 +17,7 @@ namespace BasicRenderer
 		}
 	}
 
-	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, const Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 	{
 		const SceneObject* obj = dynamic_cast<const SceneObject*>(primitive);
 
@@ -28,7 +28,7 @@ namespace BasicRenderer
 		{
 			Material* mat = obj->GetMaterial();
 			Color c = Material::MissingMaterialColor;
-			const Matrix4 mvp = camera.GetViewMatrix() * camera.GetProjectionMatrix(); // TODO GetProjection must be const and camera too!
+			const Matrix4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix();
 
 			for (uint i = 0; i < obj->NumFaces(); i++)
 			{

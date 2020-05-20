@@ -45,6 +45,9 @@ namespace BasicRenderer
 
 		inline uint GetWidth() const { return width; }
 		inline uint GetHeight() const { return height; }
+		inline uint NumPixels() const { return size;}
+
+		void CorrectGamma(const float gamma);
 
 		inline bool WriteToColor(uint index, const Color& col)
 		{

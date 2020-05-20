@@ -22,7 +22,6 @@ namespace BasicRenderer
 		inline Vector4 Normalize() const
 		{
 			float l = Magnitude();
-			if (l == 0) return Vector4::Zero();
 			l = 1.0f / l;
 			return Vector4(x * l, y * l, z * l, w * l);
 		}

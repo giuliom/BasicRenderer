@@ -226,7 +226,7 @@
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <FloatingPointModel>Fast</FloatingPointModel>
       <AdditionalOptions>/DNDEBUG %(AdditionalOptions)</AdditionalOptions>
-      <ExceptionHandling>false</ExceptionHandling>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -245,6 +245,7 @@
       <AssemblerOutput>NoListing</AssemblerOutput>
       <FloatingPointModel>Fast</FloatingPointModel>
       <AdditionalOptions>/DNDEBUG %(AdditionalOptions)</AdditionalOptions>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

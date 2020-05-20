@@ -20,7 +20,6 @@ namespace BasicRenderer
 		inline Vector2 Normalize() const
 		{
 			float l = Magnitude();
-			if (l == 0) return Vector2::Zero();
 			l = 1.0f / l;
 			return Vector2(x * l, y * l);
 		}

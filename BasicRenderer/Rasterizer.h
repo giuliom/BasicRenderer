@@ -16,11 +16,11 @@ namespace BasicRenderer
 	public:
 		Rasterizer() {}
 
-		void Rasterize(FrameBuffer& fBuffer, const World& scene, Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml));
+		void Rasterize(FrameBuffer& fBuffer, const World& scene, const Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 	protected:
 
-		void DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml));
+		void DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, const Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 		inline void PerspectiveDivide(Face& f) const;
 		inline void NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const;

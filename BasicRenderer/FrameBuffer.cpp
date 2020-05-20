@@ -1,4 +1,5 @@
 #include "FrameBuffer.h"
+#include <cmath>
 
 namespace BasicRenderer
 {
@@ -37,6 +38,17 @@ namespace BasicRenderer
 	const Color* const FrameBuffer::GetColorBuffer() const
 	{
 		return colorBuffer;
+	}
+
+	void FrameBuffer::CorrectGamma(const float gammaEncoding)
+	{
+		for (uint i = 0u; i < size; ++i)
+		{
+			Color& c = colorBuffer[i];
+			c.x = std::powf(c.x, gammaEncoding);
+			c.y = std::powf(c.y, gammaEncoding);
+			c.z = std::powf(c.z, gammaEncoding);
+		}
 	}
 
 	Color* FrameBuffer::GetColorBufferCopy() const

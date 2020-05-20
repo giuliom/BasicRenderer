@@ -11,7 +11,7 @@ namespace BasicRenderer
 	{
 		World* scene = new World();
 
-		scene->sun.SetDirection({ 0.0f, -1.0f, 0.0f });
+		scene->sun.SetDirection({ 0.0f, -1.0f, -1.0f });
 		scene->sun.intensity = 1.f;
 		scene->ambientLightIntensity = 0.1f;
 		scene->ambientLightColor = { 1.0f, 1.0f, 1.0f };

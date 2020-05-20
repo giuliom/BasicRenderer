@@ -1,5 +1,4 @@
 #include "BasicRenderer.h"
-#include <cmath>
 #include "World.h"
 #include "Ray.h"
 #include "Material.h"
@@ -35,6 +34,8 @@ namespace BasicRenderer
 			break;
 		}
 
+
+		// TODO rasterizer and raytracer should have the same parent and sue the same function
 		switch (mode)
 		{
 		default:
@@ -50,12 +51,8 @@ namespace BasicRenderer
 		break;
 		}
 
-		// TODO Post Processing 
-		for (uint i = 0u; i < width * height; i++)
-		{
-			Color& c = m_fBuffer->colorBuffer[i];
-			c = Color(std::powf(c.x, m_gammaEncoding), std::powf(c.y, m_gammaEncoding), std::powf(c.z, m_gammaEncoding));
-		}
+		// Post Processing
+		m_fBuffer->CorrectGamma(m_gammaEncoding);
 
 		return m_fBuffer;
 	}

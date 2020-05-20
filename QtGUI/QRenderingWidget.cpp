@@ -18,7 +18,6 @@ QRenderingWidget::QRenderingWidget(QWidget* parent) : QOpenGLWidget(parent)
 	SetScene("");
 }
 
-
 QRenderingWidget::~QRenderingWidget()
 {
 }
@@ -87,12 +86,12 @@ void QRenderingWidget::RenderFrame()
 
 	Camera& camera = bRenderer->GetCamera();
 
-	camera.transform.Rotate(cameraRot.y * deltaMs, cameraRot.x * deltaMs, 0.0f);
+	camera.GetTransform().Rotate(cameraRot.y * deltaMs, cameraRot.x * deltaMs, 0.0f);
 
-	Vector3 forward = camera.transform.right * cameraPos.z;
-	Vector3 right = camera.transform.forward * cameraPos.x;
-	Vector3 up = camera.transform.up * cameraPos.y;
-	camera.transform.Translate((forward + right + up) * deltaMs);
+	Vector3 forward = camera.GetTransform().right * cameraPos.z;
+	Vector3 right = camera.GetTransform().forward * cameraPos.x;
+	Vector3 up = camera.GetTransform().up * cameraPos.y;
+	camera.GetTransform().Translate((forward + right + up) * deltaMs);
 
 	
 	cameraPos = Vector3::Zero();

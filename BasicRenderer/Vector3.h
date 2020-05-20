@@ -23,7 +23,6 @@ namespace BasicRenderer
 		inline Vector3 Normalize() const
 		{
 			const float l = Length();
-			if (l == 0) return { 0.f, 0.f, 0.f };
 			return (*this) / l;
 		}
 
