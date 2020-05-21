@@ -40,14 +40,15 @@ namespace BasicRenderer
 		return colorBuffer;
 	}
 
-	void FrameBuffer::CorrectGamma(const float gammaEncoding)
+	void FrameBuffer::CorrectGamma()
 	{
 		for (uint i = 0u; i < size; ++i)
 		{
+			// gamma correction to 2.f instead of 2.2 to void the extremely expensive std::powf()
 			Color& c = colorBuffer[i];
-			c.x = std::powf(c.x, gammaEncoding);
-			c.y = std::powf(c.y, gammaEncoding);
-			c.z = std::powf(c.z, gammaEncoding);
+			c.x = std::sqrtf(c.x);
+			c.y = std::sqrtf(c.y);
+			c.z = std::sqrtf(c.z);
 		}
 	}
 

@@ -39,9 +39,6 @@ namespace BasicRenderer
 		Rasterizer m_rasterizer;
 		Raytracer m_raytracer;
 
-		float m_gamma = 2.2f;
-		float m_gammaEncoding = 1.0f / m_gamma;
-
 	public:
 
 		Renderer() : m_rasterizer(), m_raytracer() {}

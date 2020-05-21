@@ -19,7 +19,6 @@ namespace BasicRenderer
 		Color* colorBuffer = nullptr;
 		float* depthBuffer = nullptr;
 
-
 	public:
 		FrameBuffer() = delete;
 		FrameBuffer(const FrameBuffer&) = delete;
@@ -47,7 +46,7 @@ namespace BasicRenderer
 		inline uint GetHeight() const { return height; }
 		inline uint NumPixels() const { return size;}
 
-		void CorrectGamma(const float gamma);
+		void CorrectGamma();
 
 		inline bool WriteToColor(uint index, const Color& col)
 		{

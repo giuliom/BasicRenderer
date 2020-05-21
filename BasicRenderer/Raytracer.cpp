@@ -30,7 +30,7 @@ namespace BasicRenderer
 		for (uint y = 0u; y < height; y++)
 		{
 
-			std::cout << "Progress: " << static_cast<uint>(std::roundf((static_cast<float>(y) / height) * 100.f)) << "% \r";
+			std::cout << "Progress: " << static_cast<uint>(std::roundf((static_cast<float>(y) / static_cast<float>(height)) * 100.f)) << "% \r";
 
 			for (uint x = 0u; x < width; x++)
 			{

@@ -52,7 +52,7 @@ namespace BasicRenderer
 		}
 
 		// Post Processing
-		m_fBuffer->CorrectGamma(m_gammaEncoding);
+		m_fBuffer->CorrectGamma();
 
 		return m_fBuffer;
 	}

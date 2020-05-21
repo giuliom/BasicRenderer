@@ -107,6 +107,7 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
+	// Improve memory performance
 	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, 1, 1);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());

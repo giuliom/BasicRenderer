@@ -72,11 +72,18 @@ namespace BasicRenderer
 
 		inline Vector3 operator*(const Vector3& v) const
 		{
-			return Vector3(
-				x1 * v.x + x2 * v.y + x3 * v.z + x4 * 1.0f,
-				y1 * v.x + y2 * v.y + y3 * v.z + y4 * 1.0f,
-				z1 * v.x + z2 * v.y + z3 * v.z + z4 * 1.0f
+			Vector3 n(
+				x1 * v.x + x2 * v.y + x3 * v.z + x4,
+				y1 * v.x + y2 * v.y + y3 * v.z + y4,
+				z1 * v.x + z2 * v.y + z3 * v.z + z4
 			);
+			const float w = w1 * v.x + w2 * v.y + w3 * v.z + w4;
+
+			if (w != 1.f)
+			{
+				n = n / w;
+			}
+			return n;
 		}
 
 		inline float Det() const
