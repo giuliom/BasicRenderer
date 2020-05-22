@@ -45,9 +45,9 @@ namespace BasicRenderer
 		const Vector3 h(Vector3::CrossProduct(r.direction, edge2));
 		const float a = Vector3::Dot(edge1, h);
 
-		if (a > -EPSILON && a < EPSILON)
+		if (a < EPSILON || std::abs(a) < EPSILON)
 		{
-			return false;    // This ray is parallel to this triangle.
+			return false; // This ray is parallel to this triangle or facing its back
 		}
 
 		const float f = 1.0f / a;
