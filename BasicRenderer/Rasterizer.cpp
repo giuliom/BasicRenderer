@@ -36,7 +36,7 @@ namespace BasicRenderer
 
 				if (mat)
 				{
-					c = (obj->GetMaterial()->*shading)(scene, Vector3::Zero(), f.normal);
+					c = (mat->*shading)(scene, Vector3::Zero(), f.normal);
 				}
 
 				ToMatrixSpace(f, mvp);

@@ -10,7 +10,6 @@ namespace BasicRenderer
 	Camera::Camera()
 	{
 		SetAspectRatio(1u, 1u);
-		SetFov(m_fov);
 	}
 
 	Camera::~Camera()
@@ -20,15 +19,18 @@ namespace BasicRenderer
 	void Camera::SetAspectRatio(uint w, uint h)
 	{
 		m_aspectRatio = static_cast<float>(w) / static_cast<float>(h);
-		UpdateProjection();
+		SetFov(m_fov);
 	}
 
 	void Camera::SetFov(float f)
 	{
 		m_fov = f;
-		m_halfHeight = tanf(m_fov * TO_RADIANS * 0.5f);
-		m_halfWidth = m_aspectRatio * m_halfHeight;
-		m_fovFactor = 1.f / m_halfHeight;
+		m_viewportHeight = tanf(m_fov * TO_RADIANS * 0.5f) * 2.f;
+		m_viewportWidth = m_aspectRatio * m_viewportHeight;
+		m_fovFactor = 1.f / m_viewportHeight;
+
+		m_viewportUpperLeft = { -m_viewportWidth * 0.5f, m_viewportHeight * 0.5f, -m_fovFactor };
+
 		UpdateProjection();
 	}
 
@@ -63,7 +65,7 @@ namespace BasicRenderer
 	Ray Camera::GetCameraRay(const float u, const float v) const
 	{
 		// u,v comes from Top-left coordinates
-		Vector3 direction = Vector3(-m_halfWidth + u * 2.f * m_halfWidth, m_halfHeight - v * 2.f * m_halfHeight, -m_fovFactor);
+		Vector3 direction = m_viewportUpperLeft + Vector3(u * m_viewportWidth, -v * m_viewportHeight, 0);
 		return Ray(m_transform.GetPosition(), m_transform.GetMatrix() * direction);
 	}
 }

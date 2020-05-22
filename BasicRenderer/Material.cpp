@@ -14,8 +14,7 @@ namespace BasicRenderer
 
 	Color Material::LitShading(const World& scene, const Vector3& pos, const Vector3& normal)
 	{ 
-		const float lightsources = scene.sun.intensity + scene.ambientLightIntensity;
-		return Vector3::One() * std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection() * -1.f)) * (lightsources <= 1.f ? lightsources : 1.f);
+		return baseColor * (std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection() * -1.f)) + emissive + scene.ambientLightIntensity);
 	}
 
 	std::random_device rd;

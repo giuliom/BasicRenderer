@@ -21,7 +21,9 @@ namespace BasicRenderer
 		float m_nearClip = 0.3f;
 		float m_farClip = 1000.0f;
 
-		float m_halfWidth, m_halfHeight;
+		float m_viewportWidth = 0.f;
+		float m_viewportHeight = 0;
+		Vector3 m_viewportUpperLeft = { -0.5f, 0.5f, -1.f };
 
 	public:
 		Camera();
@@ -33,8 +35,8 @@ namespace BasicRenderer
 		inline Transform& GetTransform() { return m_transform; }
 		inline float GetFov() const { return m_fov; }
 		inline float GetAspectRatio() const { return m_aspectRatio; }
-		inline float GetHalfWidth() const { return m_halfWidth; }
-		inline float GetHalfHeight() const { return m_halfHeight; }
+		inline float GetViewportWidth() const { return m_viewportWidth; }
+		inline float GetViewportHeight() const { return m_viewportHeight; }
 		const Matrix4& GetViewMatrix() const;
 		const Matrix4& GetProjectionMatrix() const;
 		Ray GetCameraRay(const float u, const float v) const;

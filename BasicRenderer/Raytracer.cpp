@@ -12,8 +12,8 @@ namespace BasicRenderer
 {
 	void Raytracer::RayTracing(FrameBuffer& fBuffer, const World& scene, const Camera& camera, uint pixelSamples, uint bounces, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 	{
-		const float camW = camera.GetHalfWidth() * 2.f;
-		const float camH = camera.GetHalfHeight() * 2.f;
+		const float camW = camera.GetViewportWidth();
+		const float camH = camera.GetViewportHeight();
 		const float aspectRatio = camera.GetAspectRatio();
 
 		const uint width = fBuffer.GetWidth();
