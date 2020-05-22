@@ -3,6 +3,7 @@
 #include <QKeyEvent>
 #include <ctime>
 #include <memory>
+#include "BasicRenderer\Global.h"
 #include "BasicRenderer\PrimitiveTypes.h"
 #include "BasicRenderer\ImageFormats.h"
 #include "BasicRenderer\Vector3.h"
@@ -111,16 +112,16 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, 1, 1);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
-	int size = width() * height();
+	uint size = width() * height();
 
 	const Color* c = frame->GetColorBuffer();
 
-	for (int i = 0; i < size; ++i)
+	for (uint i = 0; i < size; ++i)
 	{
-		unsigned int ua = 255 << 24;
-		ua |= static_cast<unsigned int>(c[i].x * 255) << 16;
-		ua |= static_cast<unsigned int>(c[i].y * 255) << 8;
-		ua |= static_cast<unsigned int>(c[i].z * 255);
+		uint ua = 255 << 24;
+		ua |= static_cast<uint>(c[i].x * 255.999f) << 16;
+		ua |= static_cast<uint>(c[i].y * 255.999f) << 8;
+		ua |= static_cast<uint>(c[i].z * 255.999f);
 
 		rgb[i] = ua;
 	}

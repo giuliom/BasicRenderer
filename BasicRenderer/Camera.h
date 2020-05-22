@@ -15,7 +15,7 @@ namespace BasicRenderer
 		Matrix4 m_view = Matrix4::Identity();
 		Matrix4 m_projection = Matrix4::Zero(); // MVP = P * V * M
 
-		float m_fov = 90.0f;
+		float m_fov = 60.0f;
 		float m_fovFactor;
 		float m_aspectRatio = 4.0f / 3.0f;
 		float m_nearClip = 0.3f;

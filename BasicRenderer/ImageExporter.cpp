@@ -83,9 +83,9 @@ namespace BasicRenderer
 				//BGR
 				uint32_t index = (height - j - 1) * width + i;
 				Color c = cBuf[index];
-				bmpData.emplace_back((uint8_t)(c.z * 255.99f));
-				bmpData.emplace_back((uint8_t)(c.y * 255.99f));
-				bmpData.emplace_back((uint8_t)(c.x * 255.99f));
+				bmpData.emplace_back((uint8_t)(c.z * 255.999f));
+				bmpData.emplace_back((uint8_t)(c.y * 255.999f));
+				bmpData.emplace_back((uint8_t)(c.x * 255.999f));
 			}
 
 			uint32_t padding = bmpData.size() % 4;

@@ -37,6 +37,9 @@ namespace BasicRenderer
 				if (mat)
 				{
 					c = (mat->*shading)(scene, Vector3::Zero(), f.normal);
+					c.x = c.x < 1.f ? c.x : 1.f;
+					c.y = c.y < 1.f ? c.y : 1.f;
+					c.z = c.z < 1.f ? c.z : 1.f;
 				}
 
 				ToMatrixSpace(f, mvp);

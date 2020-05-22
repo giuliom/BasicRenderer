@@ -42,11 +42,11 @@ namespace BasicRenderer
 		const Vector3 primitive_scale_vector = { primitive_scale, primitive_scale, primitive_scale };
 		const Vector3 box_position = { 0.f, 0.f, -half_primitive_scale };
 
-		SceneObject* bunny = new SceneObject(bunnyMesh, red);
+		SceneObject* bunny = new SceneObject(bunnyMesh, gold);
 		bunny->GetTransform().SetScale(primitive_scale * 3.f, primitive_scale * 3.f, primitive_scale * 3.f);
 		bunny->GetTransform().SetPosition(box_position + Vector3(primitive_scale * 0.25f, primitive_scale * -0.6f, primitive_scale * 0.15f));
 
-		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.15f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.2f, silver);
+		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.2f, silver);
 
 		Quad* floor = new Quad(quadMesh, white);
 		floor->GetTransform().SetPosition(box_position + Vector3(0.f, -half_primitive_scale, 0.f));
