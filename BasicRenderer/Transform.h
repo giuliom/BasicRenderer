@@ -28,6 +28,7 @@ namespace BasicRenderer
 	public:
 
 		Matrix4 m;
+		Matrix4 inverse;
 
 		Vector3 forward;
 		Vector3 right;
@@ -42,6 +43,7 @@ namespace BasicRenderer
 		inline void UpdateTransform()
 		{
 			m = GetTranslationMatrix(position) * GetRotationMatrix(rotation) * GetScaleMatrix(scale);
+			inverse = m.Inverse();
 			forward = Vector3(m.x1, m.y1, m.z1).Normalize();
 			up = Vector3(m.x2, m.y2, m.z2).Normalize();
 			right = Vector3(-m.x3, -m.y3, -m.z3).Normalize();
@@ -84,8 +86,8 @@ namespace BasicRenderer
 		void SetParent(Transform* par);
 		Transform Combine(const Transform& other) const;
 
-		inline Matrix4 GetMatrix() const { return m; }
-		inline Matrix4 GetInverseMatrix() const { return m.Inverse(); }
+		inline const Matrix4& GetMatrix() const { return m; }
+		inline const Matrix4& GetInverseMatrix() const { return inverse; }
 		inline Vector4 GetTransformVector(const Vector4& v)	const { return m * v; }
 
 	};
