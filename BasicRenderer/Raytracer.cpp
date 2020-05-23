@@ -81,7 +81,7 @@ namespace BasicRenderer
 				{
 					Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
 					scattered = Ray(hitPosition, reflected + UniforSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
-					albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
+					albedo = mat.baseColor;
 					success = (Vector3::Dot(scattered.direction, hitNormal) > 0);
 				}
 				break;
@@ -91,7 +91,7 @@ namespace BasicRenderer
 					Vector3 outNormal;
 					Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
 					float ni_nt;
-					albedo = { 1.f, 1.f, 1.f }; //TODO placeholder
+					albedo = mat.baseColor;
 					Vector3 refracted;
 					float reflectionProb;
 					float cos;
