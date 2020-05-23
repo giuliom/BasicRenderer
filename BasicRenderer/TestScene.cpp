@@ -64,7 +64,7 @@ namespace BasicRenderer
 		back->GetTransform().SetScale(primitive_scale_vector);
 
 		Quad* front = new Quad(quadMesh, white);
-		front->GetTransform().SetPosition(box_position + Vector3(0.f, 0.f, half_primitive_scale + 0.001f ));
+		front->GetTransform().SetPosition(box_position + Vector3(0.f, 0.f, half_primitive_scale));
 		front->GetTransform().RotateDeg(0.f, 180.f, 0.f);
 		front->GetTransform().SetScale(primitive_scale_vector);
 
@@ -79,7 +79,7 @@ namespace BasicRenderer
 		right->GetTransform().SetScale(primitive_scale_vector);
 
 		Quad* light = new Quad(quadMesh, emissive);
-		light->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale - 0.01f, 0.f));
+		light->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale - 0.05f, 0.f));
 		light->GetTransform().RotateDeg(90.f, 0.f, 0.f);
 		light->GetTransform().SetScale(primitive_scale_vector * 0.3f);
 
@@ -93,7 +93,7 @@ namespace BasicRenderer
 		cube2->GetTransform().RotateDeg(0.f, -25.f, 0.f);
 		cube2->GetTransform().SetScale(primitive_scale_vector * 0.25f);
 
-		scene->Add(bunny);
+		//scene->Add(bunny);
 
 		scene->Add(sp);
 

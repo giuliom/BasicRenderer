@@ -19,7 +19,7 @@ namespace BasicRenderer
 			m_camera.SetAspectRatio(width, height);
 		}
 
-		m_fBuffer->Fill(scene.ambientLightColor);
+		m_fBuffer->Fill(scene.ambientLightColor * scene.ambientLightIntensity);
 
 		//Should be done in update()
 		scene.ProcessForRendering();

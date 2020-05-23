@@ -19,16 +19,17 @@ namespace BasicRenderer
 	void Camera::SetAspectRatio(uint w, uint h)
 	{
 		m_aspectRatio = static_cast<float>(w) / static_cast<float>(h);
-		SetFov(m_fov);
+		SetFov(m_hFov);
 	}
 
+	// Horizontal FOV in degrees
 	void Camera::SetFov(float f)
 	{
-		m_fov = f;
-		m_viewportHeight = tanf(m_fov * TO_RADIANS * 0.5f) * 2.f;
+		m_hFov = f;
+		m_viewportHeight = tanf(m_hFov * 0.5f * TO_RADIANS);
 		m_viewportWidth = m_aspectRatio * m_viewportHeight;
 		m_fovFactor = 1.f / m_viewportHeight;
-
+		//TODO make raytracer and rasterizer viewports have the same characteristics
 		m_viewportUpperLeft = { -m_viewportWidth * 0.5f, m_viewportHeight * 0.5f, -m_fovFactor };
 
 		UpdateProjection();
@@ -36,19 +37,17 @@ namespace BasicRenderer
 
 	void Camera::UpdateProjection()
 	{
-		const float radfov = (m_fov * TO_RADIANS * 0.5f);;
-		const float scale = 1.0f / tanf(radfov) * m_nearClip;
-		const float w = m_aspectRatio * scale;
-		const float h = scale;
+		const float scale = tanf(m_hFov * 0.5f * TO_RADIANS) * m_nearClip;
+		const float r = m_aspectRatio * scale;
+		const float t = scale;
 
-		m_projection.x1 = m_nearClip / w;
-		m_projection.y2 = m_nearClip / h;
+		m_projection.x1 = m_nearClip / r;
+		m_projection.y2 = m_nearClip / t;
 
-		m_projection.z3 = -(m_farClip + m_nearClip) / (m_farClip - m_nearClip);
-		m_projection.w3 = (-m_farClip * m_nearClip) / (m_farClip - m_nearClip);
-		m_projection.z3 = -1.0f;
+		m_projection.z3 = - (m_farClip + m_nearClip) / (m_farClip - m_nearClip);
+		m_projection.z4 = -1.f;
 
-		m_projection.z4 = -2.f * m_farClip * m_nearClip / (m_farClip - m_nearClip);
+		m_projection.w3 = -2.f * m_farClip * m_nearClip / (m_farClip - m_nearClip);
 	}
 
 	const Matrix4& Camera::GetViewMatrix() const
@@ -66,6 +65,6 @@ namespace BasicRenderer
 	{
 		// u,v comes from Top-left coordinates
 		Vector3 direction = m_viewportUpperLeft + Vector3(u * m_viewportWidth, -v * m_viewportHeight, 0);
-		return Ray(m_transform.GetPosition(), m_transform.GetMatrix() * direction);
+		return Ray(m_transform.GetPosition(), m_transform.GetMatrix() * (direction) - m_transform.GetPosition());
 	}
 }

@@ -15,11 +15,11 @@ namespace BasicRenderer
 		Matrix4 m_view = Matrix4::Identity();
 		Matrix4 m_projection = Matrix4::Zero(); // MVP = P * V * M
 
-		float m_fov = 60.0f;
+		float m_hFov = 90.0f;
 		float m_fovFactor;
 		float m_aspectRatio = 4.0f / 3.0f;
-		float m_nearClip = 0.3f;
-		float m_farClip = 1000.0f;
+		float m_nearClip = 0.1f;
+		float m_farClip = 10000.0f;
 
 		float m_viewportWidth = 0.f;
 		float m_viewportHeight = 0;
@@ -33,7 +33,7 @@ namespace BasicRenderer
 		void SetFov(float f);
 
 		inline Transform& GetTransform() { return m_transform; }
-		inline float GetFov() const { return m_fov; }
+		inline float GetFov() const { return m_hFov; }
 		inline float GetAspectRatio() const { return m_aspectRatio; }
 		inline float GetViewportWidth() const { return m_viewportWidth; }
 		inline float GetViewportHeight() const { return m_viewportHeight; }
