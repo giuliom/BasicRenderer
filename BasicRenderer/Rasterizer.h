@@ -24,8 +24,8 @@ namespace BasicRenderer
 
 		inline void PerspectiveDivide(Face& f) const;
 		inline void NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const;
-		inline int Clip(const Face& f, Face(&clippedFaces)[4]) const;
-		inline int ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const;
+		inline uint Clip(const Face& f, Face(&clippedFaces)[4]) const;
+		inline uint ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const;
 		inline bool CullFace(const Face& f) const;
 		inline Vector4 BoundingBox(const Face& f, const float fwidth, const float fheight) const;
 

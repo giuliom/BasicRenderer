@@ -48,9 +48,9 @@ namespace BasicRenderer
 				NormalizedToScreenSpace(f, fwidth, fheight);
 
 				Face clippedFaces[4];
-				int nClippedFaces = Clip(f, clippedFaces);
+				uint nClippedFaces = Clip(f, clippedFaces);
 
-				for (int j = 0; j < nClippedFaces; j++)
+				for (uint j = 0u; j < nClippedFaces; j++)
 				{
 					f = clippedFaces[j];
 
@@ -127,8 +127,7 @@ namespace BasicRenderer
 		f = Face(v0, v1, v2, f);
 	}
 
-	//TODO use custom dynamic array
-	inline int Rasterizer::Clip(const Face& f, Face(&clippedFaces)[4]) const
+	inline uint Rasterizer::Clip(const Face& f, Face(&clippedFaces)[4]) const
 	{
 		int nfaces = 0;
 
@@ -172,7 +171,7 @@ namespace BasicRenderer
 		return nfaces;
 	}
 
-	inline int Rasterizer::ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const
+	inline uint Rasterizer::ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const
 	{
 		assert(index < 5);
 
