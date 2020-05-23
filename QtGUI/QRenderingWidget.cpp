@@ -14,6 +14,7 @@
 
 QRenderingWidget::QRenderingWidget(QWidget* parent) : QOpenGLWidget(parent)
 {
+	setFocusPolicy(Qt::StrongFocus);
 	bRenderer = std::make_unique<Renderer>();
 	setMouseTracking(false);
 	SetScene("");

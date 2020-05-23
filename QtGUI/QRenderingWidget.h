@@ -23,7 +23,7 @@ protected:
 
 	std::string rTime = "";
 
-	float cameraSpeed = 3.0f;
+	float cameraSpeed = 5.0f;
 	float cameraRotationSpeed = 20.0f;
 	Vector3 cameraPos;
 	Vector2 cameraRot;
