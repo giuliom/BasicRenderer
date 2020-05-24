@@ -6,7 +6,6 @@
 #include "Rasterizer.h"
 #include "Raytracer.h"
 #include "SceneObject.h"
-#include "Camera.h"
 #include "World.h"
 
 namespace BasicRenderer
@@ -34,19 +33,19 @@ namespace BasicRenderer
 		uint m_height = 480;
 		std::shared_ptr<FrameBuffer> m_fBuffer;
 
-		Camera m_camera;
-
 		Rasterizer m_rasterizer;
 		Raytracer m_raytracer;
+		std::vector<RenderSystem*> m_renderSystems;
 
 	public:
 
-		Renderer() : m_rasterizer(), m_raytracer() {}
+		Renderer();
 		~Renderer() {}
 
-		inline Camera& GetCamera() { return m_camera; }
+		Rasterizer& GetRasterizer() { return m_rasterizer; }
+		Raytracer& GetRaytracer() { return m_raytracer; }
 
-		const std::shared_ptr<const FrameBuffer> Render(uint width, uint height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, uint samplesPerPixel = 4, uint bounces = 3);
+		const std::shared_ptr<const FrameBuffer> Render(uint width, uint height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT);
 
 	};
 }

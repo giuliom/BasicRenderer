@@ -10,8 +10,9 @@
 
 namespace BasicRenderer
 {
-	void Raytracer::RayTracing(FrameBuffer& fBuffer, const World& scene, const Camera& camera, uint pixelSamples, uint bounces, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	void Raytracer::Render(FrameBuffer& fBuffer, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 	{
+		const Camera& camera = scene.GetMainCamera();
 		const float camW = camera.GetViewportWidth();
 		const float camH = camera.GetViewportHeight();
 		const float aspectRatio = camera.GetAspectRatio();
@@ -41,7 +42,7 @@ namespace BasicRenderer
 				Color c;
 				for (uint i = 0u; i < pixelSamples; i++)
 				{
-					c = c + RayTrace(r, scene, bounces, shading);
+					c = c + RayTrace(r, scene, maxBounces, shading);
 				}
 
 				c = c * fInversePixelSameples;

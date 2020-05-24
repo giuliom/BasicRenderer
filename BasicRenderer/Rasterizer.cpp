@@ -6,19 +6,20 @@
 
 namespace BasicRenderer
 {
-	void Rasterizer::Rasterize(FrameBuffer& fBuffer, const World& scene, const Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	void Rasterizer::Render(FrameBuffer& fBuffer, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 	{
 		const uint width = fBuffer.GetWidth();
 		const uint height = fBuffer.GetHeight();
 
 		for (const std::shared_ptr<Primitive> obj : scene.GetHierarchy())
 		{
-			DrawObject(width, height, fBuffer, obj.get(), scene, camera, shading);
+			DrawObject(width, height, fBuffer, obj.get(), scene, shading);
 		}
 	}
 
-	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, const Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
 	{
+		const Camera& camera = scene.GetMainCamera();
 		const SceneObject* obj = dynamic_cast<const SceneObject*>(primitive);
 
 		const float fwidth = static_cast<float>(width);

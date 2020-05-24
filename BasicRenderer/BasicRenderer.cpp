@@ -5,7 +5,13 @@
 
 namespace BasicRenderer
 {
-	const std::shared_ptr<const FrameBuffer> Renderer::Render(uint width, uint height, World& scene, RenderingMode mode, ShadingMode shading, uint samplesPerPixel, uint maxBounces)
+	Renderer::Renderer() : m_rasterizer(), m_raytracer()
+	{
+		m_renderSystems.emplace_back(&m_rasterizer);
+		m_renderSystems.emplace_back(&m_raytracer);
+	}
+
+	const std::shared_ptr<const FrameBuffer> Renderer::Render(uint width, uint height, World& scene, RenderingMode mode, ShadingMode shading)
 	{
 		assert(width > 0 && height > 0);
 
@@ -16,7 +22,7 @@ namespace BasicRenderer
 			m_width = width;
 			m_height = height;
 
-			m_camera.SetAspectRatio(width, height);
+			scene.GetMainCamera().SetAspectRatio(width, height);
 		}
 
 		m_fBuffer->Fill(scene.ambientLightColor * scene.ambientLightIntensity);
@@ -29,7 +35,6 @@ namespace BasicRenderer
 		switch (shading)
 		{
 		case ShadingMode::NORMAL:
-			maxBounces = 1;
 			shadingFunc = &Material::NormalShading;
 			break;
 		}
@@ -40,13 +45,12 @@ namespace BasicRenderer
 		{
 		default:
 		{
-			m_rasterizer.Rasterize(*m_fBuffer, scene, m_camera, shadingFunc);
+			m_rasterizer.Render(*m_fBuffer, scene, shadingFunc);
 		}
 		break;
 		case RenderingMode::RAYTRACER:
 		{
-
-			m_raytracer.RayTracing(*m_fBuffer, scene, m_camera, samplesPerPixel, maxBounces, shadingFunc);
+			m_raytracer.Render(*m_fBuffer, scene, shadingFunc);
 		}
 		break;
 		}

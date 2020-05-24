@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Global.h"
+#include "RenderSystem.h"
 #include "Face.h"
 #include "Material.h"
 
@@ -10,17 +11,17 @@ namespace BasicRenderer
 	class World;
 	class Camera;
 
-	class Rasterizer
+	class Rasterizer : public RenderSystem
 	{
 
 	public:
 		Rasterizer() {}
 
-		void Rasterize(FrameBuffer& fBuffer, const World& scene, const Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml));
+		void Render(FrameBuffer& fBuffer, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml)) override;
 
 	protected:
 
-		void DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, const Camera& camera, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml));
+		void DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml));
 
 		inline void PerspectiveDivide(Face& f) const;
 		inline void NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const;

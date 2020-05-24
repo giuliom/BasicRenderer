@@ -4,6 +4,7 @@
 #include <memory>
 #include "Vertex.h"
 #include "DirectionalLight.h"
+#include "Camera.h"
 
 namespace BasicRenderer
 {
@@ -19,6 +20,8 @@ namespace BasicRenderer
 		//TODO implement it properly
 		Hierarchy hierarchy;
 
+		Camera m_mainCamera;
+
 	public:
 
 		World() {}
@@ -29,6 +32,8 @@ namespace BasicRenderer
 		Color ambientLightColor{ 1.f, 1.f, 1.f };
 
 		inline const Hierarchy& GetHierarchy() const { return hierarchy; }
+		inline const Camera& GetMainCamera() const { return m_mainCamera; }
+		inline Camera& GetMainCamera() { return m_mainCamera; }
 
 		void Add(Primitive* obj);
 		void ProcessForRendering();

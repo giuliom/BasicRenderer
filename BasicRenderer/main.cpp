@@ -127,9 +127,13 @@ int main(int argc, char *argv[])
 	Renderer renderer;
 	std::unique_ptr<World> scene(TestScene());
 
+	Raytracer& raytracer = renderer.GetRaytracer();
+	raytracer.pixelSamples = pixelSamples;
+	raytracer.maxBounces = maxBounces;
+
 	auto beginClock = clock();
 	
-	std::shared_ptr<const FrameBuffer> frame = renderer.Render(width, height, *scene, renderingMode, shadingMode, pixelSamples, maxBounces);
+	std::shared_ptr<const FrameBuffer> frame = renderer.Render(width, height, *scene, renderingMode, shadingMode);
 	
 	auto endClock = clock();
 

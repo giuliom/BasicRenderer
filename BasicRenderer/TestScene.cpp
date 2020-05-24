@@ -17,6 +17,8 @@ namespace BasicRenderer
 		scene->ambientLightIntensity = 0.1f;
 		scene->ambientLightColor = { 0.529f, 0.808f, 0.922f };
 
+		scene->GetMainCamera().GetTransform().SetPosition(0.f, 0.f, 4.f);
+
 		Material* emissive = new Material({ 1.0f, 1.0f, 1.0f });
 		emissive->emissive = 10.f;
 
@@ -44,9 +46,9 @@ namespace BasicRenderer
 
 		SceneObject* bunny = new SceneObject(bunnyMesh, gold);
 		bunny->GetTransform().SetScale(primitive_scale * 3.f, primitive_scale * 3.f, primitive_scale * 3.f);
-		bunny->GetTransform().SetPosition(box_position + Vector3(primitive_scale * 0.25f, primitive_scale * -0.6f, primitive_scale * 0.15f));
+		bunny->GetTransform().SetPosition(box_position + Vector3(primitive_scale * 0.25f, primitive_scale * -0.6f, primitive_scale * -0.05f));
 
-		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.2f, silver);
+		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, silver);
 
 		Quad* floor = new Quad(quadMesh, white);
 		floor->GetTransform().SetPosition(box_position + Vector3(0.f, -half_primitive_scale, 0.f));
@@ -84,8 +86,8 @@ namespace BasicRenderer
 		light->GetTransform().SetScale(primitive_scale_vector * 0.3f);
 
 		Cube* cube = new Cube(cubeMesh, white);
-		cube->GetTransform().SetPosition(box_position + Vector3(primitive_scale * -0.18f, primitive_scale * -0.15f, primitive_scale * -0.2f ));
-		cube->GetTransform().RotateDeg(0.f, 120.f, 0.f);
+		cube->GetTransform().SetPosition(box_position + Vector3(primitive_scale * -0.18f, primitive_scale * -0.15f, primitive_scale * -0.3f ));
+		cube->GetTransform().RotateDeg(0.f, 115.f, 0.f);
 		cube->GetTransform().SetScale(primitive_scale * 0.3f, primitive_scale * 0.7f, primitive_scale * 0.3f);
 
 		Cube* cube2 = new Cube(cubeMesh, white);
@@ -93,7 +95,7 @@ namespace BasicRenderer
 		cube2->GetTransform().RotateDeg(0.f, -25.f, 0.f);
 		cube2->GetTransform().SetScale(primitive_scale_vector * 0.25f);
 
-		//scene->Add(bunny);
+		scene->Add(bunny);
 
 		scene->Add(sp);
 

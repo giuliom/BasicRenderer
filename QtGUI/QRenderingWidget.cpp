@@ -18,9 +18,6 @@ QRenderingWidget::QRenderingWidget(QWidget* parent) : QOpenGLWidget(parent)
 	bRenderer = std::make_unique<Renderer>();
 	setMouseTracking(false);
 	SetScene("");
-
-	Camera& camera = bRenderer->GetCamera();
-	camera.GetTransform().SetPosition(0.f, 0.f, 6.f);
 }
 
 QRenderingWidget::~QRenderingWidget()
@@ -89,7 +86,7 @@ void QRenderingWidget::RenderFrame()
 	float deltaMs = (clock() - renderingTime) * 0.001f;
 	renderingTime = clock();
 
-	Camera& camera = bRenderer->GetCamera();
+	Camera& camera = scene->GetMainCamera();
 
 	camera.GetTransform().Rotate(cameraRot.y * deltaMs, cameraRot.x * deltaMs, 0.0f);
 
@@ -112,8 +109,12 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	
 	double beginClock = clock();
 	
+	Raytracer& raytracer = bRenderer->GetRaytracer();
+	raytracer.pixelSamples = 1;
+	raytracer.maxBounces = 2;
+
 	// Improve memory performance
-	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, 1, 1);
+	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode);
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
 	uint size = width() * height();
