@@ -15,11 +15,12 @@ namespace BasicRenderer
 		Matrix4 m_view = Matrix4::Identity();
 		Matrix4 m_projection = Matrix4::Zero(); // MVP = P * V * M
 
-		float m_hFov = 90.0f;
-		float m_fovFactor;
-		float m_aspectRatio = 4.0f / 3.0f;
+		float m_degHorizontalFov = 90.f;
+		float m_radVerticalFov = 59.f * TO_RADIANS;
+		float m_fovFactor = 0.5f;
+		float m_aspectRatio = 4.f / 3.f;
 		float m_nearClip = 0.1f;
-		float m_farClip = 10000.0f;
+		float m_farClip = 1000.0f;
 
 		float m_viewportWidth = 0.f;
 		float m_viewportHeight = 0;
@@ -33,12 +34,12 @@ namespace BasicRenderer
 		void SetFov(float f);
 
 		inline Transform& GetTransform() { return m_transform; }
-		inline float GetFov() const { return m_hFov; }
+		inline float GetFov() const { return m_degHorizontalFov; }
 		inline float GetAspectRatio() const { return m_aspectRatio; }
 		inline float GetViewportWidth() const { return m_viewportWidth; }
 		inline float GetViewportHeight() const { return m_viewportHeight; }
-		const Matrix4& GetViewMatrix() const;
-		const Matrix4& GetProjectionMatrix() const;
+		inline const Matrix4& GetViewMatrix() const { return m_transform.GetInverseMatrix(); }
+		inline const Matrix4& GetProjectionMatrix() const { return m_projection; }
 		Ray GetCameraRay(const float u, const float v) const;
 
 	protected:
