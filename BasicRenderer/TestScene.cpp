@@ -40,7 +40,7 @@ namespace BasicRenderer
 		const float primitive_scale = 4.f;
 		const float half_primitive_scale = primitive_scale * 0.5f;
 		const Vector3 primitive_scale_vector = { primitive_scale, primitive_scale, primitive_scale };
-		const Vector3 box_position = { 0.f, 0.f, -half_primitive_scale };
+		const Vector3 box_position = { 0.f, 0.f, 0.f };
 
 		SceneObject* bunny = new SceneObject(bunnyMesh, gold);
 		bunny->GetTransform().SetScale(primitive_scale * 3.f, primitive_scale * 3.f, primitive_scale * 3.f);

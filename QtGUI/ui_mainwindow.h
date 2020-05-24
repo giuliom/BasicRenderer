@@ -58,7 +58,7 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(640, 480);
+        MainWindow->resize(660, 463);
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(5);
         sizePolicy.setVerticalStretch(5);
@@ -89,6 +89,7 @@ public:
         sizePolicy2.setVerticalStretch(0);
         sizePolicy2.setHeightForWidth(renderWidget->sizePolicy().hasHeightForWidth());
         renderWidget->setSizePolicy(sizePolicy2);
+        renderWidget->setMinimumSize(QSize(640, 360));
 
         gridLayout->addWidget(renderWidget, 2, 0, 1, 1);
 
@@ -175,7 +176,7 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 640, 17));
+        menuBar->setGeometry(QRect(0, 0, 660, 17));
         menuBoh = new QMenu(menuBar);
         menuBoh->setObjectName(QStringLiteral("menuBoh"));
         MainWindow->setMenuBar(menuBar);
