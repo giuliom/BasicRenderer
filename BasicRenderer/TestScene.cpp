@@ -68,12 +68,12 @@ namespace BasicRenderer
 		front->GetTransform().RotateDeg(0.f, 180.f, 0.f);
 		front->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* left = new Quad(quadMesh, green);
+		Quad* left = new Quad(quadMesh, red);
 		left->GetTransform().SetPosition(box_position + Vector3(-half_primitive_scale, 0.f, 0.f));
 		left->GetTransform().RotateDeg(0.f, 90.f, 0.f);
 		left->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* right = new Quad(quadMesh, red);
+		Quad* right = new Quad(quadMesh, green);
 		right->GetTransform().SetPosition(box_position + Vector3(half_primitive_scale, 0.f, 0.f));
 		right->GetTransform().RotateDeg(0.f, -90.f, 0.f);
 		right->GetTransform().SetScale(primitive_scale_vector);
