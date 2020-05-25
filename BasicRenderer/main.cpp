@@ -128,8 +128,8 @@ int main(int argc, char *argv[])
 	std::unique_ptr<World> scene(TestScene());
 
 	Raytracer& raytracer = renderer.GetRaytracer();
-	raytracer.pixelSamples = pixelSamples;
-	raytracer.maxBounces = maxBounces;
+	raytracer.m_pixelSamples = pixelSamples;
+	raytracer.m_maxBounces = maxBounces;
 
 	auto beginClock = clock();
 	
