@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Global.h"
+#include <mutex>
+#include <atomic>
 #include "RenderSystem.h"
 #include "Vertex.h"
 #include "Material.h"
@@ -16,14 +18,23 @@ namespace BasicRenderer
 
 	public:
 
-		uint pixelSamples = 4;
-		uint maxBounces = 3;
+		FrameBuffer* m_fBuffer = nullptr;
+		const World* m_scene = nullptr;
+		ShadingFunc m_shadingFunc;
+
+		uint m_pixelSamples = 4;
+		uint m_maxBounces = 3;
 
 		Raytracer() {}
 
-		void Render(FrameBuffer& fBuffer, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml)) override;
-
+		void Render(FrameBuffer& fBuffer, const World& scene, const ShadingFunc& Shading) override;
+		
 	protected:
-		Color RayTrace(const Ray& ray, const World& scene, uint bounces, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml));
+
+		std::atomic<float> m_progress = 0.f;
+		static std::mutex m_progressMtx;
+
+		void RenderJob(const uint index, const uint totThreads);
+		Color RayTrace(const Ray& ray, const World& scene, uint bounces, const ShadingFunc& shading);
 	};
 }

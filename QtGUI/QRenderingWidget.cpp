@@ -110,8 +110,8 @@ void QRenderingWidget::paintEvent(QPaintEvent * e)
 	double beginClock = clock();
 	
 	Raytracer& raytracer = bRenderer->GetRaytracer();
-	raytracer.pixelSamples = 1;
-	raytracer.maxBounces = 2;
+	raytracer.m_pixelSamples = 2;
+	raytracer.m_maxBounces = 2;
 
 	// Improve memory performance
 	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode);

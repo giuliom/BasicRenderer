@@ -7,12 +7,12 @@ namespace BasicRenderer
 	const Color Material::MissingMaterialColor = { 1.0f, 0.0f, 1.0f };
 
 	//TODO Use variadic functions for shading?
-	Color Material::NormalShading(const World& scene, const Vector3& pos, const Vector3& normal)
+	Color Material::NormalShading(const World& scene, const Vector3& pos, const Vector3& normal) const
 	{
 		return (normal + 1.0f) * 0.5f;
 	}
 
-	Color Material::LitShading(const World& scene, const Vector3& pos, const Vector3& normal)
+	Color Material::LitShading(const World& scene, const Vector3& pos, const Vector3& normal) const
 	{ 
 		return baseColor * (std::fmaxf(0.0f, Vector3::Dot(normal, scene.sun.GetDirection() * -1.f)) + emissive + scene.ambientLightIntensity);
 	}

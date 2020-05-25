@@ -6,18 +6,18 @@
 
 namespace BasicRenderer
 {
-	void Rasterizer::Render(FrameBuffer& fBuffer, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	void Rasterizer::Render(FrameBuffer& fBuffer, const World& scene, const ShadingFunc& Shading)
 	{
 		const uint width = fBuffer.GetWidth();
 		const uint height = fBuffer.GetHeight();
 
 		for (const std::shared_ptr<Primitive> obj : scene.GetHierarchy())
 		{
-			DrawObject(width, height, fBuffer, obj.get(), scene, shading);
+			DrawObject(width, height, fBuffer, scene, obj.get(), Shading);
 		}
 	}
 
-	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const Primitive* primitive, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const World& scene, const Primitive* primitive, const ShadingFunc& Shading)
 	{
 		const Camera& camera = scene.GetMainCamera();
 		const SceneObject* obj = dynamic_cast<const SceneObject*>(primitive);
@@ -37,7 +37,7 @@ namespace BasicRenderer
 
 				if (mat)
 				{
-					c = (mat->*shading)(scene, Vector3::Zero(), f.normal);
+					c = Shading(*mat, scene, Vector3::Zero(), f.normal);
 					c.x = c.x < 1.f ? c.x : 1.f;
 					c.y = c.y < 1.f ? c.y : 1.f;
 					c.z = c.z < 1.f ? c.z : 1.f;

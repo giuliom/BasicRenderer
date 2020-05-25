@@ -1,7 +1,9 @@
-#include "Raytracer.h"
-#include "BasicRenderer.h"
 #include <cmath>
 #include <iostream>
+#include <thread>
+#include "Raytracer.h"
+#include "BasicRenderer.h"
+#include "FrameBuffer.h"
 #include "World.h"
 #include "Ray.h"
 #include "Material.h"
@@ -10,8 +12,36 @@
 
 namespace BasicRenderer
 {
-	void Raytracer::Render(FrameBuffer& fBuffer, const World& scene, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	std::mutex Raytracer::m_progressMtx;
+
+	void Raytracer::Render(FrameBuffer& fBuffer, const World& scene, const ShadingFunc& Shading)
 	{
+		m_fBuffer = &fBuffer;
+		m_scene = &scene;
+		m_shadingFunc = Shading;
+
+		uint thread_count = std::thread::hardware_concurrency();
+		std::vector<std::thread> renderThreads;
+
+		for (uint i = 0u; i < thread_count; i++)
+		{
+			auto thread = std::thread(&Raytracer::RenderJob, this, i, thread_count);
+			renderThreads.push_back(std::move(thread));
+		}
+
+		for (auto& t : renderThreads)
+		{
+			t.join();
+		}
+
+		std::cout << "\nRendering completed";
+	}
+
+	void Raytracer::RenderJob(const uint index, const uint totThreads)
+	{
+		const World& scene = *m_scene;
+		FrameBuffer& fBuffer = *m_fBuffer;
+
 		const Camera& camera = scene.GetMainCamera();
 		const float camW = camera.GetViewportWidth();
 		const float camH = camera.GetViewportHeight();
@@ -25,13 +55,13 @@ namespace BasicRenderer
 
 		const float inverseWidth = 1.0f / fwidth;
 		const float inverseHeight = 1.0f / fheight;
-		const float fInversePixelSameples = 1.0f / static_cast<float>(pixelSamples);
+		const float fInversePixelSameples = 1.0f / static_cast<float>(m_pixelSamples);
 
-		//Top-left
-		for (uint y = 0u; y < height; y++)
+		const float rowPctg = 100.f / fheight;
+
+		//Top-left, drawing rows
+		for (uint y = index; y < height; y += totThreads)
 		{
-			std::cout << "Progress: " << static_cast<uint>(std::roundf((static_cast<float>(y) / static_cast<float>(height)) * 100.f)) << "% \r";
-
 			for (uint x = 0u; x < width; x++)
 			{
 				const float u = static_cast<float>(x) * inverseWidth;
@@ -40,9 +70,9 @@ namespace BasicRenderer
 				Ray r = camera.GetCameraRay(u, v);
 
 				Color c;
-				for (uint i = 0u; i < pixelSamples; i++)
+				for (uint i = 0u; i < m_pixelSamples; i++)
 				{
-					c = c + RayTrace(r, scene, maxBounces, shading);
+					c = c + RayTrace(r, scene, m_maxBounces, m_shadingFunc);
 				}
 
 				c = c * fInversePixelSameples;
@@ -52,12 +82,14 @@ namespace BasicRenderer
 
 				fBuffer.WriteToColor((int)(y * fwidth + x), c);
 			}
-		}
 
-		std::cout << "\nRendering completed";
+			const std::lock_guard<std::mutex> lock(m_progressMtx);
+			m_progress = m_progress + rowPctg;
+			std::cout << "Progress: " << static_cast<uint>(std::roundf(m_progress)) << "% \r";
+		}
 	}
 
-	Color Raytracer::RayTrace(const Ray& ray, const World& scene, uint bounces, Color(Material::* shading)(const World& w, const Vector3& pos, const Vector3& nrml))
+	Color Raytracer::RayTrace(const Ray& ray, const World& scene, uint bounces, const ShadingFunc& Shading)
 	{
 		Vector3 hitPosition, hitNormal;
 		const Primitive* hitObject = nullptr;
@@ -143,7 +175,7 @@ namespace BasicRenderer
 
 			if (success)
 			{
-				return RayTrace(scattered, scene, bounces - 1, shading) * albedo + mat.emissive;
+				return RayTrace(scattered, scene, bounces - 1, Shading) * albedo + mat.emissive;
 			}
 			else
 			{

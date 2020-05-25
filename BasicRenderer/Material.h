@@ -45,8 +45,8 @@ namespace BasicRenderer
 
 		static const Color MissingMaterialColor;
 
-		Color NormalShading(const World& scene, const Vector3& pos, const Vector3& normal);
-		Color LitShading(const World& scene, const Vector3& pos, const Vector3& normal);
+		Color NormalShading(const World& scene, const Vector3& pos, const Vector3& normal) const;
+		Color LitShading(const World& scene, const Vector3& pos, const Vector3& normal) const;
 
 		static inline float Schlick(float cos, float refractiveIndex)
 		{
