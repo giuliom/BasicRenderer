@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	int width = 720;
 	int height = 480;
 
-	std::string outputFile = "../../../output/";
+	std::string outputPath = "output/";
 
 	std::string renderingModeName = "rasterizer";
 	std::string shadingModeName = "lit";
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 		}
 		else if (std::strcmp(argv[an], "-n") == 0)
 		{
-			outputFile = argv[an + 1];
+			outputPath = argv[an + 1];
 		}
 		else if (std::strcmp(argv[an], "-r") == 0)
 		{
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 	}
 
 	std::cout << "\n----- PARAMETERS -----" << std::endl;
-	std::cout << "Output: " + outputFile << std::endl;
+	std::cout << "Output: " + outputPath << std::endl;
 	std::cout << "Input: " + file << std::endl;
 	std::cout << "Width: " << width << std::endl;
 	std::cout << "Height: " << height << std::endl;
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 	double ms = diff / (CLOCKS_PER_SEC / 1000);
 
 	//Saving Image
-	ImageExporter::ExportToBMP(outputFile, renderingModeName, frame);
+	ImageExporter::ExportToBMP(outputPath, renderingModeName, frame);
 
 	std::cout <<std::endl << "Rendering Time: " << ms << " ms " << "\n\n";
 	

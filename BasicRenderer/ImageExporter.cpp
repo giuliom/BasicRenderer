@@ -1,11 +1,16 @@
 #include "ImageExporter.h"
 #include <fstream>
+#include <filesystem>
 #include "ImageFormats.h"
 
 namespace BasicRenderer
 {
 	bool ImageExporter::ExportToPPM(std::string& path, std::string& filename, const std::shared_ptr<const FrameBuffer> fBuf)
 	{
+		if (std::filesystem::is_directory(path) == false)
+		{
+			std::filesystem::create_directory(path);
+		}
 		std::ofstream outfile;
 		outfile.open(path + filename + ".ppm");
 
@@ -32,9 +37,12 @@ namespace BasicRenderer
 
 	bool ImageExporter::ExportToBMP(std::string& path, std::string& filename, const std::shared_ptr<const FrameBuffer> fBuf)
 	{
+		if (std::filesystem::is_directory(path) == false)
+		{
+			std::filesystem::create_directory(path);
+		}
 		std::ofstream outfile;
-		std::string filePath = path;
-		outfile.open((filePath + filename + ".bmp").c_str(), std::ofstream::binary);
+		outfile.open((path + filename + ".bmp").c_str(), std::ofstream::binary);
 
 		if (!outfile.is_open()) return false;
 
