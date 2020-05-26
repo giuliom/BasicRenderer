@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>Basic Renderer</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/Icon.ico</normaloff>:/Icon.ico</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
@@ -230,7 +234,7 @@
      <x>0</x>
      <y>0</y>
      <width>660</width>
-     <height>17</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuBoh">
@@ -283,6 +287,8 @@
    <header>QRenderingWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

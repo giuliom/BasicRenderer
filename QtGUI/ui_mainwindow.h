@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.6.2
+** Created by: Qt User Interface Compiler version 5.15.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -10,13 +10,12 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QIcon>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
-#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
@@ -57,21 +56,24 @@ public:
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
-            MainWindow->setObjectName(QStringLiteral("MainWindow"));
+            MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(660, 463);
         QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
         sizePolicy.setHorizontalStretch(5);
         sizePolicy.setVerticalStretch(5);
         sizePolicy.setHeightForWidth(MainWindow->sizePolicy().hasHeightForWidth());
         MainWindow->setSizePolicy(sizePolicy);
+        QIcon icon;
+        icon.addFile(QString::fromUtf8(":/Icon.ico"), QSize(), QIcon::Normal, QIcon::Off);
+        MainWindow->setWindowIcon(icon);
         actionRender = new QAction(MainWindow);
-        actionRender->setObjectName(QStringLiteral("actionRender"));
+        actionRender->setObjectName(QString::fromUtf8("actionRender"));
         actionOpen = new QAction(MainWindow);
-        actionOpen->setObjectName(QStringLiteral("actionOpen"));
+        actionOpen->setObjectName(QString::fromUtf8("actionOpen"));
         actionSave = new QAction(MainWindow);
-        actionSave->setObjectName(QStringLiteral("actionSave"));
+        actionSave->setObjectName(QString::fromUtf8("actionSave"));
         centralWidget = new QWidget(MainWindow);
-        centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         QSizePolicy sizePolicy1(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         sizePolicy1.setHorizontalStretch(0);
         sizePolicy1.setVerticalStretch(0);
@@ -81,9 +83,9 @@ public:
         gridLayout = new QGridLayout(centralWidget);
         gridLayout->setSpacing(6);
         gridLayout->setContentsMargins(11, 11, 11, 11);
-        gridLayout->setObjectName(QStringLiteral("gridLayout"));
+        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         renderWidget = new QRenderingWidget(centralWidget);
-        renderWidget->setObjectName(QStringLiteral("renderWidget"));
+        renderWidget->setObjectName(QString::fromUtf8("renderWidget"));
         QSizePolicy sizePolicy2(QSizePolicy::Expanding, QSizePolicy::Expanding);
         sizePolicy2.setHorizontalStretch(0);
         sizePolicy2.setVerticalStretch(0);
@@ -95,36 +97,36 @@ public:
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         renderButton = new QPushButton(centralWidget);
-        renderButton->setObjectName(QStringLiteral("renderButton"));
+        renderButton->setObjectName(QString::fromUtf8("renderButton"));
         renderButton->setMinimumSize(QSize(0, 25));
         renderButton->setMaximumSize(QSize(16777215, 25));
 
         horizontalLayout->addWidget(renderButton);
 
         rendererComboBox = new QComboBox(centralWidget);
-        rendererComboBox->setObjectName(QStringLiteral("rendererComboBox"));
+        rendererComboBox->setObjectName(QString::fromUtf8("rendererComboBox"));
         rendererComboBox->setMinimumSize(QSize(0, 24));
         rendererComboBox->setMaximumSize(QSize(16777215, 24));
 
         horizontalLayout->addWidget(rendererComboBox);
 
         shadingComboBox = new QComboBox(centralWidget);
-        shadingComboBox->setObjectName(QStringLiteral("shadingComboBox"));
+        shadingComboBox->setObjectName(QString::fromUtf8("shadingComboBox"));
         shadingComboBox->setMinimumSize(QSize(0, 24));
         shadingComboBox->setMaximumSize(QSize(16777215, 24));
 
         horizontalLayout->addWidget(shadingComboBox);
 
         wlabel = new QLabel(centralWidget);
-        wlabel->setObjectName(QStringLiteral("wlabel"));
+        wlabel->setObjectName(QString::fromUtf8("wlabel"));
         wlabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(wlabel);
 
         widthEdit = new QLineEdit(centralWidget);
-        widthEdit->setObjectName(QStringLiteral("widthEdit"));
+        widthEdit->setObjectName(QString::fromUtf8("widthEdit"));
         QSizePolicy sizePolicy3(QSizePolicy::Minimum, QSizePolicy::Fixed);
         sizePolicy3.setHorizontalStretch(0);
         sizePolicy3.setVerticalStretch(0);
@@ -137,13 +139,13 @@ public:
         horizontalLayout->addWidget(widthEdit);
 
         hlabel = new QLabel(centralWidget);
-        hlabel->setObjectName(QStringLiteral("hlabel"));
+        hlabel->setObjectName(QString::fromUtf8("hlabel"));
         hlabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
         horizontalLayout->addWidget(hlabel);
 
         heightEdit = new QLineEdit(centralWidget);
-        heightEdit->setObjectName(QStringLiteral("heightEdit"));
+        heightEdit->setObjectName(QString::fromUtf8("heightEdit"));
         sizePolicy3.setHeightForWidth(heightEdit->sizePolicy().hasHeightForWidth());
         heightEdit->setSizePolicy(sizePolicy3);
         heightEdit->setMinimumSize(QSize(40, 24));
@@ -153,7 +155,7 @@ public:
         horizontalLayout->addWidget(heightEdit);
 
         saveButton = new QPushButton(centralWidget);
-        saveButton->setObjectName(QStringLiteral("saveButton"));
+        saveButton->setObjectName(QString::fromUtf8("saveButton"));
         saveButton->setMinimumSize(QSize(0, 25));
         saveButton->setMaximumSize(QSize(16777215, 25));
 
@@ -164,7 +166,7 @@ public:
         horizontalLayout->addItem(horizontalSpacer);
 
         fpsLabel = new QLabel(centralWidget);
-        fpsLabel->setObjectName(QStringLiteral("fpsLabel"));
+        fpsLabel->setObjectName(QString::fromUtf8("fpsLabel"));
         fpsLabel->setMinimumSize(QSize(60, 10));
         fpsLabel->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
@@ -175,13 +177,13 @@ public:
 
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
-        menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 660, 17));
+        menuBar->setObjectName(QString::fromUtf8("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 660, 21));
         menuBoh = new QMenu(menuBar);
-        menuBoh->setObjectName(QStringLiteral("menuBoh"));
+        menuBoh->setObjectName(QString::fromUtf8("menuBoh"));
         MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
-        statusBar->setObjectName(QStringLiteral("statusBar"));
+        statusBar->setObjectName(QString::fromUtf8("statusBar"));
         MainWindow->setStatusBar(statusBar);
 
         menuBar->addAction(menuBoh->menuAction());
@@ -196,25 +198,31 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Basic Renderer", 0));
-        actionRender->setText(QApplication::translate("MainWindow", "Render", 0));
-#ifndef QT_NO_TOOLTIP
-        actionRender->setToolTip(QApplication::translate("MainWindow", "Render Image", 0));
-#endif // QT_NO_TOOLTIP
-        actionRender->setShortcut(QApplication::translate("MainWindow", "Ctrl+R", 0));
-        actionOpen->setText(QApplication::translate("MainWindow", "Open", 0));
-#ifndef QT_NO_TOOLTIP
-        actionOpen->setToolTip(QApplication::translate("MainWindow", "Open File", 0));
-#endif // QT_NO_TOOLTIP
-        actionOpen->setShortcut(QApplication::translate("MainWindow", "Ctrl+O", 0));
-        actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
-        actionSave->setShortcut(QApplication::translate("MainWindow", "Ctrl+S", 0));
-        renderButton->setText(QApplication::translate("MainWindow", "Render", 0));
-        wlabel->setText(QApplication::translate("MainWindow", "w:", 0));
-        hlabel->setText(QApplication::translate("MainWindow", "h:", 0));
-        saveButton->setText(QApplication::translate("MainWindow", "Save", 0));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Basic Renderer", nullptr));
+        actionRender->setText(QCoreApplication::translate("MainWindow", "Render", nullptr));
+#if QT_CONFIG(tooltip)
+        actionRender->setToolTip(QCoreApplication::translate("MainWindow", "Render Image", nullptr));
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(shortcut)
+        actionRender->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+R", nullptr));
+#endif // QT_CONFIG(shortcut)
+        actionOpen->setText(QCoreApplication::translate("MainWindow", "Open", nullptr));
+#if QT_CONFIG(tooltip)
+        actionOpen->setToolTip(QCoreApplication::translate("MainWindow", "Open File", nullptr));
+#endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(shortcut)
+        actionOpen->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+O", nullptr));
+#endif // QT_CONFIG(shortcut)
+        actionSave->setText(QCoreApplication::translate("MainWindow", "Save", nullptr));
+#if QT_CONFIG(shortcut)
+        actionSave->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+S", nullptr));
+#endif // QT_CONFIG(shortcut)
+        renderButton->setText(QCoreApplication::translate("MainWindow", "Render", nullptr));
+        wlabel->setText(QCoreApplication::translate("MainWindow", "w:", nullptr));
+        hlabel->setText(QCoreApplication::translate("MainWindow", "h:", nullptr));
+        saveButton->setText(QCoreApplication::translate("MainWindow", "Save", nullptr));
         fpsLabel->setText(QString());
-        menuBoh->setTitle(QApplication::translate("MainWindow", "File", 0));
+        menuBoh->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
     } // retranslateUi
 
 };
