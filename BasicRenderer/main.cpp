@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ctime>
 #include <string>
+#include <iomanip>
 #include "Global.h"
 #include "BasicRenderer.h"
 #include "ObjLoader.h"
@@ -143,7 +144,9 @@ int main(int argc, char *argv[])
 	//Saving Image
 	ImageExporter::ExportToBMP(outputPath, renderingModeName, frame);
 
-	std::cout <<std::endl << "Rendering Time: " << ms << " ms " << "\n\n";
+	std::cout << std::fixed << std::setprecision(0);
+	std::cout << std::endl << "Rendering Time: " << ms << " ms " << "\n\n";
+	std::cout << std::scientific;
 	
 	std::cin.get();
 	

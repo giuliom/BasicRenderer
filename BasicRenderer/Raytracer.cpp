@@ -20,12 +20,17 @@ namespace BasicRenderer
 		m_scene = &scene;
 		m_shadingFunc = Shading;
 
-		uint thread_count = std::thread::hardware_concurrency();
 		std::vector<std::thread> renderThreads;
+		const uint threadCount = std::thread::hardware_concurrency() - 1u;
+		const uint rowCount = fBuffer.GetHeight();
+		const uint rowsPerThread = rowCount / threadCount;
 
-		for (uint i = 0u; i < thread_count; i++)
+		for (uint i = 0u; i < threadCount; i++)
 		{
-			auto thread = std::thread(&Raytracer::RenderJob, this, i, thread_count);
+			const uint startRowIndex = rowsPerThread * i;
+			const uint endRowIndex = (startRowIndex + rowsPerThread) < rowCount ? startRowIndex + rowsPerThread : rowCount;
+
+			auto thread = std::thread(&Raytracer::RenderJob, this, startRowIndex, endRowIndex);
 			renderThreads.push_back(std::move(thread));
 		}
 
@@ -34,10 +39,11 @@ namespace BasicRenderer
 			t.join();
 		}
 
+		std::cout << "Progress: " << 100u << "% \r";
 		std::cout << "\nRendering completed";
 	}
 
-	void Raytracer::RenderJob(const uint index, const uint totThreads)
+	void Raytracer::RenderJob(const uint startRowIndex, const uint endRowIndex)
 	{
 		const World& scene = *m_scene;
 		FrameBuffer& fBuffer = *m_fBuffer;
@@ -57,10 +63,10 @@ namespace BasicRenderer
 		const float inverseHeight = 1.0f / fheight;
 		const float fInversePixelSameples = 1.0f / static_cast<float>(m_pixelSamples);
 
-		const float rowPctg = 100.f / fheight;
+		const float rowPctg =  100.f / fheight;
 
 		//Top-left, drawing rows
-		for (uint y = index; y < height; y += totThreads)
+		for (uint y = startRowIndex; y < endRowIndex; y++)
 		{
 			for (uint x = 0u; x < width; x++)
 			{
@@ -72,7 +78,7 @@ namespace BasicRenderer
 				Color c;
 				for (uint i = 0u; i < m_pixelSamples; i++)
 				{
-					c = c + RayTrace(r, scene, m_maxBounces, m_shadingFunc);
+					c = c + RayTrace(r, scene, m_shadingFunc);
 				}
 
 				c = c * fInversePixelSameples;
@@ -89,32 +95,36 @@ namespace BasicRenderer
 		}
 	}
 
-	Color Raytracer::RayTrace(const Ray& ray, const World& scene, uint bounces, const ShadingFunc& Shading)
+	Color Raytracer::RayTrace(const Ray& ray, const World& scene, const ShadingFunc& Shading)
 	{
 		Vector3 hitPosition, hitNormal;
 		const Primitive* hitObject = nullptr;
-		if ((hitObject = scene.Raycast(ray, 0.0001f, 999999.99f, hitPosition, hitNormal)) != nullptr)
-		{
-			if (hitObject->GetMaterial() == nullptr)
-			{
-				return Material::MissingMaterialColor;
-			}
 
-			Ray scattered;
-			const Material mat = *hitObject->GetMaterial();
-			Color albedo;
-			bool success = false;
-			//return hit.normal; // TODO to show normals
-			if (bounces > 0)
+		uint bounces = 0;
+		bool success = false;
+		Ray iterationRay = ray;
+		Color throughput = { 1.f, 1.f, 1.f };
+		Color result = { 0.f, 0.f, 0.f };
+
+		do
+		{
+			if ((hitObject = scene.Raycast(iterationRay, 0.0001f, 999999.99f, hitPosition, hitNormal)) != nullptr)
 			{
+				if (hitObject->GetMaterial() == nullptr && bounces == 0u)
+				{
+					throughput = Material::MissingMaterialColor;
+				}
+
+				success = false;
+				const Material& mat = *hitObject->GetMaterial();
+
 				switch (mat.type)
 				{
 				case Material::Type::METALLIC:
 				{
 					Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
-					scattered = Ray(hitPosition, reflected + UniforSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
-					albedo = mat.baseColor;
-					success = (Vector3::Dot(scattered.direction, hitNormal) > 0);
+					iterationRay = Ray(hitPosition, reflected + UniforSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
+					success = (Vector3::Dot(iterationRay.direction, hitNormal) > 0);
 				}
 				break;
 
@@ -123,7 +133,6 @@ namespace BasicRenderer
 					Vector3 outNormal;
 					Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
 					float ni_nt;
-					albedo = mat.baseColor;
 					Vector3 refracted;
 					float reflectionProb;
 					float cos;
@@ -151,11 +160,11 @@ namespace BasicRenderer
 
 					if (UnitRandf() < reflectionProb)
 					{
-						scattered = Ray(hitPosition, reflected);
+						iterationRay = Ray(hitPosition, reflected);
 					}
 					else
 					{
-						scattered = Ray(hitPosition, refracted);
+						iterationRay = Ray(hitPosition, refracted);
 					}
 
 					success = true;
@@ -165,27 +174,30 @@ namespace BasicRenderer
 				default:
 				{
 					Vector3 target = hitPosition + UniforSampleInHemisphere(hitNormal);
-					scattered = Ray(hitPosition, target - hitPosition);
-					albedo = mat.baseColor;
+					iterationRay = Ray(hitPosition, target - hitPosition);
 					success = true;
 				}
 				break;
 				}
+
+				if (success)
+				{
+					throughput = throughput * mat.baseColor;
+					result = result + throughput * mat.emissive;
+
+				}
+			}
+			else // No hit
+			{
+				throughput = throughput * scene.ambientLightColor;
+				result = result + throughput * scene.ambientLightIntensity;
 			}
 
-			if (success)
-			{
-				return RayTrace(scattered, scene, bounces - 1, Shading) * albedo + mat.emissive;
-			}
-			else
-			{
-				return Vector3(mat.emissive, mat.emissive, mat.emissive);
-			}
-		}
-		else
-		{
-			return scene.ambientLightColor * scene.ambientLightIntensity;
-		}
+			bounces++;
+
+		} while (bounces <= m_maxBounces && success);
+
+		return result;
 	}
 
 }

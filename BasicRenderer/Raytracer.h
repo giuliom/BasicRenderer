@@ -34,7 +34,7 @@ namespace BasicRenderer
 		std::atomic<float> m_progress = 0.f;
 		static std::mutex m_progressMtx;
 
-		void RenderJob(const uint index, const uint totThreads);
-		Color RayTrace(const Ray& ray, const World& scene, uint bounces, const ShadingFunc& shading);
+		void RenderJob(const uint startRowIndex, const uint endRowIndex);
+		Color RayTrace(const Ray& ray, const World& scene, const ShadingFunc& shading);
 	};
 }
