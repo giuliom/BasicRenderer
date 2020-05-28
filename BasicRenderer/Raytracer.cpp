@@ -21,9 +21,11 @@ namespace BasicRenderer
 		m_shadingFunc = Shading;
 
 		std::vector<std::thread> renderThreads;
-		const uint threadCount = std::thread::hardware_concurrency() - 1u;
+		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency()  - 1u : 1u;
 		const uint rowCount = fBuffer.GetHeight();
 		const uint rowsPerThread = rowCount / threadCount;
+
+		std::cout << "Progress: " << 0u << "% \r";
 
 		for (uint i = 0u; i < threadCount; i++)
 		{
@@ -104,7 +106,7 @@ namespace BasicRenderer
 		bool success = false;
 		Ray iterationRay = ray;
 		Color throughput = { 1.f, 1.f, 1.f };
-		Color result = { 0.f, 0.f, 0.f };
+		Color resultRadiance = { 0.f, 0.f, 0.f };
 
 		do
 		{
@@ -182,22 +184,22 @@ namespace BasicRenderer
 
 				if (success)
 				{
+					resultRadiance = resultRadiance + throughput * mat.emissive;
 					throughput = throughput * mat.baseColor;
-					result = result + throughput * mat.emissive;
 
 				}
 			}
 			else // No hit
 			{
 				throughput = throughput * scene.ambientLightColor;
-				result = result + throughput * scene.ambientLightIntensity;
+				resultRadiance = resultRadiance + throughput * scene.ambientLightIntensity;
 			}
 
 			bounces++;
 
 		} while (bounces <= m_maxBounces && success);
 
-		return result;
+		return resultRadiance;
 	}
 
 }

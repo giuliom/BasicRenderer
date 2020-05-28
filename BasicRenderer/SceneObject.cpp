@@ -83,7 +83,7 @@ namespace BasicRenderer
 
 		for (uint i = 0; i < numFaces; i++)
 		{
-			const Face& f = GetTransformedFace(i);
+			const Face& f = m_transformedFaces[i];
 			if (Intersection(f, r, tMin, tMax, test))
 			{
 				hit = true;
