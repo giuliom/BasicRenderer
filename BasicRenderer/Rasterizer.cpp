@@ -205,7 +205,7 @@ namespace BasicRenderer
 			}
 		}
 
-		if ((size == 0 || !(vertices[size - 1] != n_v0)) && size < 6)
+		if ((size == 0 || !(vertices[size - 1] != n_v0)) && size < 5)
 		{
 			vertices[size] = n_v0;
 			++size;

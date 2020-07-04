@@ -21,12 +21,12 @@ namespace BasicRenderer
 
 		inline Vector4 Normalize() const
 		{
-			float l = Magnitude();
+			float l = Length();
 			l = 1.0f / l;
 			return Vector4(x * l, y * l, z * l, w * l);
 		}
 
-		inline float Magnitude() const { return sqrtf((x * x) + (y * y) + (z * z) + (w * w)); }
+		inline float Length() const { return sqrtf((x * x) + (y * y) + (z * z) + (w * w)); }
 
 		Vector4& operator=(const Vector4& v);
 		Vector4& operator=(Vector4&& v);
@@ -41,6 +41,15 @@ namespace BasicRenderer
 		inline Vector4 operator*(const float f) const { return Vector4(x * f, y * f, z * f, w * f); }
 		inline Vector4 operator/(const Vector4& v) const { return Vector4(x / v.x, y / v.y, z / v.z, w / v.w); }
 		inline Vector4 operator/(const float f) const { return Vector4(x / f, y / f, z / f, w / f); }
+
+		inline Vector4& operator+=(const Vector4& v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
+		inline Vector4& operator+=(const float f) { x += f; y += f; z += f; w += f; return *this; }
+		inline Vector4& operator-=(const Vector4& v) { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
+		inline Vector4& operator-=(const float f) { x -= f; y -= f; z -= f; w -= f; return *this; }
+		inline Vector4& operator*=(const Vector4& v) { x *= v.x; y *= v.y; z *= v.z; w *= v.w; return *this; }
+		inline Vector4& operator*=(const float f) { x *= f; y *= f; z *= f; w *= f; return *this; }
+		inline Vector4& operator/=(const Vector4& v) { x /= v.x; y /= v.y; z /= v.z; w /= v.w; return *this; }
+		inline Vector4& operator/=(const float f) { x /= f; y /= f; z /= f; w /= f; return *this; }
 
 		inline static float Dot(const Vector4& a, const Vector4& b)
 		{

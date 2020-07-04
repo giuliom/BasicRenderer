@@ -19,12 +19,12 @@ namespace BasicRenderer
 
 		inline Vector2 Normalize() const
 		{
-			float l = Magnitude();
+			float l = Length();
 			l = 1.0f / l;
 			return Vector2(x * l, y * l);
 		}
 
-		inline float Magnitude() const
+		inline float Length() const
 		{
 			return sqrtf((x * x) + (y * y));
 		}
@@ -42,6 +42,15 @@ namespace BasicRenderer
 		inline Vector2 operator*(const float f) const { return Vector2(x * f, y * f); }
 		inline Vector2 operator/(const Vector2& v) const { return Vector2(x / v.x, y / v.y); }
 		inline Vector2 operator/(const float f) const { return Vector2(x / f, y / f); }
+
+		inline Vector2& operator+=(const Vector2& v) { x += v.x; y += v.y; return *this; }
+		inline Vector2& operator+=(const float f) { x += f; y += f; return *this; }
+		inline Vector2& operator-=(const Vector2& v) { x -= v.x; y -= v.y; return *this; }
+		inline Vector2& operator-=(const float f) { x -= f; y -= f; return *this; }
+		inline Vector2& operator*=(const Vector2& v) { x *= v.x; y *= v.y; return *this; }
+		inline Vector2& operator*=(const float f) { x *= f; y *= f; return *this; }
+		inline Vector2& operator/=(const Vector2& v) { x /= v.x; y /= v.y; return *this; }
+		inline Vector2& operator/=(const float f) { x /= f; y /= f; return *this; }
 
 		inline static float Dot(const Vector2& a, const Vector2& b)
 		{

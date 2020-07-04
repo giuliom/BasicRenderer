@@ -184,15 +184,15 @@ namespace BasicRenderer
 
 				if (success)
 				{
-					resultRadiance = resultRadiance + throughput * mat.emissive;
-					throughput = throughput * mat.baseColor;
+					resultRadiance += throughput * mat.emissive;
+					throughput *= mat.baseColor;
 
 				}
 			}
 			else // No hit
 			{
-				throughput = throughput * scene.ambientLightColor;
-				resultRadiance = resultRadiance + throughput * scene.ambientLightIntensity;
+				throughput *= scene.ambientLightColor;
+				resultRadiance += throughput * scene.ambientLightIntensity;
 			}
 
 			bounces++;
