@@ -37,6 +37,8 @@ namespace BasicRenderer
 
 		std::string line;
 
+		//TODO use regex
+
 		while (std::getline(file, line))
 		{
 			std::string sub = line.substr(0, 2);

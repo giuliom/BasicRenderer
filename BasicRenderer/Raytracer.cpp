@@ -91,7 +91,7 @@ namespace BasicRenderer
 				fBuffer.WriteToColor((int)(y * fwidth + x), c);
 			}
 
-			const std::lock_guard<std::mutex> lock(m_progressMtx);
+			const std::scoped_lock<std::mutex> lock(m_progressMtx);
 			m_progress = m_progress + rowPctg;
 			std::cout << "Progress: " << static_cast<uint>(std::roundf(m_progress)) << "% \r";
 		}
