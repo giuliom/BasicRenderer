@@ -12,4 +12,4 @@ Features planned:
 
 The solution includes two projects:
 - BasicRenderer aka the actual renderer itself that can be built as standalone executable
-- QtGUI a graphical interface for BasicRenderer made with Qt 5.6.2
+- QtGUI a graphical interface for BasicRenderer made with Qt 5.15.0
