@@ -102,7 +102,8 @@ namespace BasicRenderer
 
 		inline static Matrix4 Identity()
 		{
-			return Matrix4(1.0f, 0.0f, 0.0f, 0.0f,
+			return Matrix4(
+				1.0f, 0.0f, 0.0f, 0.0f,
 				0.0f, 1.0f, 0.0f, 0.0f,
 				0.0f, 0.0f, 1.0f, 0.0f,
 				0.0f, 0.0f, 0.0f, 1.0f);
