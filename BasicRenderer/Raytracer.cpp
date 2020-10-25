@@ -12,7 +12,10 @@
 
 namespace BasicRenderer
 {
+	// Mutexes
+	
 	std::mutex Raytracer::m_progressMtx;
+
 
 	void Raytracer::Render(FrameBuffer& fBuffer, const World& scene, const ShadingFunc& Shading)
 	{
@@ -91,9 +94,11 @@ namespace BasicRenderer
 				fBuffer.WriteToColor((int)(y * fwidth + x), c);
 			}
 
+#if !LIB_DEBUG && !LIB_RELEASE
 			const std::scoped_lock<std::mutex> lock(m_progressMtx);
 			m_progress = m_progress + rowPctg;
 			std::cout << "Progress: " << static_cast<uint>(std::roundf(m_progress)) << "% \r";
+#endif
 		}
 	}
 
