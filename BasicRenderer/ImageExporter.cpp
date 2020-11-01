@@ -5,7 +5,7 @@
 
 namespace BasicRenderer
 {
-	bool ImageExporter::ExportToPPM(std::string& path, std::string& filename, const std::shared_ptr<const FrameBuffer> fBuf)
+	bool ImageExporter::ExportToPPM(std::string& path, std::string& filename, const FrameBuffer& fBuf)
 	{
 		if (std::filesystem::is_directory(path) == false)
 		{
@@ -14,8 +14,8 @@ namespace BasicRenderer
 		std::ofstream outfile;
 		outfile.open(path + filename + ".ppm");
 
-		int width = fBuf->GetWidth();
-		int height = fBuf->GetHeight();
+		int width = fBuf.GetWidth();
+		int height = fBuf.GetHeight();
 
 		outfile << "P3\n" << width << " " << height << "\n255\n";
 
@@ -23,7 +23,7 @@ namespace BasicRenderer
 		{
 			for (int j = 0; j < width; j++)
 			{
-				Color c = fBuf->GetColor(i * width + j);
+				Color c = fBuf.GetColor(i * width + j);
 				int r = int(255.99f * c.x);
 				int g = int(255.99f * c.y);
 				int b = int(255.99f * c.z);
@@ -35,7 +35,7 @@ namespace BasicRenderer
 		return true;
 	}
 
-	bool ImageExporter::ExportToBMP(std::string& path, std::string& filename, const std::shared_ptr<const FrameBuffer> fBuf)
+	bool ImageExporter::ExportToBMP(std::string& path, std::string& filename, const FrameBuffer& fBuf)
 	{
 		if (std::filesystem::is_directory(path) == false)
 		{
@@ -47,8 +47,8 @@ namespace BasicRenderer
 		if (!outfile.is_open()) return false;
 
 		std::vector<uint8_t> bmpData;
-		uint32_t width = fBuf->GetWidth();
-		uint32_t height = fBuf->GetHeight();
+		uint32_t width = fBuf.GetWidth();
+		uint32_t height = fBuf.GetHeight();
 
 		bmpData.emplace_back(0x42);
 		bmpData.emplace_back(0x4D);
@@ -81,7 +81,7 @@ namespace BasicRenderer
 		size_t headerSize = bmpData.size();
 		memcpy(&bmpData[pixelInfo_offset], &headerSize, 4);
 
-		const Color* cBuf = fBuf->GetColorBuffer();
+		const Color* cBuf = fBuf.GetColorBuffer();
 
 		//Flipped image along the y axis
 		for (uint32_t j = 0; j < height; j++)

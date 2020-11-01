@@ -22,6 +22,8 @@ QRenderingWidget::QRenderingWidget(QWidget* parent) : QOpenGLWidget(parent)
 
 QRenderingWidget::~QRenderingWidget()
 {
+	m_loop = false;
+	m_renderThread.join();
 }
 
 void QRenderingWidget::SetScene(const char* filename)
@@ -31,7 +33,12 @@ void QRenderingWidget::SetScene(const char* filename)
 
 void QRenderingWidget::SaveFrame(const char* path)
 {
-	ImageExporter::ExportToBMP(std::string(path), std::string("saved_render"), frame);
+	std::unique_ptr<FrameBuffer> frame = std::make_unique<FrameBuffer>(imgDisplay->width(), imgDisplay->height());
+	{
+		std::scoped_lock<std::mutex> img_lock(m_renderMtx);
+		copyQImageToFrameBuffer(*frame.get(), *imgDisplay);
+	}
+	ImageExporter::ExportToBMP(std::string(path), std::string("saved_render"), *frame);
 }
 
 void QRenderingWidget::SetRenderingMode(int index)
@@ -62,17 +69,30 @@ void QRenderingWidget::SetShadingMode(int index)
 
 void QRenderingWidget::initializeGL()
 {
-	img = std::make_unique<QImage>(width(), height(), QImage::Format_ARGB32);
-	img->fill(QColor(211, 211, 211));
-
-	renderingTime = clock();
+	imgDisplay = std::make_unique<QImage>(width(), height(), QImage::Format_ARGB32);
+	imgDisplay->fill(QColor(211, 211, 211));
 
 	connect(this, SIGNAL(RenderingCompleted(double)), this, SLOT(RenderFrame()));
+
+	Raytracer& raytracer = bRenderer->GetRaytracer();
+	raytracer.m_pixelSamples = 2;
+	raytracer.m_maxBounces = 2;
+
+	m_renderThread = std::thread(&QRenderingWidget::RenderLoopThread, this);
 }
 
 void QRenderingWidget::resizeGL(int w, int h)
 {
-	img = std::make_unique<QImage>(w, h, QImage::Format_ARGB32);
+	{
+		std::scoped_lock<std::mutex> inputLock(m_inputMtx);
+		m_inputEvents.clear();
+	}
+
+	{
+		std::scoped_lock<std::mutex> renderLock(m_renderMtx);
+		imgDisplay = std::make_unique<QImage>(w, h, QImage::Format_ARGB32);
+	}
+
 	emit RendererResized();
 }
 
@@ -83,112 +103,259 @@ void QRenderingWidget::paintGL()
 
 void QRenderingWidget::RenderFrame()
 {
-	float deltaMs = (clock() - renderingTime) * 0.001f;
-	renderingTime = clock();
-
-	Camera& camera = scene->GetMainCamera();
-
-	camera.GetTransform().Rotate(cameraRot.y * deltaMs, cameraRot.x * deltaMs, 0.0f);
-
-	Vector3 forward = camera.GetTransform().right * cameraPos.z;
-	Vector3 right = camera.GetTransform().forward * cameraPos.x;
-	Vector3 up = camera.GetTransform().up * cameraPos.y;
-	camera.GetTransform().Translate((forward + right + up) * deltaMs);
-
-	
-	cameraPos = Vector3::Zero();
-	cameraRot = Vector2::Zero();
-
 	//Calls paintEvent()
 	update();
 }
 
-void QRenderingWidget::paintEvent(QPaintEvent * e)
+void QRenderingWidget::paintEvent(QPaintEvent* e)
 {
-	QPainter painter(this) ;
-	
-	double beginClock = clock();
-	
-	Raytracer& raytracer = bRenderer->GetRaytracer();
-	raytracer.m_pixelSamples = 2;
-	raytracer.m_maxBounces = 2;
+	QPainter painter(this);
 
-	// Improve memory performance
-	frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode);
-
-	QRgb* rgb = reinterpret_cast<QRgb*>(img->bits());
-	uint size = width() * height();
-
-	const Color* c = frame->GetColorBuffer();
-
-	for (uint i = 0; i < size; ++i)
 	{
-		uint ua = 255 << 24;
-		ua |= static_cast<uint>(c[i].x * 255.999f) << 16;
-		ua |= static_cast<uint>(c[i].y * 255.999f) << 8;
-		ua |= static_cast<uint>(c[i].z * 255.999f);
+		std::scoped_lock<std::mutex> frame_lock(m_renderMtx);
 
-		rgb[i] = ua;
+		painter.drawImage(0, 0, *imgDisplay);
 	}
-	
-	painter.drawImage(0, 0, *img);
-	
-	double endClock = clock() - beginClock;
-	
-	emit RenderingCompleted(endClock);
+
+	emit RenderingCompleted(m_renderingTimeMs); // atomic
 }
 
-void QRenderingWidget::keyPressEvent(QKeyEvent * event)
+void QRenderingWidget::RenderLoopThread()
 {
+	while (m_loop) // atomic
+	{
+		double beginClock = clock();
+
+		InputManager& inputMgr = bRenderer->GetInputManager();
+		{
+			std::scoped_lock<std::mutex> inputLock(m_inputMtx);
+			for (auto& event : m_inputEvents)
+			{
+				inputMgr.AddEvent(event);
+			}
+
+			m_inputEvents.clear();
+		}
+
+		// TODO Improve memory performance
+		const FrameBuffer* frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, m_renderingTimeMs * 0.001f);
+
+		{
+			std::unique_lock<std::mutex> renderLock(m_renderMtx);
+
+			uint imgSize = static_cast<uint>(imgDisplay->width() * imgDisplay->height());
+
+			if (frame->NumPixels() == imgSize)
+			{
+				copyFrameBufferToQImage(*imgDisplay.get(), *frame);
+			}
+		}
+
+		m_renderingTimeMs = (clock() - beginClock) / (CLOCKS_PER_SEC * 0.001); // atomic
+	}
+}
+
+void QRenderingWidget::copyFrameBufferToQImage(QImage& img, const FrameBuffer& frame)
+{
+	assert(img.width() == frame.GetWidth() && img.height() == frame.GetHeight());
+
+	QRgb* rgb = reinterpret_cast<QRgb*>(img.bits());
+	uint size = width() * height();
+
+	const Color* c = frame.GetColorBuffer();
+
+	if (c != nullptr)
+	{
+		for (uint i = 0; i < size; ++i)
+		{
+			uint ua = 255u << 24;
+			ua |= static_cast<uint>(c[i].x * 255.999f) << 16;
+			ua |= static_cast<uint>(c[i].y * 255.999f) << 8;
+			ua |= static_cast<uint>(c[i].z * 255.999f);
+
+			rgb[i] = ua;
+		}
+	}
+}
+
+void QRenderingWidget::copyQImageToFrameBuffer(FrameBuffer& frame, const QImage& img)
+{
+	assert(img.width() == frame.GetWidth() && img.height() == frame.GetHeight());
+
+	const QRgb* rgb = reinterpret_cast<const QRgb*>(img.bits());
+	uint size = width() * height();
+
+		for (uint i = 0; i < size; ++i)
+		{
+			uint ua = rgb[i];
+			uint r = 0u, g = 0u, b = 0u;
+
+			r |= (ua >> 16) & 255u;
+			g |= (ua >> 8) & 255u;
+			b |= ua & 255u;
+
+			Color c(r / 255.999f, g / 255.999f, b / 255.999f);
+
+			frame.WriteToColor(i, c);
+		}
+}
+
+
+void QRenderingWidget::keyPressEvent(QKeyEvent* event)
+{
+	ButtonState state;
+	ButtonType type;
+	bool matched = false;
+
+	double time = clock();
 
 	if (event->type() == QKeyEvent::KeyPress)
 	{
-		if (event->key() == Qt::Key::Key_A)
+		state = ButtonState::PRESSED;
+
+		switch (event->key())
 		{
-			cameraPos.x -= cameraSpeed;
+		case Qt::Key::Key_W:
+		{
+			type = ButtonType::KEY_W;
+			matched = true;
+			break;
 		}
-		if (event->key() == Qt::Key::Key_D)
+
+		case Qt::Key::Key_A:
 		{
-			cameraPos.x += cameraSpeed;
+			type = ButtonType::KEY_A;
+			matched = true;
+			break;
 		}
-		if (event->key() == Qt::Key::Key_W)
+
+		case Qt::Key::Key_S:
 		{
-			cameraPos.z += cameraSpeed;
+			type = ButtonType::KEY_S;
+			matched = true;
+			break;
 		}
-		if (event->key() == Qt::Key::Key_S)
+
+		case Qt::Key::Key_D:
 		{
-			cameraPos.z -= cameraSpeed;
+			type = ButtonType::KEY_D;
+			matched = true;
+			break;
 		}
-		if (event->key() == Qt::Key::Key_Q)
+
+		case Qt::Key::Key_Q:
 		{
-			cameraPos.y -= cameraSpeed;
+			type = ButtonType::KEY_Q;
+			matched = true;
+			break;
 		}
-		if (event->key() == Qt::Key::Key_E)
+
+		case Qt::Key::Key_E:
 		{
-			cameraPos.y += cameraSpeed;
+			type = ButtonType::KEY_E;
+			matched = true;
+			break;
+		}
+
 		}
 	}
-	
-	if (event->type() == QKeyEvent::KeyRelease)
+	else if (event->type() == QKeyEvent::KeyRelease)
 	{
-		if (event->key() == Qt::Key::Key_Escape)
+		state = ButtonState::RELEASED;
+
+		switch (event->key())
 		{
-			//TODO
+		case Qt::Key::Key_Escape:
+		{
+			type = ButtonType::KEY_ESCAPE;
+			matched = true;
+			break;
 		}
+		}
+	}
+
+	if (matched)
+	{
+		std::unique_ptr<ButtonInputEvent> inputEvent = std::make_unique<ButtonInputEvent>(type, state);
+
+		std::scoped_lock<std::mutex> inputLock(m_inputMtx);
+		m_inputEvents.push_back(std::move(inputEvent));
 	}
 }
 
-void QRenderingWidget::mousePressEvent(QMouseEvent * event)
+void QRenderingWidget::mousePressEvent(QMouseEvent* event)
 {
-	lastMousePos = Vector2(event->x(), event->y());
+	const Vector2 currentMousePos(event->x(), event->y());
+	ButtonType type;
+	bool matched = false;
+
+	switch (event->button())
+	{
+	case Qt::MouseButton::LeftButton:
+	{
+		type = ButtonType::CURSOR_PRIMARY;
+		matched = true;
+		break;
+	}
+
+	case Qt::MouseButton::RightButton:
+	{
+		type = ButtonType::CURSOR_SECONDARY;
+		matched = true;
+		break;
+	}
+
+	}
+
+	if (matched)
+	{
+		std::unique_ptr<ButtonInputEvent> inputEvent = std::make_unique<ButtonInputEvent>(type, ButtonState::PRESSED, currentMousePos);
+
+		std::scoped_lock<std::mutex> inputLock(m_inputMtx);
+		m_inputEvents.push_back(std::move(inputEvent));
+	}
 }
 
-void QRenderingWidget::mouseMoveEvent(QMouseEvent * event)
+void QRenderingWidget::mouseReleaseEvent(QMouseEvent* event)
 {
-	Vector2 currentPos(event->x(), event->y());
-	float ratio = 1.0 / height();
-	cameraRot = cameraRot + Vector2((currentPos.x - lastMousePos.x) * ratio * cameraRotationSpeed, (currentPos.y - lastMousePos.y) * ratio * cameraRotationSpeed);
-	lastMousePos = currentPos;
+	const Vector2 currentMousePos(event->x(), event->y());
+	ButtonType type;
+	bool matched = false;
+
+	switch (event->button())
+	{
+	case Qt::MouseButton::LeftButton:
+	{
+		type = ButtonType::CURSOR_PRIMARY;
+		matched = true;
+		break;
+	}
+
+	case Qt::MouseButton::RightButton:
+	{
+		type = ButtonType::CURSOR_SECONDARY;
+		matched = true;
+		break;
+	}
+
+	}
+
+	if (matched)
+	{
+		std::unique_ptr<ButtonInputEvent> inputEvent = std::make_unique<ButtonInputEvent>(type, ButtonState::RELEASED, currentMousePos);
+
+		std::scoped_lock<std::mutex> inputLock(m_inputMtx);
+		m_inputEvents.push_back(std::move(inputEvent));
+	}
+}
+
+void QRenderingWidget::mouseMoveEvent(QMouseEvent* event)
+{
+	const Vector2 currentPos(event->x(), event->y());
+	std::unique_ptr<CursorInputEvent> inputEvent = std::make_unique<CursorInputEvent>(currentPos);
+
+	std::scoped_lock<std::mutex> inputLock(m_inputMtx);
+	m_inputEvents.push_back(std::move(inputEvent));
 }
 
 

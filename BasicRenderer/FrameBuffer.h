@@ -32,6 +32,7 @@ namespace BasicRenderer
 		~FrameBuffer();
 
 		FrameBuffer& operator==(const FrameBuffer& buf) = delete;
+		FrameBuffer& operator=(const FrameBuffer& buf) = delete;
 
 		bool WriteToColor(uint w, uint h, const Color& col);
 		bool WriteToDepth(uint w, uint h, float col);

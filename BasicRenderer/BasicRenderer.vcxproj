@@ -262,6 +262,7 @@
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="InputEvent.cpp" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Primitive.cpp" />
     <ClCompile Include="ImageExporter.cpp" />
     <ClCompile Include="ImageFormats.cpp" />
@@ -293,6 +294,7 @@
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="InputEvent.h" />
+    <ClInclude Include="InputManager.h" />
     <ClInclude Include="Raytracer.h" />
     <ClInclude Include="Primitive.h" />
     <ClInclude Include="ImageExporter.h" />

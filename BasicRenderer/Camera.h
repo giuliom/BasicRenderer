@@ -26,6 +26,9 @@ namespace BasicRenderer
 		float m_viewportHeight = 0;
 		Vector3 m_viewportUpperLeft = { -0.5f, 0.5f, -1.f };
 
+		const float m_movementSpeed = 5.f;
+		const float m_rotationSpeed = 0.05f;
+
 	public:
 		Camera();
 		~Camera();
@@ -40,6 +43,9 @@ namespace BasicRenderer
 		inline float GetViewportHeight() const { return m_viewportHeight; }
 		inline const Matrix4& GetViewMatrix() const { return m_transform.GetInverseMatrix(); }
 		inline const Matrix4& GetProjectionMatrix() const { return m_projection; }
+		inline float GetMovementSpeed() const { return m_movementSpeed; }
+		inline float GetRotationSpeed() const { return m_rotationSpeed; }
+
 		Ray GetCameraRay(const float u, const float v) const;
 
 	protected:

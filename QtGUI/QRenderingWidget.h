@@ -3,6 +3,7 @@
 
 #include <qopenglwidget.h>
 #include <QTimer>
+#include <mutex>
 #include "BasicRenderer\BasicRenderer.h"
 
 using namespace BasicRenderer;
@@ -13,23 +14,22 @@ class QRenderingWidget : public QOpenGLWidget
 
 protected:
 	std::unique_ptr<Renderer> bRenderer;
-	std::unique_ptr<QImage> img;
+	std::unique_ptr<QImage> imgDisplay;
 	std::unique_ptr<QTimer> timer;
 	std::unique_ptr<World> scene;
-	std::shared_ptr<const FrameBuffer> frame;
 
-	Renderer::RenderingMode renderingMode = Renderer::RenderingMode::RASTERIZER;
-	Renderer::ShadingMode shadingMode = Renderer::ShadingMode::LIT;
+	std::atomic<double> m_renderingTimeMs = 0.0;
+	std::atomic<bool> m_loop = true;
+	std::atomic<Renderer::RenderingMode> renderingMode = Renderer::RenderingMode::RASTERIZER;
+	std::atomic<Renderer::ShadingMode> shadingMode = Renderer::ShadingMode::LIT;
+
+	std::mutex m_renderMtx;
+	std::thread m_renderThread;
 
 	std::string rTime = "";
 
-	float cameraSpeed = 5.0f;
-	float cameraRotationSpeed = 20.0f;
-	Vector3 cameraPos;
-	Vector2 cameraRot;
-	Vector2 lastMousePos;
-
-	double renderingTime = 0.0;
+	std::mutex m_inputMtx;
+	std::vector<std::unique_ptr<InputEvent>> m_inputEvents;
 
 public:
 	QRenderingWidget(QWidget* parent);
@@ -53,11 +53,14 @@ protected:
 	virtual void resizeGL(int w, int h) override;
 	virtual void paintGL() override;
 	virtual void paintEvent(QPaintEvent *e) override;
+	void RenderLoopThread();
+	void copyFrameBufferToQImage(QImage& img, const FrameBuffer& frame);
+	void copyQImageToFrameBuffer(FrameBuffer& frame, const QImage& img);
 
-	virtual void keyPressEvent(QKeyEvent *event) override;
-	virtual void mousePressEvent(QMouseEvent *event) override;
-	virtual void mouseMoveEvent(QMouseEvent *event) override;
-
+	virtual void keyPressEvent(QKeyEvent* event) override;
+	virtual void mousePressEvent(QMouseEvent* event) override;
+	virtual void mouseReleaseEvent(QMouseEvent* event) override;
+	virtual void mouseMoveEvent(QMouseEvent* event) override;
 };
 
 #endif

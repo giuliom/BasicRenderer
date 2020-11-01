@@ -4,17 +4,24 @@
 
 namespace BasicRenderer
 {
-	enum class InputType
+	enum class InputCategory
 	{
 		BUTTON_EVENT,
-		MOUSE_EVENT
+		CURSOR_EVENT
 	};
 
-
-	struct InputEvent
+	class InputEvent
 	{
+	protected:
+		const Vector2 m_position;
+		const bool m_validPosition;
+
 	public:
-		virtual InputType GetType() const = 0;
+		InputEvent(const Vector2& pos, bool validPos) : m_position(pos), m_validPosition(validPos) {}
+
+		inline virtual InputCategory GetCategory() const = 0;
+		inline bool HasValidPosition() { return m_validPosition; }
+		inline const Vector2& GetPosition() const { return m_position; }
 	};
 
 	enum class ButtonState
@@ -32,27 +39,30 @@ namespace BasicRenderer
 		KEY_Q,
 		KEY_E,
 		KEY_ESCAPE,
-		MOUSE_LEFT,
-		MOUSE_RIGHT
+		CURSOR_PRIMARY,
+		CURSOR_SECONDARY
 	};
 
-	struct ButtonInputEvent : public InputEvent
+	class ButtonInputEvent : public InputEvent
 	{
-		const ButtonType buttonType;
-		const ButtonState buttonState;
+		const ButtonType m_buttonType;
+		const ButtonState m_buttonState;
 
-		ButtonInputEvent(ButtonType button, ButtonState state) : buttonType(button), buttonState(state) {}
+	public:
+		ButtonInputEvent(ButtonType button, ButtonState state) : InputEvent({ 0.f, 0.f }, false), m_buttonType(button), m_buttonState(state) {}
+		ButtonInputEvent(ButtonType button, ButtonState state, const Vector2& pos) : InputEvent(pos, true), m_buttonType(button), m_buttonState(state) {}
 
-		InputType GetType() const override { return InputType::BUTTON_EVENT; }
+		inline InputCategory GetCategory() const override { return InputCategory::BUTTON_EVENT; }
+		inline ButtonType GetButtonType() const { return m_buttonType; }
+		inline ButtonState GetButtonState() const { return m_buttonState; }
 	};
 
-	struct MouseInputEvent : public InputEvent
+	class CursorInputEvent : public InputEvent
 	{
-		const Vector2 position;
+	public:
+		CursorInputEvent(const Vector2 pos) : InputEvent(pos, true) {}
 
-		MouseInputEvent(const Vector2 pos) : position(pos) {}
-
-		InputType GetType() const override { return InputType::MOUSE_EVENT; }
+		inline InputCategory GetCategory() const override { return InputCategory::CURSOR_EVENT; }
 	};
 
 }

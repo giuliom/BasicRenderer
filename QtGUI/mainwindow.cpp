@@ -41,8 +41,8 @@ void MainWindow::SetupSignals()
 	connect(ui->actionRender, SIGNAL(triggered()), this, SLOT(RenderImage()));
 	connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(SaveImage()));
 	connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(OpenFile()));
-	connect(renderButton, SIGNAL(pressed()), actionRender, SLOT(trigger()));
-	connect(saveButton, SIGNAL(pressed()), actionSave, SLOT(trigger()));
+	connect(renderButton, SIGNAL(pressed()), this, SLOT(RenderImage()));
+	connect(saveButton, SIGNAL(pressed()), this, SLOT(SaveImage()));
     connect(renderView, SIGNAL(RenderingCompleted(double)), this, SLOT(UpdateFpsLabel(double)));
 	connect(renderView, SIGNAL(RendererResized()), this, SLOT(UpdateResolutionLabels()));
 

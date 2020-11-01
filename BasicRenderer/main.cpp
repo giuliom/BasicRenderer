@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 	int width = 720;
 	int height = 480;
 
-	std::string outputPath = "output/";
+	std::string outputPath = "../../../output/";
 
 	std::string renderingModeName = "rasterizer";
 	std::string shadingModeName = "lit";
@@ -134,15 +134,15 @@ int main(int argc, char *argv[])
 
 	auto beginClock = clock();
 	
-	std::shared_ptr<const FrameBuffer> frame = renderer.Render(width, height, *scene, renderingMode, shadingMode);
+	const FrameBuffer* frame = renderer.Render(width, height, *scene, renderingMode, shadingMode);
 	
 	auto endClock = clock();
 
 	double diff = endClock - beginClock;
-	double ms = diff / (CLOCKS_PER_SEC / 1000);
+	double ms = diff / (CLOCKS_PER_SEC * 0.001);
 
 	//Saving Image
-	ImageExporter::ExportToBMP(outputPath, renderingModeName, frame);
+	ImageExporter::ExportToBMP(outputPath, renderingModeName, *frame);
 
 	std::cout << std::fixed << std::setprecision(0);
 	std::cout << std::endl << "Rendering Time: " << ms << " ms " << "\n\n";
