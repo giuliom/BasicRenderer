@@ -54,8 +54,8 @@ protected:
 	virtual void paintGL() override;
 	virtual void paintEvent(QPaintEvent *e) override;
 	void RenderLoopThread();
-	void copyFrameBufferToQImage(QImage& img, const FrameBuffer& frame);
-	void copyQImageToFrameBuffer(FrameBuffer& frame, const QImage& img);
+	void CopyFrameBufferToQImage(QImage& img, const FrameBuffer& frame);
+	void CopyQImageToFrameBuffer(FrameBuffer& frame, const QImage& img);
 
 	virtual void keyPressEvent(QKeyEvent* event) override;
 	virtual void mousePressEvent(QMouseEvent* event) override;

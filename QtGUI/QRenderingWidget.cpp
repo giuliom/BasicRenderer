@@ -36,7 +36,7 @@ void QRenderingWidget::SaveFrame(const char* path)
 	std::unique_ptr<FrameBuffer> frame = std::make_unique<FrameBuffer>(imgDisplay->width(), imgDisplay->height());
 	{
 		std::scoped_lock<std::mutex> img_lock(m_renderMtx);
-		copyQImageToFrameBuffer(*frame.get(), *imgDisplay);
+		CopyQImageToFrameBuffer(*frame.get(), *imgDisplay);
 	}
 	ImageExporter::ExportToBMP(std::string(path), std::string("saved_render"), *frame);
 }
@@ -137,17 +137,16 @@ void QRenderingWidget::RenderLoopThread()
 			m_inputEvents.clear();
 		}
 
-		// TODO Improve memory performance
 		const FrameBuffer* frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, m_renderingTimeMs * 0.001f);
 
 		{
-			std::unique_lock<std::mutex> renderLock(m_renderMtx);
+			std::scoped_lock<std::mutex> renderLock(m_renderMtx);
 
 			uint imgSize = static_cast<uint>(imgDisplay->width() * imgDisplay->height());
 
 			if (frame->NumPixels() == imgSize)
 			{
-				copyFrameBufferToQImage(*imgDisplay.get(), *frame);
+				CopyFrameBufferToQImage(*imgDisplay.get(), *frame);
 			}
 		}
 
@@ -155,12 +154,12 @@ void QRenderingWidget::RenderLoopThread()
 	}
 }
 
-void QRenderingWidget::copyFrameBufferToQImage(QImage& img, const FrameBuffer& frame)
+void QRenderingWidget::CopyFrameBufferToQImage(QImage& img, const FrameBuffer& frame)
 {
 	assert(img.width() == frame.GetWidth() && img.height() == frame.GetHeight());
 
 	QRgb* rgb = reinterpret_cast<QRgb*>(img.bits());
-	uint size = width() * height();
+	uint size = img.width() * img.height();
 
 	const Color* c = frame.GetColorBuffer();
 
@@ -178,12 +177,12 @@ void QRenderingWidget::copyFrameBufferToQImage(QImage& img, const FrameBuffer& f
 	}
 }
 
-void QRenderingWidget::copyQImageToFrameBuffer(FrameBuffer& frame, const QImage& img)
+void QRenderingWidget::CopyQImageToFrameBuffer(FrameBuffer& frame, const QImage& img)
 {
 	assert(img.width() == frame.GetWidth() && img.height() == frame.GetHeight());
 
 	const QRgb* rgb = reinterpret_cast<const QRgb*>(img.bits());
-	uint size = width() * height();
+	uint size = frame.GetWidth() * frame.GetHeight();
 
 		for (uint i = 0; i < size; ++i)
 		{
