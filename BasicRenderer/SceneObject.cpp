@@ -52,23 +52,23 @@ namespace BasicRenderer
 		}
 		else
 		{
-			if (m_transform.dirty)
+			if (m_transform.isDirty())
 			{
 				m_worldTransform = m_transform.Combine(*parent);
-				m_transform.dirty = false;
+				m_transform.SetDirty(false);
 				for (auto t : m_children)
 				{
-					t->dirty = true;
+					t->SetDirty(true);
 				}
 			}
 		}
 
-		if (m_transform.dirty)
+		if (m_transform.isDirty())
 		{
 			for (int i = 0; i < NumFaces(); ++i)
 			{
 				Face f = m_mesh->GetFace(i);
-				ToMatrixSpace(f, m_worldTransform.m);
+				ToMatrixSpace(f, m_worldTransform.m_matrix);
 				m_transformedFaces[i] = f;
 			}
 		}

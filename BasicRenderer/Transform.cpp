@@ -3,44 +3,44 @@
 
 namespace BasicRenderer
 {
-	Matrix4 Transform::GetTranslationMatrix(const Vector3& _position)
+	Matrix4 Transform::GetTranslationMatrix(const Vector3& position)
 	{
-		return Matrix4(1.0f, 0.0f, 0.0f, _position.x,
-			0.0f, 1.0f, 0.0f, _position.y,
-			0.0f, 0.0f, 1.0f, _position.z,
+		return Matrix4(1.0f, 0.0f, 0.0f, position.x,
+			0.0f, 1.0f, 0.0f, position.y,
+			0.0f, 0.0f, 1.0f, position.z,
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}
 
-	Matrix4 Transform::GetScaleMatrix(const Vector3& _scale)
+	Matrix4 Transform::GetScaleMatrix(const Vector3& scale)
 	{
-		return Matrix4(_scale.x, 0.0f, 0.0f, 0.0f,
-			0.0f, _scale.y, 0.0f, 0.0f,
-			0.0f, 0.0f, _scale.z, 0.0f,
+		return Matrix4(scale.x, 0.0f, 0.0f, 0.0f,
+			0.0f, scale.y, 0.0f, 0.0f,
+			0.0f, 0.0f, scale.z, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 	}
 
 	// Right-hand
-	Matrix4 Transform::GetRotationMatrix(const Vector3& _rotation)
+	Matrix4 Transform::GetRotationMatrix(const Vector3& rotation)
 	{
 		// X-axis
 		Matrix4 roll(1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, cosf(_rotation.x), -sinf(_rotation.x), 0.0f,
-			0.0f, sinf(_rotation.x), cosf(_rotation.x), 0.0f,
+			0.0f, cosf(rotation.x), -sinf(rotation.x), 0.0f,
+			0.0f, sinf(rotation.x), cosf(rotation.x), 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 
 		// Y-axis
-		Matrix4 yaw(cosf(_rotation.y), 0.0f, sinf(_rotation.y), 0.0f,
+		Matrix4 yaw(cosf(rotation.y), 0.0f, sinf(rotation.y), 0.0f,
 			0.0f, 1.0f, 0.0f, 0.0f,
-			-sinf(_rotation.y), 0.0f, cosf(_rotation.y), 0.0f,
+			-sinf(rotation.y), 0.0f, cosf(rotation.y), 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
 
 		// Z-axis
-		Matrix4 pitch(cosf(_rotation.z), -sinf(_rotation.z), 0.0f, 0.0f,
-			sinf(_rotation.z), cosf(_rotation.z), 0.0f, 0.0f,
+		Matrix4 pitch(cosf(rotation.z), -sinf(rotation.z), 0.0f, 0.0f,
+			sinf(rotation.z), cosf(rotation.z), 0.0f, 0.0f,
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		);
@@ -50,54 +50,54 @@ namespace BasicRenderer
 
 	Transform::Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, Transform* _parent, SceneObject* obj)
 	{
-		position = pos;
-		scale = scl;
-		rotation = rot;
-		parent = _parent;
-		object = obj;
+		m_position = pos;
+		m_scale = scl;
+		m_rotation = rot;
+		m_parent = _parent;
+		m_object = obj;
 
 		UpdateTransform();
 	}
 
 	Transform& Transform::operator=(const Transform& t)
 	{
-		parent = t.parent;
-		m = t.m;
-		position = t.position;
-		scale = t.scale;
-		rotation = t.rotation;
-		object = t.object;
+		m_parent = t.m_parent;
+		m_matrix = t.m_matrix;
+		m_position = t.m_position;
+		m_scale = t.m_scale;
+		m_rotation = t.m_rotation;
+		m_object = t.m_object;
 		UpdateTransform();
 		return *this;
 	}
 
 	Transform& Transform::operator=(Transform&& t)
 	{
-		parent = t.parent;
-		m = t.m;
-		position = t.position;
-		scale = t.scale;
-		rotation = t.rotation;
-		object = t.object;
+		m_parent = t.m_parent;
+		m_matrix = t.m_matrix;
+		m_position = t.m_position;
+		m_scale = t.m_scale;
+		m_rotation = t.m_rotation;
+		m_object = t.m_object;
 		UpdateTransform();
 		return *this;
 	}
 
 	void Transform::SetPosition(const Vector3& position)
 	{
-		this->position = position;
+		m_position = position;
 		UpdateTransform();
 	}
 
 	void Transform::SetScale(const Vector3& scale)
 	{
-		this->scale = scale;
+		m_scale = scale;
 		UpdateTransform();
 	}
 
 	void Transform::SetRotation(const Vector3& rotation)
 	{
-		this->rotation = rotation;
+		m_rotation = rotation;
 		UpdateTransform();
 	}
 
@@ -116,9 +116,9 @@ namespace BasicRenderer
 		SetRotation(Vector3(roll, yaw, pitch));
 	}
 
-	void Transform::Translate(const Vector3& position_)
+	void Transform::Translate(const Vector3& position)
 	{
-		position = position + position_;
+		m_position = m_position + position;
 		UpdateTransform();
 	}
 
@@ -127,9 +127,9 @@ namespace BasicRenderer
 		Translate(Vector3(x, y, z));
 	}
 
-	void Transform::Scale(const Vector3& scale_)
+	void Transform::Scale(const Vector3& scale)
 	{
-		scale = scale + scale_;
+		m_scale = m_scale + scale;
 		UpdateTransform();
 	}
 
@@ -138,9 +138,9 @@ namespace BasicRenderer
 		Scale(Vector3(x, y, z));
 	}
 
-	void Transform::Rotate(const Vector3& radRotation_)
+	void Transform::Rotate(const Vector3& radRotation)
 	{
-		rotation = rotation + radRotation_;
+		m_rotation = m_rotation + radRotation;
 		UpdateTransform();
 	}
 
@@ -159,15 +159,15 @@ namespace BasicRenderer
 		Rotate(Vector3(roll, yaw, pitch) * TO_RADIANS);
 	}
 
-	void Transform::SetParent(Transform* par)
+	void Transform::SetParent(Transform* parent)
 	{
-		parent = par;
-		dirty = true;
+		m_parent = parent;
+		m_dirty = true;
 	}
 
 	Transform Transform::Combine(const Transform& other) const
 	{
-		return Transform(position + other.position, rotation + other.rotation, scale + other.scale, other.parent, other.object);
+		return Transform(m_position + other.m_position, m_rotation + other.m_rotation, m_scale + other.m_scale, other.m_parent, other.m_object);
 	}
 }
 

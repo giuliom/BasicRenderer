@@ -152,9 +152,9 @@ namespace BasicRenderer
 
 		if (cameraPos.Length() != 0.f)
 		{
-			const Vector3 forward = camera.GetTransform().right * cameraPos.z;
-			const Vector3 right = camera.GetTransform().forward * cameraPos.x;
-			const Vector3 up = camera.GetTransform().up * cameraPos.y;
+			const Vector3 forward = camera.GetTransform().Right() * cameraPos.z;
+			const Vector3 right = camera.GetTransform().Forward() * cameraPos.x;
+			const Vector3 up = camera.GetTransform().Up() * cameraPos.y;
 			camera.GetTransform().Translate(forward + right + up);
 		}
 	}
