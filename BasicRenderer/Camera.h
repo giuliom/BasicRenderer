@@ -26,8 +26,8 @@ namespace BasicRenderer
 		float m_viewportHeight = 0;
 		Vector3 m_viewportUpperLeft = { -0.5f, 0.5f, -1.f };
 
-		const float m_movementSpeed = 5.f;
-		const float m_rotationSpeed = 0.05f;
+		const float m_movementSpeed = 0.25f;
+		const float m_rotationSpeed = 0.005f;
 
 	public:
 		Camera();

@@ -61,8 +61,9 @@ namespace BasicRenderer
 		return m_fBuffer.get();
 	}
 
-	void Renderer::ProcessInput(InputManager& inputMgr, World& scene, const float deltaTime)
+	void Renderer::ProcessInput(InputManager& inputMgr, World& scene)
 	{
+		// deltaTime not used because of buffered input
 		while (inputMgr.Empty() == false)
 		{
 			auto& event = inputMgr.PopFrontEvent();
@@ -72,13 +73,13 @@ namespace BasicRenderer
 			case InputCategory::BUTTON_EVENT:
 			{
 				const ButtonInputEvent& buttonEvent = dynamic_cast<ButtonInputEvent&>(*event.get());
-				ProcessButtonInput(buttonEvent, scene, deltaTime);
+				ProcessButtonInput(buttonEvent, scene);
 				break;
 			}
 			case InputCategory::CURSOR_EVENT:
 			{
 				const CursorInputEvent& cursorEvent = dynamic_cast<CursorInputEvent&>(*event.get());
-				ProcessCursorInput(inputMgr, cursorEvent, scene, deltaTime);
+				ProcessCursorInput(inputMgr, cursorEvent, scene);
 				break;
 			}
 			}
@@ -91,11 +92,11 @@ namespace BasicRenderer
 		}
 	}
 
-	void Renderer::ProcessButtonInput(const ButtonInputEvent& input, World& scene, const float deltaTime)
+	void Renderer::ProcessButtonInput(const ButtonInputEvent& input, World& scene)
 	{
 		Camera& camera = scene.GetMainCamera();
 		Vector3 cameraPos(0.f, 0.f, 0.f);
-		const float cameraSpeed = camera.GetMovementSpeed() * deltaTime;
+		const float cameraSpeed = camera.GetMovementSpeed(); //*deltaTime;
 		
 		if (input.GetButtonState() == ButtonState::PRESSED)
 		{
@@ -159,11 +160,11 @@ namespace BasicRenderer
 		}
 	}
 
-	void Renderer::ProcessCursorInput(const InputManager& inputMgr, const CursorInputEvent& input, World& scene, const float deltaTime)
+	void Renderer::ProcessCursorInput(const InputManager& inputMgr, const CursorInputEvent& input, World& scene)
 	{
 		const Vector2& cursorDiff = input.GetPosition() - inputMgr.GetLastCursorPosition();
 		Camera& camera = scene.GetMainCamera();
-		const float cameraRotationSpeed = camera.GetRotationSpeed() * deltaTime;
+		const float cameraRotationSpeed = camera.GetRotationSpeed(); //* deltaTime;
 
 		float ratio = camera.GetAspectRatio();
 		const Vector2 cameraRot = { cursorDiff.x * cameraRotationSpeed, cursorDiff.y * ratio * cameraRotationSpeed };

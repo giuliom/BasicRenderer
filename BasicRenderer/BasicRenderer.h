@@ -51,8 +51,8 @@ namespace BasicRenderer
 
 		const FrameBuffer* Render(uint width, uint height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, const float deltaTime = 0.f);
 
-		void ProcessInput(InputManager& inputMgr, World& scene, const float deltaTime);
-		void ProcessButtonInput(const ButtonInputEvent& input, World& scene, const float deltaTime);
-		void ProcessCursorInput(const InputManager& inputMgr, const CursorInputEvent& input, World& scene, const float deltaTime);
+		void ProcessInput(InputManager& inputMgr, World& scene);
+		void ProcessButtonInput(const ButtonInputEvent& input, World& scene);
+		void ProcessCursorInput(const InputManager& inputMgr, const CursorInputEvent& input, World& scene);
 	};
 }
