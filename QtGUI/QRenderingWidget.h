@@ -18,7 +18,7 @@ protected:
 	std::unique_ptr<QTimer> timer;
 	std::unique_ptr<World> scene;
 
-	std::atomic<double> m_renderingTimeMs = 0.0;
+	std::atomic<double> m_renderingTimeMs;
 	std::atomic<bool> m_loop = true;
 	std::atomic<Renderer::RenderingMode> renderingMode = Renderer::RenderingMode::RASTERIZER;
 	std::atomic<Renderer::ShadingMode> shadingMode = Renderer::ShadingMode::LIT;

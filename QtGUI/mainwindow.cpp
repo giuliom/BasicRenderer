@@ -70,7 +70,7 @@ void MainWindow::OpenFile()
 void MainWindow::UpdateFpsLabel(double time)
 {
 	std::string rTime = std::to_string(time);
-	rTime = rTime.substr(0, rTime.length() - 7).append("ms ");
+	rTime = rTime.substr(0, rTime.length() - 7).append(" ms ");
 	ui->fpsLabel->setText(rTime.c_str());
 }
 

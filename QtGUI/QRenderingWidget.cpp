@@ -1,7 +1,6 @@
 #include "QRenderingWidget.h"
 #include <qpainter.h>
 #include <QKeyEvent>
-#include <ctime>
 #include <memory>
 #include "BasicRenderer\Global.h"
 #include "BasicRenderer\PrimitiveTypes.h"
@@ -12,7 +11,9 @@
 #include "BasicRenderer\Material.h"
 #include "BasicRenderer\TestScene.h"
 
-QRenderingWidget::QRenderingWidget(QWidget* parent) : QOpenGLWidget(parent)
+QRenderingWidget::QRenderingWidget(QWidget* parent) 
+	: QOpenGLWidget(parent)
+	, m_renderingTimeMs(0.0)
 {
 	setFocusPolicy(Qt::StrongFocus);
 	bRenderer = std::make_unique<Renderer>();
@@ -124,7 +125,7 @@ void QRenderingWidget::RenderLoopThread()
 {
 	while (m_loop) // atomic
 	{
-		double beginClock = clock();
+		const auto beginTime = std::chrono::high_resolution_clock::now();
 
 		InputManager& inputMgr = bRenderer->GetInputManager();
 		{
@@ -150,7 +151,9 @@ void QRenderingWidget::RenderLoopThread()
 			}
 		}
 
-		m_renderingTimeMs = (clock() - beginClock) / (CLOCKS_PER_SEC * 0.001); // atomic
+		const auto endTime = std::chrono::high_resolution_clock::now();
+
+		ConvertChronoDuration<std::chrono::milliseconds>(endTime - beginTime, m_renderingTimeMs); // atomic
 	}
 }
 

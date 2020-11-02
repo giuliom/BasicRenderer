@@ -1,6 +1,6 @@
 
 #include <iostream>
-#include <ctime>
+#include <chrono>
 #include <string>
 #include <iomanip>
 #include "Global.h"
@@ -132,14 +132,14 @@ int main(int argc, char *argv[])
 	raytracer.m_pixelSamples = pixelSamples;
 	raytracer.m_maxBounces = maxBounces;
 
-	auto beginClock = clock();
+	const auto beginTime = std::chrono::high_resolution_clock::now();
 	
 	const FrameBuffer* frame = renderer.Render(width, height, *scene, renderingMode, shadingMode);
 	
-	auto endClock = clock();
+	const auto endTime = std::chrono::high_resolution_clock::now();
 
-	double diff = endClock - beginClock;
-	double ms = diff / (CLOCKS_PER_SEC * 0.001);
+	double ms = 0.0;
+	ConvertChronoDuration<std::chrono::milliseconds>(endTime - beginTime, ms);
 
 	//Saving Image
 	ImageExporter::ExportToBMP(outputPath, renderingModeName, *frame);

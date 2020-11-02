@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include "Global.h"
 #include "FrameBuffer.h"
 #include "Rasterizer.h"
 #include "Raytracer.h"
