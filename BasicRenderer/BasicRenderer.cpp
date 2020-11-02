@@ -28,7 +28,7 @@ namespace BasicRenderer
 		m_fBuffer->Fill(scene.ambientLightColor * scene.ambientLightIntensity);
 
 		// TODO Move to separate thread for simulation update
-		ProcessInput(m_inputMgr, scene, deltaTime);
+		ProcessInput(m_inputMgr, scene);
 		scene.ProcessForRendering();
 
 		auto shadingFunc = &Material::LitShading;
@@ -96,7 +96,7 @@ namespace BasicRenderer
 	{
 		Camera& camera = scene.GetMainCamera();
 		Vector3 cameraPos(0.f, 0.f, 0.f);
-		const float cameraSpeed = camera.GetMovementSpeed(); //*deltaTime;
+		const float cameraSpeed = camera.GetMovementSpeed();
 		
 		if (input.GetButtonState() == ButtonState::PRESSED)
 		{
@@ -164,7 +164,7 @@ namespace BasicRenderer
 	{
 		const Vector2& cursorDiff = input.GetPosition() - inputMgr.GetLastCursorPosition();
 		Camera& camera = scene.GetMainCamera();
-		const float cameraRotationSpeed = camera.GetRotationSpeed(); //* deltaTime;
+		const float cameraRotationSpeed = camera.GetRotationSpeed();
 
 		float ratio = camera.GetAspectRatio();
 		const Vector2 cameraRot = { cursorDiff.x * cameraRotationSpeed, cursorDiff.y * ratio * cameraRotationSpeed };
