@@ -35,6 +35,7 @@ namespace BasicRenderer
 		Material* chromium = new Material({ .550f, 0.556f, 0.554f }, Material::Type::DIELECTRIC);
 
 		std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load("../../../assets/bunny.obj"));
+		std::shared_ptr<Mesh> teapotMesh(ObjLoader::Load("../../../assets/teapot.obj"));
 		std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("../../../assets/cube.obj"));
 		std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../../assets/quad.obj"));
 
@@ -47,6 +48,10 @@ namespace BasicRenderer
 		SceneObject* bunny = new SceneObject(bunnyMesh, gold);
 		bunny->GetTransform().SetScale(primitive_scale * 3.f, primitive_scale * 3.f, primitive_scale * 3.f);
 		bunny->GetTransform().SetPosition(box_position + Vector3(primitive_scale * 0.25f, primitive_scale * -0.6f, primitive_scale * -0.05f));
+
+		SceneObject* teapot = new SceneObject(teapotMesh, silver);
+		teapot->GetTransform().SetScale(primitive_scale * 0.05f, primitive_scale * 0.05f, primitive_scale * 0.05f);
+		teapot->GetTransform().SetPosition(box_position + Vector3(primitive_scale * -0.2f, primitive_scale * -0.5f, primitive_scale * 0.03f));
 
 		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, silver);
 
@@ -96,6 +101,7 @@ namespace BasicRenderer
 		cube2->GetTransform().SetScale(primitive_scale_vector * 0.25f);
 
 		//scene->Add(bunny);
+		//scene->Add(teapot);
 
 		scene->Add(sp);
 
