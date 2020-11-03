@@ -25,7 +25,7 @@ namespace BasicRenderer
 			scene.GetMainCamera().SetAspectRatio(width, height);
 		}
 
-		m_fBuffer->Fill(scene.ambientLightColor * scene.ambientLightIntensity);
+		m_fBuffer->Fill(scene.GetAmbientLightColor() * scene.GetAmbientLightIntensity());
 
 		// TODO Move to separate thread for simulation update
 		ProcessInput(m_inputMgr, scene);

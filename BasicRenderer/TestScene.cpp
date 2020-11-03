@@ -12,10 +12,10 @@ namespace BasicRenderer
 	{
 		World* scene = new World();
 
-		scene->sun.SetDirection({ 0.5f, -1.0f, -1.0f });
-		scene->sun.intensity = 1.f;
-		scene->ambientLightIntensity = 0.1f;
-		scene->ambientLightColor = { 0.529f, 0.808f, 0.922f };
+		scene->GetSun().SetDirection({ 0.5f, -1.0f, -1.0f });
+		scene->GetSun().intensity = 1.f;
+		scene->SetAmbientLightIntensity(0.1f);
+		scene->SetAmbientLightColor({ 0.529f, 0.808f, 0.922f });
 
 		scene->GetMainCamera().GetTransform().SetPosition(0.f, 0.f, 4.f);
 

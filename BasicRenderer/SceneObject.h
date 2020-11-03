@@ -35,7 +35,31 @@ namespace BasicRenderer
 		inline const Face& GetTransformedFace(uint index) const { return m_transformedFaces[index]; }
 
 		void ProcessForRendering() override;
-		bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
+		virtual void UpdateAxisAlignedBoundingBox() override;
+
+		bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
+		{
+			tHit = tMax;
+			float test = 0.f;
+			bool hit = false;
+			const auto numFaces = m_transformedFaces.size();
+
+			for (uint i = 0; i < numFaces; i++)
+			{
+				const Face& f = m_transformedFaces[i];
+				if (Intersection(f, r, tMin, tMax, test))
+				{
+					hit = true;
+					if (test < tHit)
+					{
+						tHit = test;
+						normalHit = f.normal;
+					}
+				}
+			}
+
+			return hit;
+		}
 	};
 }
 

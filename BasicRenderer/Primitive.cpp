@@ -3,7 +3,5 @@
 
 namespace BasicRenderer
 {
-	Primitive::Primitive()
-	{
-	}
+	uint Primitive::m_idCounter = 0;
 }

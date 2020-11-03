@@ -14,18 +14,47 @@ namespace BasicRenderer
 
 	void World::Add(Primitive* obj)
 	{
-		if (obj != nullptr)
+		if (obj != nullptr && Find(obj->GetId()) == false)
 		{
-			hierarchy.emplace_back(obj);
+			m_objectList[obj->GetId()].reset(obj);
 		}
+	}
+
+	bool World::Remove(const uint id)
+	{
+		m_objectList.erase(id);
+	}
+
+	Primitive* World::Find(const uint id)
+	{
+		return m_objectList[id].get();
+	}
+
+	const Primitive* World::Find(const uint id) const
+	{
+		const auto& it = m_objectList.find(id);
+
+		if (it != m_objectList.end())
+		{
+			return it->second.get();
+		}
+		return nullptr;
+	}
+
+	void World::BuildBoundingVolumeHierarchy()
+	{
+		// TODO implement BVH building
+		//Fully rebuild it or partially? 
 	}
 
 	void World::ProcessForRendering()
 	{
-		for (auto& obj : hierarchy)
+		for (auto& obj : m_objectList)
 		{
-			obj->ProcessForRendering();
+			obj.second->ProcessForRendering();
 		}
+
+		BuildBoundingVolumeHierarchy();
 	}
 
 	const Primitive* World::Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const
@@ -35,15 +64,15 @@ namespace BasicRenderer
 		float tempHit = tMax;
 		Vector3 tempNormal;
 
-		for (const auto& obj : hierarchy)
+		for (const auto& obj : m_objectList)
 		{
-			if (obj->GetHit(r, tMin, tMax, tempHit, tempNormal))
+			if (obj.second->GetHit(r, tMin, tMax, tempHit, tempNormal))
 			{
 				if (tempHit < closestHit)
 				{
 					closestHit = tempHit;
 					hitNormal = tempNormal;
-					anyHit = obj.get();
+					anyHit = obj.second.get();
 				}
 			}
 		}

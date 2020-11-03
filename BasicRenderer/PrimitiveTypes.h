@@ -14,7 +14,7 @@ namespace BasicRenderer
 
 	//TODO World space assumed for all these primitives
 
-	struct Sphere : public Primitive
+	class Sphere : public Primitive
 	{
 	public:
 		Vector3 pos;
@@ -24,8 +24,38 @@ namespace BasicRenderer
 		Sphere(Vector3 pos_, float radius_) : pos(pos_), radius(radius_) {}
 		Sphere(Vector3 pos_, float radius_, Material* mat) : Primitive(mat), pos(pos_), radius(radius_) {}
 
-		void ProcessForRendering() override {}
-		bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
+		void ProcessForRendering() override { UpdateAxisAlignedBoundingBox(); }
+		void UpdateAxisAlignedBoundingBox() override;
+
+		inline bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
+		{
+			const Vector3 oc = r.origin - pos;
+			const float a = Vector3::Dot(r.direction, r.direction);
+			const float b = Vector3::Dot(oc, r.direction);
+			const float c = Vector3::Dot(oc, oc) - radius * radius;
+			const float discriminant = b * b - a * c;
+			const float sqDiscr = sqrtf(discriminant);
+
+			if (discriminant > 0.f)
+			{
+				float temp = (-b - sqDiscr) / a;
+				if (temp > tMin && temp < tMax)
+				{
+					tHit = temp;
+					normalHit = ((r.GetPoint(temp) - pos) / radius);
+					return true;
+				}
+				temp = (-b + sqDiscr) / a;
+				if (temp > tMin && temp < tMax)
+				{
+					tHit = temp;
+					normalHit = ((r.GetPoint(temp) - pos) / radius);
+					return true;
+				}
+			}
+			return false;
+		}
+
 	};
 
 
@@ -38,9 +68,30 @@ namespace BasicRenderer
 		Plane() = delete;
 		Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Primitive(mat), centre(centre), normal(normal.Normalize()) {}
 
-		void ProcessForRendering() override {}
-		bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override;
+		void ProcessForRendering() override { UpdateAxisAlignedBoundingBox(); }
+		void UpdateAxisAlignedBoundingBox() override;
+
+		inline bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
+		{
+			const float div = Vector3::Dot(normal, r.direction);
+
+			if (abs(div) > 0.0001f)
+			{
+				float t = Vector3::Dot(centre - r.origin, normal) / div;
+
+				if (t >= 0.0001f)
+				{
+					tHit = t;
+					normalHit = normal;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 	};
+
 
 	class Quad : public SceneObject
 	{
@@ -53,7 +104,6 @@ namespace BasicRenderer
 		Quad(const SceneObject& obj) = delete;
 		Quad(const Quad& quad) : SceneObject(quad) {}
 		virtual ~Quad() {}
-
 	};
 
 

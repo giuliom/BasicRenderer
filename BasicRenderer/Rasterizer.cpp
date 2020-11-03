@@ -11,9 +11,9 @@ namespace BasicRenderer
 		const uint width = fBuffer.GetWidth();
 		const uint height = fBuffer.GetHeight();
 
-		for (const std::shared_ptr<Primitive> obj : scene.GetHierarchy())
+		for (const auto& obj : scene.GetObjects())
 		{
-			DrawObject(width, height, fBuffer, scene, obj.get(), Shading);
+			DrawObject(width, height, fBuffer, scene, obj.second.get(), Shading);
 		}
 	}
 
@@ -27,7 +27,7 @@ namespace BasicRenderer
 
 		if (obj != nullptr)
 		{
-			Material* mat = obj->GetMaterial();
+			const Material* mat = obj->GetMaterial();
 			Color c = Material::MissingMaterialColor;
 			const Matrix4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix();
 

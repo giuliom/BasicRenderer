@@ -196,8 +196,8 @@ namespace BasicRenderer
 			}
 			else // No hit
 			{
-				throughput *= scene.ambientLightColor;
-				resultRadiance += throughput * scene.ambientLightIntensity;
+				throughput *= scene.GetAmbientLightColor();
+				resultRadiance += throughput * scene.GetAmbientLightIntensity();
 			}
 
 			bounces++;

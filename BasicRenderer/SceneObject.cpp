@@ -71,30 +71,53 @@ namespace BasicRenderer
 				ToMatrixSpace(f, m_worldTransform.m_matrix);
 				m_transformedFaces[i] = f;
 			}
+
+			UpdateAxisAlignedBoundingBox();
 		}
 	}
 
-	bool SceneObject::GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const
+	void SceneObject::UpdateAxisAlignedBoundingBox()
 	{
-		tHit = tMax;
-		float test = 0.f;
-		bool hit = false;
-		const auto numFaces = m_transformedFaces.size();
-
-		for (uint i = 0; i < numFaces; i++)
+		if (m_transformedFaces.size() > 0)
 		{
-			const Face& f = m_transformedFaces[i];
-			if (Intersection(f, r, tMin, tMax, test))
+			Vector3 min = m_transformedFaces[0].v0.pos;
+			Vector3 max = m_transformedFaces[0].v1.pos;
+
+			for (const auto& f : m_transformedFaces)
 			{
-				hit = true;
-				if (test < tHit)
+				for (uint i = 0; i < 3; ++i)
 				{
-					tHit = test;
-					normalHit = f.normal;
+					const Vector3& vertexPos = ((&f.v0) + i)->pos;
+
+					if (vertexPos.x < min.x)
+					{
+						min.x = vertexPos.x;
+					}
+					if (vertexPos.y < min.y)
+					{
+						min.y = vertexPos.y;
+					}
+					if (vertexPos.z < min.z)
+					{
+						min.z = vertexPos.z;
+					}
+
+					if (vertexPos.x > max.x)
+					{
+						min.x = vertexPos.x;
+					}
+					if (vertexPos.y > max.y)
+					{
+						min.y = vertexPos.y;
+					}
+					if (vertexPos.z > max.z)
+					{
+						min.z = vertexPos.z;
+					}
 				}
 			}
-		}
 
-		return hit;
+			m_boundingBox = AxisAlignedBoundingBox(min, max);
+		}
 	}
 }
