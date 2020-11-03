@@ -22,7 +22,7 @@ namespace BasicRenderer
 
 	bool World::Remove(const uint id)
 	{
-		m_objectList.erase(id);
+		return m_objectList.erase(id) > 0;
 	}
 
 	Primitive* World::Find(const uint id)

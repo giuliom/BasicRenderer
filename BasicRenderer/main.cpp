@@ -19,31 +19,31 @@ int main(int argc, char *argv[])
 {
 	std::string file = "../../../assets/bunny.obj";
 
-	int width = 720;
-	int height = 480;
+	int width = 1280;
+	int height = 720;
 
 	std::string outputPath = "../../../output/";
 
-	std::string renderingModeName = "rasterizer";
+	std::string renderingModeName = "raytracer";
 	std::string shadingModeName = "lit";
 
-	Renderer::RenderingMode renderingMode = Renderer::RenderingMode::RASTERIZER;
+	Renderer::RenderingMode renderingMode = Renderer::RenderingMode::RAYTRACER;
 	Renderer::ShadingMode shadingMode = Renderer::ShadingMode::LIT;
 
 	int pixelSamples = 4;
 	int maxBounces = 3;
 
-	if (argc < 2)
+	for (int an = 1; an < argc; ++an)
 	{
-		if (std::strcmp(argv[1], "help") == 0)
+		if (std::strcmp(argv[an], "help") == 0)
 		{
-			std::cout << "The following options are available:" << std::endl << std::endl
+			std::cout << "\n*** Basic Renderer ***\n\nThe following options are available:" << std::endl << std::endl
 			<< "-n output image name and path" << std::endl
 			<< "-f input obj file name and path" << std::endl
 			<< "-w output image width" << std::endl
 			<< "-h output image height" << std::endl
-			<< "-r rendering mode" << std::endl
-			<< "-s shading mode" << std::endl
+			<< "-r rendering mode [rasterizer, raytracer]" << std::endl
+			<< "-s shading mode [lit, normal]" << std::endl
 			<< "-p pixel samples" << std::endl
 			<< "-b max bounces" << std::endl
 			<< std::endl;
@@ -51,7 +51,6 @@ int main(int argc, char *argv[])
 			return 0;
 		}
 	}
-
 
 	for (int an = 1; an < argc -1;)
 	{
