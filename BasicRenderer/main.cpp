@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 			<< "-h output image height" << std::endl
 			<< "-r rendering mode [rasterizer, raytracer]" << std::endl
 			<< "-s shading mode [lit, normal]" << std::endl
-			<< "-p pixel samples" << std::endl
+			<< "-p pixel samples" << std::endl 
 			<< "-b max bounces" << std::endl
 			<< std::endl;
 			std::cin.get();

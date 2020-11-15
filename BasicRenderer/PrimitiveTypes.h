@@ -20,12 +20,12 @@ namespace BasicRenderer
 		Vector3 pos;
 		float radius;
 
-		Sphere() : radius(1.f) {}
-		Sphere(Vector3 pos_, float radius_) : pos(pos_), radius(radius_) {}
-		Sphere(Vector3 pos_, float radius_, Material* mat) : Primitive(mat), pos(pos_), radius(radius_) {}
+		Sphere() : radius(1.f) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(Vector3 pos_, float radius_) : pos(pos_), radius(radius_) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(Vector3 pos_, float radius_, Material* mat) : Primitive(mat), pos(pos_), radius(radius_) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
 
-		void ProcessForRendering() override { UpdateAxisAlignedBoundingBox(); }
-		void UpdateAxisAlignedBoundingBox() override;
+		void ProcessForRendering() override { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
 		{
@@ -66,10 +66,10 @@ namespace BasicRenderer
 		Vector3 centre, normal;
 
 		Plane() = delete;
-		Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Primitive(mat), centre(centre), normal(normal.Normalize()) {}
+		Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Primitive(mat), centre(centre), normal(normal.Normalize()) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
 
-		void ProcessForRendering() override { UpdateAxisAlignedBoundingBox(); }
-		void UpdateAxisAlignedBoundingBox() override;
+		void ProcessForRendering() override { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
 		{

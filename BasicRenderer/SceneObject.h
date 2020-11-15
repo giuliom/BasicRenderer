@@ -20,10 +20,9 @@ namespace BasicRenderer
 	public:
 		SceneObject() = delete;
 		SceneObject(Material* mat) = delete;
-		SceneObject(std::shared_ptr<Mesh> mesh);
 		SceneObject(std::shared_ptr<Mesh> mesh, Material* mat);
 		SceneObject(const SceneObject& obj);
-		SceneObject(SceneObject&& obj);
+		SceneObject(SceneObject&& obj) noexcept;
 		virtual ~SceneObject();
 
 		//TODO define assigments
@@ -35,7 +34,7 @@ namespace BasicRenderer
 		inline const Face& GetTransformedFace(uint index) const { return m_transformedFaces[index]; }
 
 		void ProcessForRendering() override;
-		virtual void UpdateAxisAlignedBoundingBox() override;
+		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
 		bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
 		{

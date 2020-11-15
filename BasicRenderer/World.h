@@ -6,11 +6,11 @@
 #include "Vertex.h"
 #include "DirectionalLight.h"
 #include "Camera.h"
+#include "AccelerationStructure.h"
 
 namespace BasicRenderer
 {
 	class Primitive;
-	class BVHnode;
 	class Ray;
 
 	typedef std::unordered_map<uint, std::unique_ptr<Primitive>> ObjectList;
@@ -21,17 +21,17 @@ namespace BasicRenderer
 
 		//TODO implement it properly
 		ObjectList m_objectList;
-		std::unique_ptr<BVHnode> m_bvhRoot;
 
 		Camera m_mainCamera;
 
 		DirectionalLight m_sun;
 		float m_ambientLightIntensity = 1.0f;
 		Color m_ambientLightColor{ 1.f, 1.f, 1.f };
+		BoundingVolumeHierarchy m_bvh;
 
 	public:
 
-		World() : m_bvhRoot(nullptr) {}
+		World() {}
 		~World();
 
 		inline const ObjectList& GetObjects() const { return m_objectList; }
@@ -52,7 +52,6 @@ namespace BasicRenderer
 		Primitive* Find(const uint id);
 		const Primitive* Find(const uint id) const;
 
-		void BuildBoundingVolumeHierarchy();
 		void ProcessForRendering();
 
 		const Primitive* Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;

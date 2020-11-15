@@ -2,14 +2,16 @@
 
 namespace BasicRenderer
 {
-	void Sphere::UpdateAxisAlignedBoundingBox()
+	AxisAlignedBoundingBox Sphere::UpdateAxisAlignedBoundingBox() const
 	{
-		m_boundingBox = AxisAlignedBoundingBox(pos - Vector3(radius, radius, radius), pos + Vector3(radius, radius, radius));
+		return AxisAlignedBoundingBox(pos - Vector3(radius, radius, radius), pos + Vector3(radius, radius, radius));
 	}
 
-	void Plane::UpdateAxisAlignedBoundingBox()
+	AxisAlignedBoundingBox Plane::UpdateAxisAlignedBoundingBox() const
 	{
-		m_boundingBox.m_size = -1.f; // special case that is always hit to make infinite planes work easily
+		AxisAlignedBoundingBox box = m_boundingBox;
+		box.m_size = -1.f; // special case that is always hit to make infinite planes work easily
+		return box;
 	}
 }
 

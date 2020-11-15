@@ -41,12 +41,6 @@ namespace BasicRenderer
 		return nullptr;
 	}
 
-	void World::BuildBoundingVolumeHierarchy()
-	{
-		// TODO implement BVH building
-		//Fully rebuild it or partially? 
-	}
-
 	void World::ProcessForRendering()
 	{
 		for (auto& obj : m_objectList)
@@ -54,7 +48,9 @@ namespace BasicRenderer
 			obj.second->ProcessForRendering();
 		}
 
-		BuildBoundingVolumeHierarchy();
+		// TODO implement BVH building
+		//Fully rebuild it or partially? 
+		m_bvh.Build();
 	}
 
 	const Primitive* World::Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const

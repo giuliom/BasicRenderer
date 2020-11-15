@@ -26,6 +26,7 @@ namespace BasicRenderer
 
 		AxisAlignedBoundingBox() : m_minimum({ 0.f, 0.f, 0.f }), m_maximum({ 0.f, 0.f, 0.f }), m_size(0.f) {}
 		AxisAlignedBoundingBox(const Vector3& minimum, const Vector3& maximum) : m_minimum(minimum), m_maximum(maximum), m_size((maximum - minimum).Length()) {}
+		AxisAlignedBoundingBox(const AxisAlignedBoundingBox& other) : m_minimum(other.m_minimum), m_maximum(other.m_maximum), m_size(other.m_size) {}
 
 		inline const Vector3& GetMinimum() const { return m_minimum; }
 		inline const Vector3& GetMaximum() const { return m_maximum; }
@@ -87,43 +88,6 @@ namespace BasicRenderer
 		}
 	};
 
-
-	class BVHnode
-	{
-		AxisAlignedBoundingBox m_box;
-		std::unique_ptr<BVHnode> m_left;
-		std::unique_ptr<BVHnode> m_right;
-
-	public:
-
-		BVHnode(const AxisAlignedBoundingBox& box, BVHnode* left, BVHnode* right) : m_box(box), m_left(left), m_right(right) {}
-
-		inline bool GetHit(const Ray& r, float tMin, float tMax) const
-		{
-			if (m_box.GetHit(r, tMin, tMax) == false)
-			{
-				return false;
-			}
-
-			bool hit_left = false;
-
-			if (m_left != nullptr)
-			{
-				hit_left = m_left->GetHit(r, tMin, tMax);
-			}
-
-			bool hit_right = false;
-
-			if (m_right != nullptr)
-			{
-				hit_right = m_right->GetHit(r, tMin, tMax);
-			}
-
-			return hit_left || hit_right;
-		}
-	};
-
-
 	class Primitive
 	{
 	protected:
@@ -133,11 +97,10 @@ namespace BasicRenderer
 		AxisAlignedBoundingBox m_boundingBox;
 		const Material* m_material = nullptr;
 
-		virtual void UpdateAxisAlignedBoundingBox() = 0;
+		virtual AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const = 0;
 
 	public:
-
-		Primitive() : m_id(m_idCounter++), m_boundingBox() {}
+		Primitive() : m_id(m_idCounter++), m_boundingBox(), m_material(nullptr) {}
 		Primitive(Material* mat) : m_id(m_idCounter++), m_boundingBox(), m_material(mat) {}
 		Primitive(const Primitive& other) : m_id(m_idCounter++), m_boundingBox(other.GetAxisAlignedBoundingBox()), m_material(other.GetMaterial()) {}
 

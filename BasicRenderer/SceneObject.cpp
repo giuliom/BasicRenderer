@@ -4,19 +4,12 @@
 
 namespace BasicRenderer
 {
-	SceneObject::SceneObject(std::shared_ptr<Mesh> mesh)
-		: m_mesh(mesh)
-		, m_transformedFaces(m_mesh ? m_mesh->NumFaces() : 0)
-	{
-
-	}
-
 	SceneObject::SceneObject(std::shared_ptr<Mesh> mesh, Material* mat)
 		: Primitive(mat)
 		, m_mesh(mesh)
 		, m_transformedFaces(m_mesh ? m_mesh->NumFaces() : 0)
 	{
-
+		m_boundingBox = UpdateAxisAlignedBoundingBox();
 	}
 
 	SceneObject::SceneObject(const SceneObject& obj)
@@ -26,15 +19,17 @@ namespace BasicRenderer
 		, m_mesh(obj.m_mesh)
 		, m_transformedFaces(obj.m_transformedFaces)
 	{
+		m_boundingBox = UpdateAxisAlignedBoundingBox();
 	}
 
-	SceneObject::SceneObject(SceneObject&& obj)
+	SceneObject::SceneObject(SceneObject&& obj) noexcept
 		: m_worldTransform(obj.m_worldTransform)
 		, m_transform(obj.m_transform)
 		, m_children(obj.m_children)
 		, m_mesh(obj.m_mesh)
 		, m_transformedFaces(obj.m_transformedFaces)
 	{
+		m_boundingBox = UpdateAxisAlignedBoundingBox();
 	}
 
 	SceneObject::~SceneObject()
@@ -46,20 +41,20 @@ namespace BasicRenderer
 		Transform* parent = m_transform.GetParent();
 		bool updateFaces = false;
 
-		if (parent == nullptr)
+		if (m_transform.isDirty())
 		{
-			m_worldTransform = m_transform;
-		}
-		else
-		{
-			if (m_transform.isDirty())
+			if (parent == nullptr)
+			{
+				m_worldTransform = m_transform;
+			}
+			else
 			{
 				m_worldTransform = m_transform.Combine(*parent);
-				m_transform.SetDirty(false);
-				for (auto t : m_children)
-				{
-					t->SetDirty(true);
-				}
+			}
+
+			for (auto t : m_children)
+			{
+				t->SetDirty(true);
 			}
 		}
 
@@ -72,11 +67,13 @@ namespace BasicRenderer
 				m_transformedFaces[i] = f;
 			}
 
-			UpdateAxisAlignedBoundingBox();
+			m_boundingBox = UpdateAxisAlignedBoundingBox();
+
+			m_transform.SetDirty(false);
 		}
 	}
 
-	void SceneObject::UpdateAxisAlignedBoundingBox()
+	AxisAlignedBoundingBox SceneObject::UpdateAxisAlignedBoundingBox() const
 	{
 		if (m_transformedFaces.size() > 0)
 		{
@@ -117,7 +114,9 @@ namespace BasicRenderer
 				}
 			}
 
-			m_boundingBox = AxisAlignedBoundingBox(min, max);
+			return AxisAlignedBoundingBox(min, max);
 		}
+
+		return m_boundingBox;
 	}
 }
