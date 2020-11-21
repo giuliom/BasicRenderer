@@ -2,14 +2,14 @@
 #include <qpainter.h>
 #include <QKeyEvent>
 #include <memory>
-#include "BasicRenderer\Global.h"
-#include "BasicRenderer\PrimitiveTypes.h"
-#include "BasicRenderer\ImageFormats.h"
-#include "BasicRenderer\Vector3.h"
-#include "BasicRenderer\ObjLoader.h"
-#include "BasicRenderer\ImageExporter.h"
-#include "BasicRenderer\Material.h"
-#include "BasicRenderer\TestScene.h"
+#include "Global.h"
+#include "PrimitiveTypes.h"
+#include "ImageFormats.h"
+#include "Vector3.h"
+#include "ObjLoader.h"
+#include "ImageExporter.h"
+#include "Material.h"
+#include "TestScene.h"
 
 QRenderingWidget::QRenderingWidget(QWidget* parent) 
 	: QOpenGLWidget(parent)
