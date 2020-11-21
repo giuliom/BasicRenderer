@@ -23,25 +23,19 @@ namespace BasicRenderer
 
 	Vector3 UniforSampleInHemisphere(const Vector3& normal)
 	{
-		Vector3 nt;
-		if (std::fabs(normal.x) > std::fabs(normal.y))
-		{
-			nt = Vector3(normal.z, 0.f, -normal.x) / sqrtf(normal.x * normal.x + normal.z * normal.z);
-		}
-		else
-		{
-			nt = Vector3(0.f, -normal.z, normal.y) / sqrtf(normal.y * normal.y + normal.z * normal.z);
-		}
+		const Vector3 nt = std::fabs(normal.x) > std::fabs(normal.y) 
+			? Vector3(normal.z, 0.f, -normal.x) / sqrtf(normal.x * normal.x + normal.z * normal.z)
+			: Vector3(0.f, -normal.z, normal.y) / sqrtf(normal.y * normal.y + normal.z * normal.z);
 
-		Vector3 nb = Vector3::CrossProduct(normal, nt);
+		const Vector3 nb = Vector3::CrossProduct(normal, nt);
 
-		float r1 = uniformDist(engine);
-		float r2 = uniformDist(engine);
-		float sinTheta = sqrtf(1.f - r1 * r1);
-		float phi = 2.f * PI * r2;
-		float x = sinTheta * cosf(phi);
-		float z = sinTheta * sinf(phi);
-		Vector3 sample(x, r1, z);
+		const float r1 = uniformDist(engine);
+		const float r2 = uniformDist(engine);
+		const float sinTheta = sqrtf(1.f - r1 * r1);
+		const float phi = 2.f * PI * r2;
+		const float x = sinTheta * cosf(phi);
+		const float z = sinTheta * sinf(phi);
+		const Vector3 sample(x, r1, z);
 
 		return {
 			sample.x * nb.x + sample.y * normal.x + sample.z * nt.x,

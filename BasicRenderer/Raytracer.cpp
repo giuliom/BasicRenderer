@@ -120,81 +120,87 @@ namespace BasicRenderer
 		{
 			if ((hitObject = scene.Raycast(iterationRay, 0.0001f, 999999.99f, dfsStack, hitPosition, hitNormal)) != nullptr)
 			{
-				if (hitObject->GetMaterial() == nullptr && bounces == 0u)
-				{
-					throughput = Material::MissingMaterialColor;
-				}
+				const Material* material = hitObject->GetMaterial();
 
 				success = false;
-				const Material& mat = *hitObject->GetMaterial();
+				
+				if (material != nullptr)
+				{
+					const Material& mat = *material;
 
-				switch (mat.type)
-				{
-				case Material::Type::METALLIC:
-				{
-					Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
-					iterationRay = Ray(hitPosition, reflected + UniforSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
-					success = (Vector3::Dot(iterationRay.direction, hitNormal) > 0);
+					switch (mat.type)
+					{
+					case Material::Type::METALLIC:
+					{
+						Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
+						iterationRay = Ray(hitPosition, reflected + UniforSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
+						success = (Vector3::Dot(iterationRay.direction, hitNormal) > 0);
+					}
+					break;
+
+					case Material::Type::DIELECTRIC:
+					{
+						Vector3 outNormal;
+						Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
+						float ni_nt;
+						Vector3 refracted;
+						float reflectionProb;
+						float cos;
+						if (Vector3::Dot(ray.direction, hitNormal) > 0.f)
+						{
+							outNormal = hitNormal * -1.f;
+							ni_nt = mat.refractiveIndex;
+							cos = (Vector3::Dot(ray.direction, hitNormal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
+						}
+						else
+						{
+							outNormal = hitNormal;
+							ni_nt = 1.f / mat.refractiveIndex;
+							cos = -(Vector3::Dot(ray.direction, hitNormal)); // / rayIn.direction.Length(); == 1.f
+						}
+
+						if (Material::Refract(ray.direction, outNormal, ni_nt, refracted))
+						{
+							reflectionProb = Material::Schlick(cos, mat.refractiveIndex);
+						}
+						else
+						{
+							reflectionProb = 1.f;
+						}
+
+						if (UnitRandf() < reflectionProb)
+						{
+							iterationRay = Ray(hitPosition, reflected);
+						}
+						else
+						{
+							iterationRay = Ray(hitPosition, refracted);
+						}
+
+						success = true;
+					}
+					break;
+
+					default:
+					{
+						Vector3 target = hitPosition + UniforSampleInHemisphere(hitNormal);
+						iterationRay = Ray(hitPosition, target - hitPosition);
+						success = true;
+					}
+					break;
+					}
+
+					if (success)
+					{
+						resultRadiance += throughput * mat.emissive;
+						throughput *= mat.baseColor;
+
+					}
 				}
-				break;
-
-				case Material::Type::DIELECTRIC:
+				else if (bounces == 0u)
 				{
-					Vector3 outNormal;
-					Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
-					float ni_nt;
-					Vector3 refracted;
-					float reflectionProb;
-					float cos;
-					if (Vector3::Dot(ray.direction, hitNormal) > 0.f)
-					{
-						outNormal = hitNormal * -1.f;
-						ni_nt = mat.refractiveIndex;
-						cos = (Vector3::Dot(ray.direction, hitNormal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
-					}
-					else
-					{
-						outNormal = hitNormal;
-						ni_nt = 1.f / mat.refractiveIndex;
-						cos = -(Vector3::Dot(ray.direction, hitNormal)); // / rayIn.direction.Length(); == 1.f
-					}
-
-					if (Material::Refract(ray.direction, outNormal, ni_nt, refracted))
-					{
-						reflectionProb = Material::Schlick(cos, mat.refractiveIndex);
-					}
-					else
-					{
-						reflectionProb = 1.f;
-					}
-
-					if (UnitRandf() < reflectionProb)
-					{
-						iterationRay = Ray(hitPosition, reflected);
-					}
-					else
-					{
-						iterationRay = Ray(hitPosition, refracted);
-					}
-
-					success = true;
-				}
-				break;
-
-				default:
-				{
-					Vector3 target = hitPosition + UniforSampleInHemisphere(hitNormal);
-					iterationRay = Ray(hitPosition, target - hitPosition);
-					success = true;
-				}
-				break;
-				}
-
-				if (success)
-				{
-					resultRadiance += throughput * mat.emissive;
-					throughput *= mat.baseColor;
-
+					resultRadiance = Material::MissingMaterialColor;
+					break;
 				}
 			}
 			else // No hit
