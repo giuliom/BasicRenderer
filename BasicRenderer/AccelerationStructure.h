@@ -1,12 +1,15 @@
 #pragma once
 
 #include <vector>
+#include <unordered_map>
 #include "Global.h"
 #include "Primitive.h"
 
 
 namespace BasicRenderer
 {
+	typedef std::unordered_map<uint, std::unique_ptr<Primitive>> ObjectList;
+
 	class BVHnode
 	{
 		const Primitive* m_primitive;
@@ -32,14 +35,17 @@ namespace BasicRenderer
 	protected:
 
 		std::unique_ptr<const BVHnode> m_root;
+		uint m_treeLevels;
 
 	public:
 
-		BoundingVolumeHierarchy() : m_root(nullptr) {}
+		BoundingVolumeHierarchy() : m_root(nullptr), m_treeLevels(0u) {}
 
-		const Primitive* GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const;
+		uint LevelsCount() const { return m_treeLevels; }
 
-		void Build(const std::vector<const Primitive*>& primitives);
+		const Primitive* GetHit(const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, HitResult& outHit) const;
+
+		void Build(const ObjectList::iterator& begin_it, const ObjectList::iterator& end_it);
 
 
 		void DebugPrint();

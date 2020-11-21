@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <memory>
-#include <unordered_map>
 #include "Vertex.h"
 #include "DirectionalLight.h"
 #include "Camera.h"
@@ -13,7 +12,7 @@ namespace BasicRenderer
 	class Primitive;
 	class Ray;
 
-	typedef std::unordered_map<uint, std::unique_ptr<Primitive>> ObjectList;
+	typedef BoundingVolumeHierarchy AccelerationStructure;
 
 	class World
 	{
@@ -27,7 +26,7 @@ namespace BasicRenderer
 		DirectionalLight m_sun;
 		float m_ambientLightIntensity = 1.0f;
 		Color m_ambientLightColor{ 1.f, 1.f, 1.f };
-		BoundingVolumeHierarchy m_bvh;
+		AccelerationStructure m_bvh;
 
 	public:
 
@@ -46,6 +45,7 @@ namespace BasicRenderer
 		inline void SetAmbientLightIntensity(const float intensity) { m_ambientLightIntensity = intensity; }
 		inline const Color& GetAmbientLightColor() const  { return m_ambientLightColor; }
 		inline void SetAmbientLightColor(const Color& color) { m_ambientLightColor = color; }
+		const AccelerationStructure& GetAccelerationStructure() const { return m_bvh; }
 
 		void Add(Primitive* obj);
 		bool Remove(const uint id);
@@ -54,7 +54,20 @@ namespace BasicRenderer
 
 		void ProcessForRendering();
 
-		const Primitive* OldRaycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
-		const Primitive* Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
+		const Primitive* OldRaycast(const Ray& r, float tMin, float tMax, HitResult& outHit) const;
+		inline const Primitive* Raycast(const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, Vector3& hitPosition, Vector3& hitNormal) const
+		{
+			const Primitive* anyHit = nullptr;
+			HitResult hit;
+			anyHit = m_bvh.GetHit(r, tMin, tMax, dfsStack, hit);
+
+			if (anyHit != nullptr)
+			{
+				hitPosition = r.GetPoint(hit.t);
+				hitNormal = hit.normal;
+			}
+
+			return anyHit;
+		}
 	};
 }

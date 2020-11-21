@@ -100,7 +100,7 @@ namespace BasicRenderer
 		cube2->GetTransform().RotateDeg(0.f, -25.f, 0.f);
 		cube2->GetTransform().SetScale(primitive_scale_vector * 0.25f);
 
-		scene->Add(bunny);
+		//scene->Add(bunny);
 		//scene->Add(teapot);
 
 		scene->Add(sp);

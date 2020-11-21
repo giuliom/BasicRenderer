@@ -70,6 +70,9 @@ namespace BasicRenderer
 
 		const float rowPctg =  100.f / fheight;
 
+		std::vector<const BVHnode*> dfsStack;
+		dfsStack.reserve(scene.GetAccelerationStructure().LevelsCount());
+
 		//Top-left, drawing rows
 		for (uint y = startRowIndex; y < endRowIndex; y++)
 		{
@@ -83,7 +86,7 @@ namespace BasicRenderer
 				Color c;
 				for (uint i = 0u; i < m_pixelSamples; i++)
 				{
-					c = c + RayTrace(r, scene, m_shadingFunc);
+					c = c + RayTrace(r, scene, dfsStack, m_shadingFunc);
 				}
 
 				c = c * fInversePixelSameples;
@@ -102,7 +105,7 @@ namespace BasicRenderer
 		}
 	}
 
-	Color Raytracer::RayTrace(const Ray& ray, const World& scene, const ShadingFunc& Shading)
+	Color Raytracer::RayTrace(const Ray& ray, const World& scene, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& Shading)
 	{
 		Vector3 hitPosition, hitNormal;
 		const Primitive* hitObject = nullptr;
@@ -115,7 +118,7 @@ namespace BasicRenderer
 
 		do
 		{
-			if ((hitObject = scene.Raycast(iterationRay, 0.0001f, 999999.99f, hitPosition, hitNormal)) != nullptr)
+			if ((hitObject = scene.Raycast(iterationRay, 0.0001f, 999999.99f, dfsStack, hitPosition, hitNormal)) != nullptr)
 			{
 				if (hitObject->GetMaterial() == nullptr && bounces == 0u)
 				{

@@ -2,24 +2,20 @@
 
 #include <algorithm>
 #include <iostream>
-#include <stack>
-
 
 namespace BasicRenderer
 {
-	const Primitive* BoundingVolumeHierarchy::GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const
+	const Primitive* BoundingVolumeHierarchy::GetHit(const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, HitResult& outHit) const
 	{
-		std::stack<const BVHnode*> nstack;
-		
 		const Primitive* tempPrim = nullptr;
 		outHit.t = tMax;
 
-		nstack.push(m_root.get());
+		dfsStack.emplace_back(m_root.get());
 
-		while (nstack.size() > 0)
+		while (dfsStack.size() > 0)
 		{
-			const BVHnode* n = nstack.top();
-			nstack.pop();
+			const BVHnode* n = dfsStack.back();
+			dfsStack.pop_back();
 
 			if (n != nullptr && n->GetHit(r, tMin, outHit.t)) // AABB is hit
 			{
@@ -36,8 +32,8 @@ namespace BasicRenderer
 				}
 				else // Non leaf node, adding children to the stack
 				{
-					nstack.push(n->GetRight());
-					nstack.push(n->GetLeft());
+					dfsStack.emplace_back(n->GetRight());
+					dfsStack.emplace_back(n->GetLeft());
 				}
 			}
 		}
@@ -45,20 +41,21 @@ namespace BasicRenderer
 		return tempPrim;
 	}
 
-	void BoundingVolumeHierarchy::Build(const std::vector<const Primitive*>& primitives)
+	void BoundingVolumeHierarchy::Build(const ObjectList::iterator& begin_it, const ObjectList::iterator& end_it)
 	{
-		if (primitives.size() == 0)
+		if (begin_it == end_it)
 		{
 			return;
 		}
 
 		// Building the nodes bottom-up
 		std::vector<const BVHnode*> nodes;
+		nodes.reserve(std::distance(begin_it, end_it));
 
-		for (const Primitive* p : primitives)
+		for (auto it = begin_it; it != end_it; ++it)
 		{
-			BVHnode* n = new BVHnode(p, p->GetAxisAlignedBoundingBox(), nullptr, nullptr);
-			nodes.push_back(n);
+			BVHnode* n = new BVHnode(it->second.get(), it->second->GetAxisAlignedBoundingBox(), nullptr, nullptr);
+			nodes.emplace_back(n);
 		}
 
 		// Axis comparator
@@ -80,10 +77,12 @@ namespace BasicRenderer
 		// First sort based on axis
 		std::sort(nodes.begin(), nodes.end(), axis_comparator);
 
+		m_treeLevels = 1;
+		std::vector<const BVHnode*> upperLevel;
+		upperLevel.reserve(nodes.size());
+
 		while (nodes.size() > 1)
 		{
-			std::vector<const BVHnode*> upperLevel;
-
 			for (uint i = 1; i < nodes.size(); i += 2)
 			{
 				const BVHnode* left = nodes[i - 1];
@@ -102,6 +101,8 @@ namespace BasicRenderer
 			}
 
 			nodes = upperLevel;
+			upperLevel.clear();
+			++m_treeLevels;
 
 			axis = axis + 1 > 2 ? 0 : axis + 1;
 			std::sort(nodes.begin(), nodes.end(), axis_comparator);
