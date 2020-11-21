@@ -148,6 +148,15 @@ namespace BasicRenderer
 		{
 			switch (input.GetButtonType())
 			{
+			case ButtonType::CURSOR_PRIMARY:
+			{
+				break;
+			}
+
+			case ButtonType::CURSOR_SECONDARY:
+			{
+				break;
+			}
 			}
 		}
 
