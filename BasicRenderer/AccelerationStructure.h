@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "Global.h"
 #include "Primitive.h"
 
@@ -8,39 +9,21 @@ namespace BasicRenderer
 {
 	class BVHnode
 	{
-		AxisAlignedBoundingBox m_box;
-		std::unique_ptr<BVHnode> m_left;
-		std::unique_ptr<BVHnode> m_right;
-
-		//TODO link to primitives by id?
+		const Primitive* m_primitive;
+		const AxisAlignedBoundingBox m_box;
+		std::unique_ptr<const BVHnode> m_left;
+		std::unique_ptr<const BVHnode> m_right;
 
 	public:
 
-		BVHnode(const AxisAlignedBoundingBox& box, BVHnode* left, BVHnode* right) : m_box(box), m_left(left), m_right(right) {}
+		BVHnode(const Primitive* primitive, const AxisAlignedBoundingBox& box, const BVHnode* left, const BVHnode* right) : m_primitive(primitive), m_box(box), m_left(left), m_right(right) {}
 
-		inline bool GetHit(const Ray& r, float tMin, float tMax) const
-		{
-			if (m_box.GetHit(r, tMin, tMax) == false)
-			{
-				return false;
-			}
+		inline const Primitive* GetPrimitive() const { return m_primitive; }
+		inline const AxisAlignedBoundingBox GetAxisAlignedBoundingBox() const { return m_box; }
+		inline const BVHnode* GetLeft() const { return m_left.get(); }
+		inline const BVHnode* GetRight() const { return m_right.get(); }
 
-			bool hit_left = false;
-
-			if (m_left != nullptr)
-			{
-				hit_left = m_left->GetHit(r, tMin, tMax);
-			}
-
-			bool hit_right = false;
-
-			if (m_right != nullptr)
-			{
-				hit_right = m_right->GetHit(r, tMin, tMax);
-			}
-
-			return hit_left || hit_right;
-		}
+		inline bool GetHit(const Ray& r, float tMin, float tMax) const { return m_box.GetHit(r, tMin, tMax); }
 	};
 
 
@@ -48,17 +31,18 @@ namespace BasicRenderer
 	{
 	protected:
 
-		BVHnode m_root;
+		std::unique_ptr<const BVHnode> m_root;
 
 	public:
 
-		BoundingVolumeHierarchy() : m_root(AxisAlignedBoundingBox(), nullptr, nullptr) {}
+		BoundingVolumeHierarchy() : m_root(nullptr) {}
 
-		inline bool GetHit(const Ray& r, float tMin, float tMax) const
-		{
-			return m_root.GetHit(r, tMin, tMax);
-		}
+		const Primitive* GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const;
 
-		void Build();
+		void Build(const std::vector<const Primitive*>& primitives);
+
+
+		void DebugPrint();
+
 	};
 }

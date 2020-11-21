@@ -4,7 +4,7 @@ namespace BasicRenderer
 {
 	AxisAlignedBoundingBox Sphere::UpdateAxisAlignedBoundingBox() const
 	{
-		return AxisAlignedBoundingBox(pos - Vector3(radius, radius, radius), pos + Vector3(radius, radius, radius));
+		return AxisAlignedBoundingBox(m_pos - Vector3(m_radius, m_radius, m_radius), m_pos + Vector3(m_radius, m_radius, m_radius));
 	}
 
 	AxisAlignedBoundingBox Plane::UpdateAxisAlignedBoundingBox() const

@@ -13,6 +13,7 @@ namespace BasicRenderer
 	protected:
 		mutable Transform m_worldTransform;
 		Transform m_transform;
+		Material* m_material;
 		std::vector<Transform*> m_children; //TODO Move to Transform?
 		std::shared_ptr<Mesh> m_mesh = nullptr;
 		std::vector<Face> m_transformedFaces;
@@ -20,7 +21,7 @@ namespace BasicRenderer
 	public:
 		SceneObject() = delete;
 		SceneObject(Material* mat) = delete;
-		SceneObject(std::shared_ptr<Mesh> mesh, Material* mat);
+		SceneObject(std::shared_ptr<Mesh> mesh, Material* mat, const std::string& name = "");
 		SceneObject(const SceneObject& obj);
 		SceneObject(SceneObject&& obj) noexcept;
 		virtual ~SceneObject();
@@ -32,13 +33,14 @@ namespace BasicRenderer
 		inline const Transform& GetWorldTransform() const { return m_worldTransform; }
 		inline size_t NumFaces() const { return m_transformedFaces.size(); }
 		inline const Face& GetTransformedFace(uint index) const { return m_transformedFaces[index]; }
+		const Material* GetMaterial() const override { return m_material; }
 
 		void ProcessForRendering() override;
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
-		bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
+		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
-			tHit = tMax;
+			outHit.t = tMax;
 			float test = 0.f;
 			bool hit = false;
 			const auto numFaces = m_transformedFaces.size();
@@ -49,10 +51,10 @@ namespace BasicRenderer
 				if (Intersection(f, r, tMin, tMax, test))
 				{
 					hit = true;
-					if (test < tHit)
+					if (test < outHit.t)
 					{
-						tHit = test;
-						normalHit = f.normal;
+						outHit.t = test;
+						outHit.normal = f.normal;
 					}
 				}
 			}

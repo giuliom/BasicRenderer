@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <string>
 #include "Global.h"
 #include "Vector3.h"
 #include "Ray.h"
@@ -10,7 +11,16 @@
 namespace BasicRenderer
 {
 	class Material;
-	class AxisAlignedBoundingBox;
+	class Primitive;
+
+	struct HitResult
+	{
+		const Primitive* primitive;
+		float t;
+		Vector3 normal;
+
+		HitResult() : primitive(nullptr), t(0.f), normal() {}
+	};
 
 	class AxisAlignedBoundingBox
 	{
@@ -57,7 +67,7 @@ namespace BasicRenderer
 					tMin = t0 > tMin ? t0 : tMin;
 					tMax = t1 < tMax ? t1 : tMax;
 
-					if (tMax <= tMin)
+					if (tMax < tMin)
 					{
 						return false;
 					}
@@ -74,7 +84,7 @@ namespace BasicRenderer
 		}
 
 		// Return the bounding box of the two boxes combined
-		inline AxisAlignedBoundingBox operator+(const AxisAlignedBoundingBox& other)
+		inline AxisAlignedBoundingBox operator+(const AxisAlignedBoundingBox& other) const
 		{
 			Vector3 min(std::min(m_minimum.x, other.m_minimum.x),
 						std::min(m_minimum.y, other.m_minimum.y),
@@ -93,23 +103,25 @@ namespace BasicRenderer
 	protected:
 		//TODO temporary implementation
 		static uint m_idCounter;
+		std::string m_name;
 		uint m_id;
 		AxisAlignedBoundingBox m_boundingBox;
-		const Material* m_material = nullptr;
 
 		virtual AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const = 0;
 
 	public:
-		Primitive() : m_id(m_idCounter++), m_boundingBox(), m_material(nullptr) {}
-		Primitive(Material* mat) : m_id(m_idCounter++), m_boundingBox(), m_material(mat) {}
-		Primitive(const Primitive& other) : m_id(m_idCounter++), m_boundingBox(other.GetAxisAlignedBoundingBox()), m_material(other.GetMaterial()) {}
+		Primitive(const std::string& name = "") : m_name(name), m_id(m_idCounter++), m_boundingBox() {}
+		Primitive(const Primitive& other) : m_name(other.m_name), m_id(m_idCounter++), m_boundingBox(other.m_boundingBox) {}
+
+		Primitive& operator=(const Primitive& other) = delete;
 
 		inline uint GetId() const { return m_id; }
+		inline const std::string& GetName() const { return m_name; }
 
 		virtual void ProcessForRendering() = 0;
-		virtual bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const = 0;
+		virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const = 0;
 
 		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox() const { return m_boundingBox; }
-		inline const Material* GetMaterial() const { return m_material; }
+		virtual const Material* GetMaterial() const = 0;
 	};
 }

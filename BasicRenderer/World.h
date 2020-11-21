@@ -54,6 +54,7 @@ namespace BasicRenderer
 
 		void ProcessForRendering();
 
+		const Primitive* OldRaycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
 		const Primitive* Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const;
 	};
 }

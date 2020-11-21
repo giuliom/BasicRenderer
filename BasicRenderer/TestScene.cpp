@@ -45,62 +45,62 @@ namespace BasicRenderer
 		const Vector3 primitive_scale_vector = { primitive_scale, primitive_scale, primitive_scale };
 		const Vector3 box_position = { 0.f, 0.f, 0.f };
 
-		SceneObject* bunny = new SceneObject(bunnyMesh, gold);
+		SceneObject* bunny = new SceneObject(bunnyMesh, gold, "Bunny");
 		bunny->GetTransform().SetScale(primitive_scale * 3.f, primitive_scale * 3.f, primitive_scale * 3.f);
 		bunny->GetTransform().SetPosition(box_position + Vector3(primitive_scale * 0.25f, primitive_scale * -0.6f, primitive_scale * -0.05f));
 
-		SceneObject* teapot = new SceneObject(teapotMesh, silver);
+		SceneObject* teapot = new SceneObject(teapotMesh, silver, "Teapot");
 		teapot->GetTransform().SetScale(primitive_scale * 0.05f, primitive_scale * 0.05f, primitive_scale * 0.05f);
 		teapot->GetTransform().SetPosition(box_position + Vector3(primitive_scale * -0.2f, primitive_scale * -0.5f, primitive_scale * 0.03f));
 
-		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, silver);
+		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, silver, "Sphere");
 
-		Quad* floor = new Quad(quadMesh, white);
+		Quad* floor = new Quad(quadMesh, white, "Floor");
 		floor->GetTransform().SetPosition(box_position + Vector3(0.f, -half_primitive_scale, 0.f));
 		floor->GetTransform().RotateDeg(-90.f, 0.f, 0.f);
 		floor->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* ceiling = new Quad(quadMesh, white);
+		Quad* ceiling = new Quad(quadMesh, white, "Ceiling");
 		ceiling->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale, 0.f));
 		ceiling->GetTransform().RotateDeg(90.f, 0.f, 0.f);
 		ceiling->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* back = new Quad(quadMesh, white);
+		Quad* back = new Quad(quadMesh, white, "Back");
 		back->GetTransform().SetPosition(box_position + Vector3(0.f, 0.f, -half_primitive_scale ));
 		back->GetTransform().RotateDeg(0.f, 0.f, 0.f);
 		back->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* front = new Quad(quadMesh, white);
+		Quad* front = new Quad(quadMesh, white, "Front");
 		front->GetTransform().SetPosition(box_position + Vector3(0.f, 0.f, half_primitive_scale));
 		front->GetTransform().RotateDeg(0.f, 180.f, 0.f);
 		front->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* left = new Quad(quadMesh, red);
+		Quad* left = new Quad(quadMesh, red, "Left");
 		left->GetTransform().SetPosition(box_position + Vector3(-half_primitive_scale, 0.f, 0.f));
 		left->GetTransform().RotateDeg(0.f, 90.f, 0.f);
 		left->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* right = new Quad(quadMesh, green);
+		Quad* right = new Quad(quadMesh, green, "Right");
 		right->GetTransform().SetPosition(box_position + Vector3(half_primitive_scale, 0.f, 0.f));
 		right->GetTransform().RotateDeg(0.f, -90.f, 0.f);
 		right->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* light = new Quad(quadMesh, emissive);
+		Quad* light = new Quad(quadMesh, emissive, "Light");
 		light->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale - 0.05f, 0.f));
 		light->GetTransform().RotateDeg(90.f, 0.f, 0.f);
 		light->GetTransform().SetScale(primitive_scale_vector * 0.3f);
 
-		Cube* cube = new Cube(cubeMesh, white);
+		Cube* cube = new Cube(cubeMesh, white, "Cube");
 		cube->GetTransform().SetPosition(box_position + Vector3(primitive_scale * -0.18f, primitive_scale * -0.15f, primitive_scale * -0.3f ));
 		cube->GetTransform().RotateDeg(0.f, 115.f, 0.f);
 		cube->GetTransform().SetScale(primitive_scale * 0.3f, primitive_scale * 0.7f, primitive_scale * 0.3f);
 
-		Cube* cube2 = new Cube(cubeMesh, white);
+		Cube* cube2 = new Cube(cubeMesh, white, "Cube2");
 		cube2->GetTransform().SetPosition(box_position + Vector3(primitive_scale * 0.25f, primitive_scale * -0.375f, primitive_scale * -0.25f ));
 		cube2->GetTransform().RotateDeg(0.f, -25.f, 0.f);
 		cube2->GetTransform().SetScale(primitive_scale_vector * 0.25f);
 
-		//scene->Add(bunny);
+		scene->Add(bunny);
 		//scene->Add(teapot);
 
 		scene->Add(sp);

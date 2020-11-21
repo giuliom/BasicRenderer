@@ -6,7 +6,7 @@ namespace BasicRenderer
 {
 	class Ray;
 
-	/* Pinhole camera aligned with -z therefore left handed */
+	/* Pinhole camera facing -z therefore right handed like OpenGL */
 	class Camera
 	{
 	protected:

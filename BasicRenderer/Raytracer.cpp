@@ -24,7 +24,7 @@ namespace BasicRenderer
 		m_shadingFunc = Shading;
 
 		std::vector<std::thread> renderThreads;
-		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency()  - 1u : 1u;
+		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u;
 		const uint rowCount = fBuffer.GetHeight();
 		const uint rowsPerThread = rowCount / threadCount;
 

@@ -4,8 +4,9 @@
 
 namespace BasicRenderer
 {
-	SceneObject::SceneObject(std::shared_ptr<Mesh> mesh, Material* mat)
-		: Primitive(mat)
+	SceneObject::SceneObject(std::shared_ptr<Mesh> mesh, Material* mat, const std::string& name)
+		: Primitive(name)
+		, m_material(mat)
 		, m_mesh(mesh)
 		, m_transformedFaces(m_mesh ? m_mesh->NumFaces() : 0)
 	{
@@ -16,6 +17,7 @@ namespace BasicRenderer
 		: m_worldTransform(obj.m_worldTransform)
 		, m_transform(obj.m_transform)
 		, m_children(obj.m_children)
+		, m_material(obj.m_material)
 		, m_mesh(obj.m_mesh)
 		, m_transformedFaces(obj.m_transformedFaces)
 	{
@@ -26,6 +28,7 @@ namespace BasicRenderer
 		: m_worldTransform(obj.m_worldTransform)
 		, m_transform(obj.m_transform)
 		, m_children(obj.m_children)
+		, m_material(obj.m_material)
 		, m_mesh(obj.m_mesh)
 		, m_transformedFaces(obj.m_transformedFaces)
 	{
@@ -101,15 +104,15 @@ namespace BasicRenderer
 
 					if (vertexPos.x > max.x)
 					{
-						min.x = vertexPos.x;
+						max.x = vertexPos.x;
 					}
 					if (vertexPos.y > max.y)
 					{
-						min.y = vertexPos.y;
+						max.y = vertexPos.y;
 					}
 					if (vertexPos.z > max.z)
 					{
-						min.z = vertexPos.z;
+						max.z = vertexPos.z;
 					}
 				}
 			}

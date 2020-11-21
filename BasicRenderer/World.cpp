@@ -43,31 +43,34 @@ namespace BasicRenderer
 
 	void World::ProcessForRendering()
 	{
+		std::vector<const Primitive*> primitives;
+
 		for (auto& obj : m_objectList)
 		{
 			obj.second->ProcessForRendering();
+			primitives.push_back(obj.second.get());
 		}
 
-		// TODO implement BVH building
-		//Fully rebuild it or partially? 
-		m_bvh.Build();
+		// TODO partial rebuilding of the bvh?
+		m_bvh.Build(primitives);
 	}
 
-	const Primitive* World::Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const
+	const Primitive* World::OldRaycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const
 	{
 		const Primitive* anyHit = nullptr;
 		float closestHit = tMax;
-		float tempHit = tMax;
-		Vector3 tempNormal;
+
+		HitResult tempHit;
+		tempHit.t = tMax;
 
 		for (const auto& obj : m_objectList)
 		{
-			if (obj.second->GetHit(r, tMin, tMax, tempHit, tempNormal))
+			if (obj.second->GetHit(r, tMin, tMax, tempHit))
 			{
-				if (tempHit < closestHit)
+				if (tempHit.t < closestHit)
 				{
-					closestHit = tempHit;
-					hitNormal = tempNormal;
+					closestHit = tempHit.t;
+					hitNormal = tempHit.normal;
 					anyHit = obj.second.get();
 				}
 			}
@@ -75,6 +78,21 @@ namespace BasicRenderer
 
 		hitPosition = r.GetPoint(closestHit);
 
+		return anyHit;
+	}
+
+	const Primitive* World::Raycast(const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal) const
+	{
+		const Primitive* anyHit = nullptr;
+		HitResult hit;
+		anyHit = m_bvh.GetHit(r, tMin, tMax, hit);
+
+		if (anyHit != nullptr)
+		{
+			hitPosition = r.GetPoint(hit.t);
+			hitNormal = hit.normal;
+		}
+	
 		return anyHit;
 	}
 }

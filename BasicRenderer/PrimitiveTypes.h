@@ -17,22 +17,25 @@ namespace BasicRenderer
 	class Sphere : public Primitive
 	{
 	public:
-		Vector3 pos;
-		float radius;
+		Vector3 m_pos;
+		float m_radius;
+		Material* m_material;
 
-		Sphere() : radius(1.f) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
-		Sphere(Vector3 pos_, float radius_) : pos(pos_), radius(radius_) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
-		Sphere(Vector3 pos_, float radius_, Material* mat) : Primitive(mat), pos(pos_), radius(radius_) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(const std::string& name = "") : Primitive(name), m_radius(1.f) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(Vector3 pos_, float radius_, const std::string& name = "") : Primitive(name), m_pos(pos_), m_radius(radius_) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(Vector3 pos_, float radius_, Material* mat, const std::string& name = "") : Primitive(name), m_material(mat), m_pos(pos_), m_radius(radius_) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
 
 		void ProcessForRendering() override { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
-		inline bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
+		const Material* GetMaterial() const override { return m_material; }
+
+		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
-			const Vector3 oc = r.origin - pos;
+			const Vector3 oc = r.origin - m_pos;
 			const float a = Vector3::Dot(r.direction, r.direction);
 			const float b = Vector3::Dot(oc, r.direction);
-			const float c = Vector3::Dot(oc, oc) - radius * radius;
+			const float c = Vector3::Dot(oc, oc) - m_radius * m_radius;
 			const float discriminant = b * b - a * c;
 			const float sqDiscr = sqrtf(discriminant);
 
@@ -41,15 +44,15 @@ namespace BasicRenderer
 				float temp = (-b - sqDiscr) / a;
 				if (temp > tMin && temp < tMax)
 				{
-					tHit = temp;
-					normalHit = ((r.GetPoint(temp) - pos) / radius);
+					outHit.t = temp;
+					outHit.normal = ((r.GetPoint(temp) - m_pos) / m_radius);
 					return true;
 				}
 				temp = (-b + sqDiscr) / a;
 				if (temp > tMin && temp < tMax)
 				{
-					tHit = temp;
-					normalHit = ((r.GetPoint(temp) - pos) / radius);
+					outHit.t = temp;
+					outHit.normal = ((r.GetPoint(temp) - m_pos) / m_radius);
 					return true;
 				}
 			}
@@ -63,26 +66,29 @@ namespace BasicRenderer
 	class Plane : public Primitive
 	{
 	public:
-		Vector3 centre, normal;
+		Vector3 m_centre, m_normal;
+		Material* m_material;
 
 		Plane() = delete;
-		Plane(const Vector3& centre, const Vector3& normal, Material* mat) : Primitive(mat), centre(centre), normal(normal.Normalize()) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Plane(const Vector3& centre, const Vector3& normal, Material* mat, const std::string& name = "") : Primitive(name), m_centre(centre), m_normal(normal.Normalize()), m_material(mat) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
 
 		void ProcessForRendering() override { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
-		inline bool GetHit(const Ray& r, float tMin, float tMax, float& tHit, Vector3& normalHit) const override
+		const Material* GetMaterial() const override { return m_material; }
+
+		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
-			const float div = Vector3::Dot(normal, r.direction);
+			const float div = Vector3::Dot(m_normal, r.direction);
 
 			if (abs(div) > 0.0001f)
 			{
-				float t = Vector3::Dot(centre - r.origin, normal) / div;
+				float t = Vector3::Dot(m_centre - r.origin, m_normal) / div;
 
 				if (t >= 0.0001f)
 				{
-					tHit = t;
-					normalHit = normal;
+					outHit.t = t;
+					outHit.normal = m_normal;
 					return true;
 				}
 			}
@@ -100,7 +106,7 @@ namespace BasicRenderer
 
 	public:
 		Quad(std::shared_ptr<Mesh> mesh_) = delete;
-		Quad(std::shared_ptr<Mesh> mesh_, Material* mat) :SceneObject(mesh_, mat) {}
+		Quad(std::shared_ptr<Mesh> mesh_, Material* mat, const std::string& name = "") : SceneObject(mesh_, mat, name) {}
 		Quad(const SceneObject& obj) = delete;
 		Quad(const Quad& quad) : SceneObject(quad) {}
 		virtual ~Quad() {}
@@ -147,7 +153,7 @@ namespace BasicRenderer
 
 	public:
 		Cube(std::shared_ptr<Mesh> mesh_) = delete;
-		Cube(std::shared_ptr<Mesh> mesh_, Material* mat) : SceneObject(mesh_, mat) {}
+		Cube(std::shared_ptr<Mesh> mesh_, Material* mat, const std::string& name = "") : SceneObject(mesh_, mat, name) {}
 		Cube(const SceneObject& obj) = delete;
 		Cube(const Cube& cube) : SceneObject(cube) {}
 		virtual ~Cube() {}
