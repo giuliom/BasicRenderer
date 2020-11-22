@@ -126,19 +126,27 @@
     <ExcludePath>$(ExcludePath)</ExcludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)header;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LibDebug|x64'">
     <ExcludePath>$(ExcludePath)</ExcludePath>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)header;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)header;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(ProjectDir)header;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
@@ -257,75 +265,75 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AccelerationStructure.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="DirectionalLight.cpp" />
-    <ClCompile Include="Face.cpp" />
-    <ClCompile Include="FrameBuffer.cpp" />
-    <ClCompile Include="InputEvent.cpp" />
-    <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="Primitive.cpp" />
-    <ClCompile Include="ImageExporter.cpp" />
-    <ClCompile Include="ImageFormats.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Matrix4.cpp" />
-    <ClCompile Include="BasicRenderer.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="ObjLoader.cpp" />
-    <ClCompile Include="PointLight.cpp" />
-    <ClCompile Include="PrimitiveTypes.cpp" />
-    <ClCompile Include="Rasterizer.cpp" />
-    <ClCompile Include="Ray.cpp" />
-    <ClCompile Include="Raytracer.cpp" />
-    <ClCompile Include="RenderSystem.cpp" />
-    <ClCompile Include="SceneObject.cpp" />
-    <ClCompile Include="TestScene.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Vector2.cpp" />
-    <ClCompile Include="Vector3.cpp" />
-    <ClCompile Include="Vector4.cpp" />
-    <ClCompile Include="Vertex.cpp" />
-    <ClCompile Include="World.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="AccelerationStructure.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="DirectionalLight.h" />
-    <ClInclude Include="Face.h" />
-    <ClInclude Include="FrameBuffer.h" />
-    <ClInclude Include="Global.h" />
-    <ClInclude Include="InputEvent.h" />
-    <ClInclude Include="InputManager.h" />
-    <ClInclude Include="Raytracer.h" />
-    <ClInclude Include="Primitive.h" />
-    <ClInclude Include="ImageExporter.h" />
-    <ClInclude Include="ImageFormats.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Matrix4.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="ObjLoader.h" />
-    <ClInclude Include="PointLight.h" />
-    <ClInclude Include="PrimitiveTypes.h" />
-    <ClInclude Include="BasicRenderer.h" />
-    <ClInclude Include="Rasterizer.h" />
-    <ClInclude Include="Ray.h" />
-    <ClInclude Include="RenderSystem.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="SceneObject.h" />
-    <ClInclude Include="TestScene.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="Vector2.h" />
-    <ClInclude Include="Vector3.h" />
-    <ClInclude Include="Vector4.h" />
-    <ClInclude Include="Vertex.h" />
-    <ClInclude Include="World.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="header\AccelerationStructure.h" />
+    <ClInclude Include="header\BasicRenderer.h" />
+    <ClInclude Include="header\Camera.h" />
+    <ClInclude Include="header\DirectionalLight.h" />
+    <ClInclude Include="header\Face.h" />
+    <ClInclude Include="header\FrameBuffer.h" />
+    <ClInclude Include="header\Global.h" />
+    <ClInclude Include="header\ImageExporter.h" />
+    <ClInclude Include="header\ImageFormats.h" />
+    <ClInclude Include="header\InputEvent.h" />
+    <ClInclude Include="header\InputManager.h" />
+    <ClInclude Include="header\Material.h" />
+    <ClInclude Include="header\Matrix4.h" />
+    <ClInclude Include="header\Mesh.h" />
+    <ClInclude Include="header\ObjLoader.h" />
+    <ClInclude Include="header\PointLight.h" />
+    <ClInclude Include="header\Primitive.h" />
+    <ClInclude Include="header\PrimitiveTypes.h" />
+    <ClInclude Include="header\Rasterizer.h" />
+    <ClInclude Include="header\Ray.h" />
+    <ClInclude Include="header\Raytracer.h" />
+    <ClInclude Include="header\RenderSystem.h" />
+    <ClInclude Include="header\resource.h" />
+    <ClInclude Include="header\SceneObject.h" />
+    <ClInclude Include="header\TestScene.h" />
+    <ClInclude Include="header\Transform.h" />
+    <ClInclude Include="header\Vector2.h" />
+    <ClInclude Include="header\Vector3.h" />
+    <ClInclude Include="header\Vector4.h" />
+    <ClInclude Include="header\Vertex.h" />
+    <ClInclude Include="header\World.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\AccelerationStructure.cpp" />
+    <ClCompile Include="source\BasicRenderer.cpp" />
+    <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\DirectionalLight.cpp" />
+    <ClCompile Include="source\Face.cpp" />
+    <ClCompile Include="source\FrameBuffer.cpp" />
+    <ClCompile Include="source\ImageExporter.cpp" />
+    <ClCompile Include="source\ImageFormats.cpp" />
+    <ClCompile Include="source\InputEvent.cpp" />
+    <ClCompile Include="source\InputManager.cpp" />
+    <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\Material.cpp" />
+    <ClCompile Include="source\Matrix4.cpp" />
+    <ClCompile Include="source\Mesh.cpp" />
+    <ClCompile Include="source\ObjLoader.cpp" />
+    <ClCompile Include="source\PointLight.cpp" />
+    <ClCompile Include="source\Primitive.cpp" />
+    <ClCompile Include="source\PrimitiveTypes.cpp" />
+    <ClCompile Include="source\Rasterizer.cpp" />
+    <ClCompile Include="source\Ray.cpp" />
+    <ClCompile Include="source\Raytracer.cpp" />
+    <ClCompile Include="source\RenderSystem.cpp" />
+    <ClCompile Include="source\SceneObject.cpp" />
+    <ClCompile Include="source\TestScene.cpp" />
+    <ClCompile Include="source\Transform.cpp" />
+    <ClCompile Include="source\Vector2.cpp" />
+    <ClCompile Include="source\Vector3.cpp" />
+    <ClCompile Include="source\Vector4.cpp" />
+    <ClCompile Include="source\Vertex.cpp" />
+    <ClCompile Include="source\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
