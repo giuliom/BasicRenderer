@@ -5,12 +5,36 @@
 #include <vector>
 #include <cassert>
 #include <stdio.h>
+#include <regex>
 #include "Vector3.h"
 #include "Vector2.h"
 #include "PrimitiveTypes.h"
 
 namespace BasicRenderer
 {
+	float MatchToFloat(const std::cmatch& m)
+	{
+		return std::stof(m.str());
+	}
+
+	int MatchToInt(const std::cmatch& m)
+	{
+		return std::stoi(m.str());
+	}
+
+	bool regex_search_all_matches(const char* s, std::vector<std::cmatch>& outMatches, const std::regex& rgx)
+	{
+		std::cmatch match;
+		while (std::regex_search(s, match, rgx))
+		{
+			outMatches.push_back(match);
+			s = match.suffix().first;
+		}
+
+		return outMatches.size() > 0;
+	}
+
+
 	/** TODO expand to support textures and materials */
 	Mesh* ObjLoader::Load(const char* path_name_extension)
 	{
@@ -37,46 +61,70 @@ namespace BasicRenderer
 
 		std::string line;
 
-		//TODO use regex
+		std::regex intRgx(R"(\d+)");
+		std::regex floatRgx(R"([+-]?(?=[.]?[0-9])[0-9]*(?:[.][0-9]*)?(?:[Ee][+-]?[0-9]+)?)");
+
+		std::regex vRgx(R"(^v )");
+		std::regex vtRgx(R"(^vt )");
+		std::regex vnRgx(R"(^vn )");
+		std::regex fRgx(R"(^f )");
 
 		while (std::getline(file, line))
 		{
-			std::string sub = line.substr(0, 2);
+			if (std::regex_search(line, vRgx))  // Vertices
+			{
+				std::vector<std::cmatch> floats;
+				regex_search_all_matches(line.c_str(), floats, floatRgx);
 
-			if (sub.compare("v ") == 0)  // Vertices
-			{
-				Vector4 vertex = Vector4::Zero();
-				vertex.w = 1.0f;
-				sscanf_s(line.c_str(), "v %f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-				rawVertices.push_back(vertex);
-			}
-			else if (sub.compare("vt") == 0) // UV
-			{
-				Vector2 uv;
-				sscanf_s(line.c_str(), "vt %f %f\n", &uv.x, &uv.y);
-				rawUVs.push_back(uv);
-			}
-			else if (sub.compare("vn") == 0)  // Normals
-			{
-				Vector4 normal = Vector4::Zero();
-				sscanf_s(line.c_str(), "vn %f %f %f\n", &normal.x, &normal.y, &normal.z);
-				rawNormals.push_back(normal);
-			}
-			else if (sub.compare("f ") == 0) // Faces
-			{
-				unsigned int vIndex[3], nIndex[3], tIndex[3];
-				int matches = 0;
-				matches = sscanf_s(line.c_str(), "f %d/%d/%d %d/%d/%d %d/%d/%d\n", &vIndex[0], &vIndex[1], &vIndex[2], &nIndex[0], &nIndex[1], &nIndex[2], &tIndex[0], &tIndex[1], &tIndex[2]);
-				if (matches < 3)	matches = sscanf_s(line.c_str(), "f %d %d %d %d %d %d %d %d %d\n", &vIndex[0], &vIndex[1], &vIndex[2], &nIndex[0], &nIndex[1], &nIndex[2], &tIndex[0], &tIndex[1], &tIndex[2]);
-
-				if (matches >= 3) // .obj indices start from 1
+				if (floats.size() == 3)
 				{
-					vIndices.emplace_back(FaceIndices(vIndex[0] - 1, vIndex[1] - 1, vIndex[2] - 1));
+					const float x = MatchToFloat(floats[0]);
+					const float y = MatchToFloat(floats[1]);
+					const float z = MatchToFloat(floats[2]);
+
+					rawVertices.emplace_back(x, y, z, 1.f);
 				}
-				if (matches >= 9)
+			}
+			else if (std::regex_search(line, vtRgx)) // UV
+			{
+				std::vector<std::cmatch> floats;
+				regex_search_all_matches(line.c_str(), floats, floatRgx);
+
+				if (floats.size() == 2)
 				{
-					nIndices.emplace_back(FaceIndices(nIndex[0] - 1, nIndex[1] - 1, nIndex[2] - 1));
-					tIndices.emplace_back(FaceIndices(tIndex[0] - 1, tIndex[1] - 1, tIndex[2] - 1));
+					const float u = MatchToFloat(floats[0]);
+					const float v = MatchToFloat(floats[1]);
+
+					rawUVs.emplace_back(u, v);
+				}				
+			}
+			else if (std::regex_search(line, vnRgx))  // Normals
+			{
+				std::vector<std::cmatch> floats;
+				regex_search_all_matches(line.c_str(), floats, floatRgx);
+
+				if (floats.size() == 3)
+				{
+					const float x = MatchToFloat(floats[0]);
+					const float y = MatchToFloat(floats[1]);
+					const float z = MatchToFloat(floats[2]);
+
+					rawNormals.emplace_back(x, y, z, 0.f);
+				}	
+			}
+			else if (std::regex_search(line, fRgx)) // Faces
+			{
+				std::vector<std::cmatch> indices;
+				regex_search_all_matches(line.c_str(), indices, intRgx);
+
+				if(indices.size() >= 3) // .obj indices start from 1
+				{
+					vIndices.emplace_back(FaceIndices(MatchToInt(indices[0]) - 1, MatchToInt(indices[1]) - 1, MatchToInt(indices[2]) - 1));
+				}
+				if (indices.size() >= 9)
+				{
+					nIndices.emplace_back(FaceIndices(MatchToInt(indices[3]) - 1, MatchToInt(indices[4]) - 1, MatchToInt(indices[5]) - 1));
+					tIndices.emplace_back(FaceIndices(MatchToInt(indices[6]) - 1, MatchToInt(indices[7]) - 1, MatchToInt(indices[8]) - 1));
 				}
 			}
 

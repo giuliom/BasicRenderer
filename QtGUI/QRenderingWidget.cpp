@@ -29,6 +29,7 @@ QRenderingWidget::~QRenderingWidget()
 
 void QRenderingWidget::SetScene(const char* filename)
 {
+	filename;
 	scene.reset(TestScene());
 }
 
@@ -110,6 +111,7 @@ void QRenderingWidget::RenderFrame()
 
 void QRenderingWidget::paintEvent(QPaintEvent* e)
 {
+	e;
 	QPainter painter(this);
 
 	{
@@ -208,8 +210,6 @@ void QRenderingWidget::keyPressEvent(QKeyEvent* event)
 	ButtonState state;
 	ButtonType type;
 	bool matched = false;
-
-	double time = clock();
 
 	if (event->type() == QKeyEvent::KeyPress)
 	{

@@ -44,7 +44,7 @@ namespace BasicRenderer
 	{
 		for (uint i = 0u; i < size; ++i)
 		{
-			// gamma correction to 2.f instead of 2.2 to void the extremely expensive std::powf()
+			// gamma correction to 2.f instead of 2.2 to avoid the extremely expensive std::powf()
 			Color& c = colorBuffer[i];
 			c.x = std::sqrtf(c.x);
 			c.y = std::sqrtf(c.y);
