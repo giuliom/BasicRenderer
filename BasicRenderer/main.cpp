@@ -108,8 +108,10 @@ int main(int argc, char *argv[])
 		an += 2;
 	}
 
+	const std::string fileName = Renderer::GenerateFilename("cmd", height, renderingMode, shadingMode, pixelSamples, maxBounces);
+
 	std::cout << "\n----- PARAMETERS -----" << std::endl;
-	std::cout << "Output: " + outputPath << std::endl;
+	std::cout << "Output: " + outputPath + fileName + ".bmp" << std::endl;
 	std::cout << "Input: " + file << std::endl;
 	std::cout << "Width: " << width << std::endl;
 	std::cout << "Height: " << height << std::endl;
@@ -117,9 +119,6 @@ int main(int argc, char *argv[])
 	std::cout << "Shading: " + shadingModeName << std::endl;
 	std::cout << "Pixel Samples: " << pixelSamples << std::endl;
 	std::cout << "Max Bounces: " << maxBounces << std::endl;
-
-	//std::cout << std::endl << "Press any key to start" << std::endl;
-	//std::cin.get();
 
 	std::cout << "\n----- RENDERING -----\n"<<std::endl;
 
@@ -141,7 +140,7 @@ int main(int argc, char *argv[])
 	ConvertChronoDuration<std::chrono::milliseconds>(endTime - beginTime, ms);
 
 	//Saving Image
-	ImageExporter::ExportToBMP(outputPath, renderingModeName, *frame);
+	ImageExporter::ExportToBMP(outputPath, fileName, *frame);
 
 	std::cout << std::fixed << std::setprecision(0);
 	std::cout << std::endl << "Rendering Time: " << ms << " ms " << "\n\n";

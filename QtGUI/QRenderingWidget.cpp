@@ -35,12 +35,15 @@ void QRenderingWidget::SetScene(const char* filename)
 
 void QRenderingWidget::SaveFrame(const char* path)
 {
+	std::string fileName;
 	std::unique_ptr<FrameBuffer> frame = std::make_unique<FrameBuffer>(imgDisplay->width(), imgDisplay->height());
 	{
 		std::scoped_lock<std::mutex> img_lock(m_renderMtx);
 		CopyQImageToFrameBuffer(*frame.get(), *imgDisplay);
+		fileName = Renderer::GenerateFilename("ui", frame->GetHeight(), m_renderingMode, m_shadingMode, m_pixelSamples, m_maxBounces);
 	}
-	ImageExporter::ExportToBMP(std::string(path), std::string("saved_render"), *frame);
+
+	ImageExporter::ExportToBMP(std::string(path), fileName, *frame);
 }
 
 void QRenderingWidget::SetRenderingMode(int index)
@@ -48,10 +51,10 @@ void QRenderingWidget::SetRenderingMode(int index)
 	switch (index)
 	{
 	case 1:
-		renderingMode = Renderer::RenderingMode::RAYTRACER;
+		m_renderingMode = Renderer::RenderingMode::RAYTRACER;
 		break;
 	default:
-		renderingMode = Renderer::RenderingMode::RASTERIZER;
+		m_renderingMode = Renderer::RenderingMode::RASTERIZER;
 		break;
 	}
 }
@@ -61,10 +64,10 @@ void QRenderingWidget::SetShadingMode(int index)
 	switch (index)
 	{
 	case 1:
-		shadingMode = Renderer::ShadingMode::NORMAL;
+		m_shadingMode = Renderer::ShadingMode::NORMAL;
 		break;
 	default:
-		shadingMode = Renderer::ShadingMode::LIT;
+		m_shadingMode = Renderer::ShadingMode::LIT;
 		break;
 	}
 }
@@ -77,8 +80,8 @@ void QRenderingWidget::initializeGL()
 	connect(this, SIGNAL(RenderingCompleted(double)), this, SLOT(RenderFrame()));
 
 	Raytracer& raytracer = bRenderer->GetRaytracer();
-	raytracer.m_pixelSamples = 2;
-	raytracer.m_maxBounces = 2;
+	raytracer.m_pixelSamples = m_pixelSamples;
+	raytracer.m_maxBounces = m_maxBounces;
 
 	m_renderThread = std::thread(&QRenderingWidget::RenderLoopThread, this);
 }
@@ -140,7 +143,7 @@ void QRenderingWidget::RenderLoopThread()
 			m_inputEvents.clear();
 		}
 
-		const FrameBuffer* frame = bRenderer->Render(width(), height(), *scene, renderingMode, shadingMode, m_renderingTimeMs * 0.001f);
+		const FrameBuffer* frame = bRenderer->Render(width(), height(), *scene, m_renderingMode, m_shadingMode, m_renderingTimeMs * 0.001f);
 
 		{
 			std::scoped_lock<std::mutex> renderLock(m_renderMtx);

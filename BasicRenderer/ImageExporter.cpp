@@ -5,7 +5,7 @@
 
 namespace BasicRenderer
 {
-	bool ImageExporter::ExportToPPM(std::string& path, std::string& filename, const FrameBuffer& fBuf)
+	bool ImageExporter::ExportToPPM(const std::string& path, const std::string& filename, const FrameBuffer& fBuf)
 	{
 		if (std::filesystem::is_directory(path) == false)
 		{
@@ -35,7 +35,7 @@ namespace BasicRenderer
 		return true;
 	}
 
-	bool ImageExporter::ExportToBMP(std::string& path, std::string& filename, const FrameBuffer& fBuf)
+	bool ImageExporter::ExportToBMP(const std::string& path, const std::string& filename, const FrameBuffer& fBuf)
 	{
 		if (std::filesystem::is_directory(path) == false)
 		{

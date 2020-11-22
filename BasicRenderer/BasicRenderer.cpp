@@ -5,6 +5,18 @@
 
 namespace BasicRenderer
 {
+	std::vector<std::string> Renderer::renderingModeStrings =
+	{
+		"Rasterizer",
+		"Raytracer"
+	};
+
+	std::vector<std::string> Renderer::shadingModeStrings =
+	{
+		"Lit",
+		"Normal"
+	};
+
 	Renderer::Renderer() : m_rasterizer(), m_raytracer(), m_inputMgr()
 	{
 		m_renderSystems.emplace_back(&m_rasterizer);
@@ -181,7 +193,17 @@ namespace BasicRenderer
 		camera.GetTransform().Rotate(cameraRot.y, cameraRot.x, 0.0f);
 	}
 
-	
+	std::string Renderer::GenerateFilename(const std::string& customPrefix, uint imageHeight, RenderingMode mode, ShadingMode shading, uint pixelSamples, uint bounces)
+	{
+		std::string rtInfo = mode == RenderingMode::RAYTRACER 
+							? "_" + std::to_string(pixelSamples) + "ps_" + std::to_string(bounces) + "b"
+							: "";
+
+			return customPrefix + "_"
+			+ renderingModeStrings[std::underlying_type_t<RenderingMode>(mode)] + "_"
+			+ shadingModeStrings[std::underlying_type_t<RenderingMode>(shading)] + "_"
+			+ std::to_string(imageHeight) + "p" + rtInfo;
+	}
 
 	
 

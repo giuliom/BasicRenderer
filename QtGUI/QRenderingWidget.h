@@ -20,8 +20,10 @@ protected:
 
 	std::atomic<double> m_renderingTimeMs;
 	std::atomic<bool> m_loop = true;
-	std::atomic<Renderer::RenderingMode> renderingMode = Renderer::RenderingMode::RASTERIZER;
-	std::atomic<Renderer::ShadingMode> shadingMode = Renderer::ShadingMode::LIT;
+	std::atomic<Renderer::RenderingMode> m_renderingMode = Renderer::RenderingMode::RASTERIZER;
+	std::atomic<Renderer::ShadingMode> m_shadingMode = Renderer::ShadingMode::LIT;
+	std::atomic<unsigned int> m_pixelSamples = 2;
+	std::atomic<unsigned int> m_maxBounces = 2;
 
 	std::mutex m_renderMtx;
 	std::thread m_renderThread;

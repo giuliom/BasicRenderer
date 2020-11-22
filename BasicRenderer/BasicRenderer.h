@@ -18,17 +18,21 @@ namespace BasicRenderer
 	class Renderer
 	{
 	public:
-		enum class RenderingMode
+		enum class RenderingMode : uint
 		{
 			RASTERIZER,
 			RAYTRACER
 		};
 
-		enum class ShadingMode
+		static std::vector<std::string> renderingModeStrings;
+
+		enum class ShadingMode : uint
 		{
 			LIT,
 			NORMAL
 		};
+
+		static std::vector<std::string> shadingModeStrings;
 
 	protected:
 		uint m_width = 640;
@@ -55,5 +59,7 @@ namespace BasicRenderer
 		void ProcessInput(InputManager& inputMgr, World& scene);
 		void ProcessButtonInput(const ButtonInputEvent& input, World& scene);
 		void ProcessCursorInput(const InputManager& inputMgr, const CursorInputEvent& input, World& scene);
+
+		static std::string GenerateFilename(const std::string& customPrefix, uint imageHeight, RenderingMode mode, ShadingMode shading, uint pixelSamples = 1u, uint bounces = 0u);
 	};
 }
