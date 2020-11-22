@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <string_view>
 #include <vector>
 #include <cassert>
 #include <stdio.h>
@@ -27,7 +28,7 @@ namespace BasicRenderer
 		std::cmatch match;
 		while (std::regex_search(s, match, rgx))
 		{
-			outMatches.push_back(match);
+			outMatches.emplace_back(match);
 			s = match.suffix().first;
 		}
 
@@ -64,16 +65,18 @@ namespace BasicRenderer
 		std::regex intRgx(R"(\d+)");
 		std::regex floatRgx(R"([+-]?(?=[.]?[0-9])[0-9]*(?:[.][0-9]*)?(?:[Ee][+-]?[0-9]+)?)");
 
-		std::regex vRgx(R"(^v )");
-		std::regex vtRgx(R"(^vt )");
-		std::regex vnRgx(R"(^vn )");
-		std::regex fRgx(R"(^f )");
+		std::vector<std::cmatch> floats;
+		floats.reserve(3);
+
+		std::vector<std::cmatch> indices;
+		indices.reserve(9);
 
 		while (std::getline(file, line))
 		{
-			if (std::regex_search(line, vRgx))  // Vertices
+			std::string_view sub = std::string_view(line).substr(0, 2);
+
+			if (sub == "v ")  // Vertices
 			{
-				std::vector<std::cmatch> floats;
 				regex_search_all_matches(line.c_str(), floats, floatRgx);
 
 				if (floats.size() == 3)
@@ -84,10 +87,11 @@ namespace BasicRenderer
 
 					rawVertices.emplace_back(x, y, z, 1.f);
 				}
+
+				floats.clear();
 			}
-			else if (std::regex_search(line, vtRgx)) // UV
+			else if (sub == "vt ") // UV
 			{
-				std::vector<std::cmatch> floats;
 				regex_search_all_matches(line.c_str(), floats, floatRgx);
 
 				if (floats.size() == 2)
@@ -96,11 +100,12 @@ namespace BasicRenderer
 					const float v = MatchToFloat(floats[1]);
 
 					rawUVs.emplace_back(u, v);
-				}				
+				}
+
+				floats.clear();
 			}
-			else if (std::regex_search(line, vnRgx))  // Normals
+			else if (sub == "vn ")  // Normals
 			{
-				std::vector<std::cmatch> floats;
 				regex_search_all_matches(line.c_str(), floats, floatRgx);
 
 				if (floats.size() == 3)
@@ -111,10 +116,11 @@ namespace BasicRenderer
 
 					rawNormals.emplace_back(x, y, z, 0.f);
 				}	
+
+				floats.clear();
 			}
-			else if (std::regex_search(line, fRgx)) // Faces
+			else if (sub == "f ") // Faces
 			{
-				std::vector<std::cmatch> indices;
 				regex_search_all_matches(line.c_str(), indices, intRgx);
 
 				if(indices.size() >= 3) // .obj indices start from 1
@@ -126,6 +132,8 @@ namespace BasicRenderer
 					nIndices.emplace_back(FaceIndices(MatchToInt(indices[3]) - 1, MatchToInt(indices[4]) - 1, MatchToInt(indices[5]) - 1));
 					tIndices.emplace_back(FaceIndices(MatchToInt(indices[6]) - 1, MatchToInt(indices[7]) - 1, MatchToInt(indices[8]) - 1));
 				}
+
+				indices.clear();
 			}
 
 		}
