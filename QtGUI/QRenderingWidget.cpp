@@ -146,6 +146,7 @@ void QRenderingWidget::RenderLoopThread()
 		const FrameBuffer* frame = bRenderer->Render(width(), height(), *scene, m_renderingMode, m_shadingMode, m_renderingTimeMs * 0.001f);
 
 		{
+			// TODO double buffering
 			std::scoped_lock<std::mutex> renderLock(m_renderMtx);
 
 			uint imgSize = static_cast<uint>(imgDisplay->width() * imgDisplay->height());
