@@ -13,10 +13,11 @@ class QRenderingWidget : public QOpenGLWidget
 	Q_OBJECT
 
 protected:
-	std::unique_ptr<Renderer> bRenderer;
+	std::unique_ptr<Model> m_model;
+	std::unique_ptr<Renderer> m_renderer;
+
 	std::unique_ptr<QImage> imgDisplay;
 	std::unique_ptr<QTimer> timer;
-	std::unique_ptr<World> scene;
 
 	std::atomic<double> m_renderingTimeMs;
 	std::atomic<bool> m_loop = true;

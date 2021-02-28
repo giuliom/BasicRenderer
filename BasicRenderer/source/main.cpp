@@ -5,6 +5,7 @@
 #include <iomanip>
 #include "Global.h"
 #include "BasicRenderer.h"
+#include "Model.h"
 #include "ObjLoader.h"
 #include "SceneObject.h"
 #include "Material.h"
@@ -124,7 +125,10 @@ int main(int argc, char *argv[])
 
 	
 	Renderer renderer;
-	std::unique_ptr<World> scene(TestScene());
+	std::unique_ptr<Model> model = std::make_unique<Model>(TestScene());
+
+	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
+	model->update();
 
 	Raytracer& raytracer = renderer.GetRaytracer();
 	raytracer.m_pixelSamples = pixelSamples;
@@ -132,7 +136,7 @@ int main(int argc, char *argv[])
 
 	const auto beginTime = std::chrono::high_resolution_clock::now();
 	
-	const FrameBuffer* frame = renderer.Render(width, height, *scene, renderingMode, shadingMode);
+	const FrameBuffer* frame = renderer.Render(*model, width, height, renderingMode, shadingMode);
 	
 	const auto endTime = std::chrono::high_resolution_clock::now();
 

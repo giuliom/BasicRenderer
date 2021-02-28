@@ -6,9 +6,8 @@
 #include "FrameBuffer.h"
 #include "Rasterizer.h"
 #include "Raytracer.h"
-#include "InputManager.h"
 #include "SceneObject.h"
-#include "World.h"
+#include "Model.h"
 
 namespace BasicRenderer
 {
@@ -43,8 +42,6 @@ namespace BasicRenderer
 		Raytracer m_raytracer;
 		std::vector<RenderSystem*> m_renderSystems;
 
-		InputManager m_inputMgr;
-
 	public:
 
 		Renderer();
@@ -52,13 +49,8 @@ namespace BasicRenderer
 
 		Rasterizer& GetRasterizer() { return m_rasterizer; }
 		Raytracer& GetRaytracer() { return m_raytracer; }
-		InputManager& GetInputManager() { return m_inputMgr; }
 
-		const FrameBuffer* Render(uint width, uint height, World& scene, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, const float deltaTime = 0.f);
-
-		void ProcessInput(InputManager& inputMgr, World& scene);
-		void ProcessButtonInput(const ButtonInputEvent& input, World& scene);
-		void ProcessCursorInput(const InputManager& inputMgr, const CursorInputEvent& input, World& scene);
+		const FrameBuffer* Render(const Model& model, uint width, uint height, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, const float deltaTime = 0.f);
 
 		static std::string GenerateFilename(const std::string& customPrefix, uint imageHeight, RenderingMode mode, ShadingMode shading, uint pixelSamples = 1u, uint bounces = 0u);
 	};

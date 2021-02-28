@@ -13,12 +13,12 @@
 
 QRenderingWidget::QRenderingWidget(QWidget* parent) 
 	: QOpenGLWidget(parent)
+	, m_model(std::make_unique<Model>(TestScene()))
+	, m_renderer(std::make_unique<Renderer>())
 	, m_renderingTimeMs(0.0)
 {
 	setFocusPolicy(Qt::StrongFocus);
-	bRenderer = std::make_unique<Renderer>();
 	setMouseTracking(false);
-	SetScene("");
 }
 
 QRenderingWidget::~QRenderingWidget()
@@ -30,7 +30,7 @@ QRenderingWidget::~QRenderingWidget()
 void QRenderingWidget::SetScene(const char* filename)
 {
 	filename;
-	scene.reset(TestScene());
+	m_model.reset(new Model(TestScene()));
 }
 
 void QRenderingWidget::SaveFrame(const char* path)
@@ -79,7 +79,7 @@ void QRenderingWidget::initializeGL()
 
 	connect(this, SIGNAL(RenderingCompleted(double)), this, SLOT(RenderFrame()));
 
-	Raytracer& raytracer = bRenderer->GetRaytracer();
+	Raytracer& raytracer = m_renderer->GetRaytracer();
 	raytracer.m_pixelSamples = m_pixelSamples;
 	raytracer.m_maxBounces = m_maxBounces;
 
@@ -132,9 +132,16 @@ void QRenderingWidget::RenderLoopThread()
 	{
 		const auto beginTime = std::chrono::high_resolution_clock::now();
 
-		InputManager& inputMgr = bRenderer->GetInputManager();
+		const auto w = width();
+		const auto h = height();
+
+		InputManager& inputMgr = m_model->GetInputManager();
 		{
 			std::scoped_lock<std::mutex> inputLock(m_inputMtx);
+
+			m_model->update();
+			m_model->SetMainCameraAspectRatio(static_cast<float>(w), static_cast<float>(h));
+
 			for (auto& event : m_inputEvents)
 			{
 				inputMgr.AddEvent(event);
@@ -143,7 +150,7 @@ void QRenderingWidget::RenderLoopThread()
 			m_inputEvents.clear();
 		}
 
-		const FrameBuffer* frame = bRenderer->Render(width(), height(), *scene, m_renderingMode, m_shadingMode, m_renderingTimeMs * 0.001f);
+		const FrameBuffer* frame = m_renderer->Render(*m_model, w, h, m_renderingMode, m_shadingMode, m_renderingTimeMs * 0.001f);
 
 		{
 			// TODO double buffering

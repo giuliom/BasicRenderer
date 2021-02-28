@@ -33,7 +33,7 @@ namespace BasicRenderer
 		Camera();
 		~Camera();
 
-		void SetAspectRatio(uint w, uint h);
+		void SetAspectRatio(float w, float h);
 		void SetFov(float f);
 
 		inline Transform& GetTransform() { return m_transform; }

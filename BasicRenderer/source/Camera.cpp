@@ -16,9 +16,9 @@ namespace BasicRenderer
 	{
 	}
 
-	void Camera::SetAspectRatio(uint w, uint h)
+	void Camera::SetAspectRatio(float w, float h)
 	{
-		m_aspectRatio = static_cast<float>(w) / static_cast<float>(h);
+		m_aspectRatio = w / h;
 		SetFov(m_degHorizontalFov);
 	}
 
