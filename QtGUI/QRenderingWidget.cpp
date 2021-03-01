@@ -155,7 +155,6 @@ void QRenderingWidget::FixedUpdateLoopThread()
 		const int w = m_width;
 		const int h = m_height;
 
-
 		InputManager& inputMgr = model.GetInputManager();
 		{
 			std::scoped_lock<std::mutex> inputLock(m_inputMtx);
@@ -169,7 +168,9 @@ void QRenderingWidget::FixedUpdateLoopThread()
 		}
 
 		model.SetMainCameraAspectRatio(static_cast<float>(w), static_cast<float>(h));
-		model.update();
+		
+		// TODO make it return RenderState only, use only one model 
+		model.update(expectedTimeBetweenUpdates);
 		
 		//TODO
 		// Make update fixed 

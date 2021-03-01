@@ -6,7 +6,7 @@ namespace BasicRenderer
 	{
 	}
 
-	void Model::update()
+	void Model::update(const TimeDuration deltaTime)
 	{
 		ProcessInput(m_inputMgr, *m_scene);
 		m_scene->ProcessForRendering();
