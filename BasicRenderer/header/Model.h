@@ -13,6 +13,9 @@ namespace BasicRenderer
 		std::unique_ptr<World> m_scene;
 		InputManager m_inputMgr;
 
+		const uint m_updateFreq = 60u;
+		const TimeDuration m_updateTime = TimeDuration(1000000000 / m_updateFreq);
+
 	public:
 
 		Model(World* scene) : m_scene(scene), m_inputMgr() {}
@@ -23,8 +26,11 @@ namespace BasicRenderer
 
 		void update();
 
-		inline const World& GetScene() const { return *m_scene; }
-		InputManager& GetInputManager() { return m_inputMgr; }
+		inline const World& GetScene()		const	{ return *m_scene; }
+		InputManager& GetInputManager()				{ return m_inputMgr; }
+		inline uint UpdateFreq()			const	{ return m_updateFreq; }
+		inline TimeDuration UpdateTime()	const	{ return m_updateTime; }
+
 		void SetMainCameraAspectRatio(float w, float h) { m_scene->GetMainCamera().SetAspectRatio(static_cast<int>(w), static_cast<int>(h)); }
 
 	protected:

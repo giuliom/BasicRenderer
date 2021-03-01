@@ -1,4 +1,4 @@
-#include "..\header\Model.h"
+#include "Model.h"
 
 namespace BasicRenderer
 {

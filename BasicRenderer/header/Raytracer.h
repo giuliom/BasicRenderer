@@ -19,7 +19,6 @@ namespace BasicRenderer
 	public:
 
 		FrameBuffer* m_fBuffer = nullptr;
-		const World* m_scene = nullptr;
 		ShadingFunc m_shadingFunc;
 
 		uint m_pixelSamples = 4;
@@ -34,7 +33,7 @@ namespace BasicRenderer
 		std::atomic<float> m_progress = 0.f;
 		static std::mutex m_progressMtx;
 
-		void RenderJob(const uint startRowIndex, const uint endRowIndex);
+		void RenderJob(const World& scene, const uint startRowIndex, const uint endRowIndex);
 		Color RayTrace(const Ray& ray, const World& scene, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& shading);
 	};
 }

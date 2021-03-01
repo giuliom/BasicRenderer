@@ -20,7 +20,6 @@ namespace BasicRenderer
 	void Raytracer::Render(FrameBuffer& fBuffer, const World& scene, const ShadingFunc& Shading)
 	{
 		m_fBuffer = &fBuffer;
-		m_scene = &scene;
 		m_shadingFunc = Shading;
 
 		std::vector<std::thread> renderThreads;
@@ -35,7 +34,7 @@ namespace BasicRenderer
 			const uint startRowIndex = rowsPerThread * i;
 			const uint endRowIndex = (startRowIndex + rowsPerThread) < rowCount ? startRowIndex + rowsPerThread : rowCount;
 
-			auto thread = std::thread(&Raytracer::RenderJob, this, startRowIndex, endRowIndex);
+			auto thread = std::thread(&Raytracer::RenderJob, this, std::cref(scene), startRowIndex, endRowIndex);
 			renderThreads.push_back(std::move(thread));
 		}
 
@@ -48,9 +47,8 @@ namespace BasicRenderer
 		std::cout << "\nRendering completed";
 	}
 
-	void Raytracer::RenderJob(const uint startRowIndex, const uint endRowIndex)
+	void Raytracer::RenderJob(const World& scene, const uint startRowIndex, const uint endRowIndex)
 	{
-		const World& scene = *m_scene;
 		FrameBuffer& fBuffer = *m_fBuffer;
 
 		const Camera& camera = scene.GetMainCamera();

@@ -13,24 +13,30 @@
 
 QRenderingWidget::QRenderingWidget(QWidget* parent) 
 	: QOpenGLWidget(parent)
-	, m_model(std::make_unique<Model>(TestScene()))
 	, m_renderer(std::make_unique<Renderer>())
 	, m_renderingTimeMs(0.0)
+	, m_lastUpdateTime(TimeClock::now())
+	, m_width(width())
+	, m_height(height())
 {
 	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(false);
+
+	m_models[m_updating_model_index] = std::make_unique<Model>(TestScene());
+	m_models[m_available_model_index] = std::make_unique<Model>(TestScene());
+	m_models[m_rendering_model_index] = std::make_unique<Model>(TestScene());
 }
 
 QRenderingWidget::~QRenderingWidget()
 {
 	m_loop = false;
+	m_modelThread.join();
 	m_renderThread.join();
 }
 
 void QRenderingWidget::SetScene(const char* filename)
 {
 	filename;
-	m_model.reset(new Model(TestScene()));
 }
 
 void QRenderingWidget::SaveFrame(const char* path)
@@ -83,11 +89,15 @@ void QRenderingWidget::initializeGL()
 	raytracer.m_pixelSamples = m_pixelSamples;
 	raytracer.m_maxBounces = m_maxBounces;
 
+	m_modelThread = std::thread(&QRenderingWidget::FixedUpdateLoopThread, this);
 	m_renderThread = std::thread(&QRenderingWidget::RenderLoopThread, this);
 }
 
 void QRenderingWidget::resizeGL(int w, int h)
 {
+	m_width = w;
+	m_height = h;
+
 	{
 		std::scoped_lock<std::mutex> inputLock(m_inputMtx);
 		m_inputEvents.clear();
@@ -126,21 +136,29 @@ void QRenderingWidget::paintEvent(QPaintEvent* e)
 	emit RenderingCompleted(m_renderingTimeMs); // atomic
 }
 
-void QRenderingWidget::RenderLoopThread()
+void QRenderingWidget::FixedUpdateLoopThread()
 {
 	while (m_loop) // atomic
 	{
-		const auto beginTime = std::chrono::high_resolution_clock::now();
+		const TimeDuration timeSinceLastUpdate = TimeClock::now() - m_lastUpdateTime;
 
-		const auto w = width();
-		const auto h = height();
+		Model& model = GetUpdatingModel();
+		const TimeDuration expectedTimeBetweenUpdates = model.UpdateTime();
 
-		InputManager& inputMgr = m_model->GetInputManager();
+		if (timeSinceLastUpdate < expectedTimeBetweenUpdates)
+		{
+			std::this_thread::sleep_for(expectedTimeBetweenUpdates - timeSinceLastUpdate);
+		}
+
+		m_lastUpdateTime = TimeClock::now();
+
+		const int w = m_width;
+		const int h = m_height;
+
+
+		InputManager& inputMgr = model.GetInputManager();
 		{
 			std::scoped_lock<std::mutex> inputLock(m_inputMtx);
-
-			m_model->update();
-			m_model->SetMainCameraAspectRatio(static_cast<float>(w), static_cast<float>(h));
 
 			for (auto& event : m_inputEvents)
 			{
@@ -150,10 +168,36 @@ void QRenderingWidget::RenderLoopThread()
 			m_inputEvents.clear();
 		}
 
-		const FrameBuffer* frame = m_renderer->Render(*m_model, w, h, m_renderingMode, m_shadingMode, m_renderingTimeMs * 0.001f);
+		model.SetMainCameraAspectRatio(static_cast<float>(w), static_cast<float>(h));
+		model.update();
+		
+		//TODO
+		// Make update fixed 
+		// Update current model, copy it, change indices
 
 		{
-			// TODO double buffering
+			std::scoped_lock<std::mutex> modelLock(m_modelSwapMtx);
+			const uint available_index = m_available_model_index;
+			m_available_model_index = m_updating_model_index;
+			m_updating_model_index = available_index;	
+		}
+	}
+}
+
+void QRenderingWidget::RenderLoopThread()
+{
+	while (m_loop) // atomic
+	{
+		const auto beginTime = TimeClock::now();
+
+		const int w = m_width;
+		const int h = m_height;
+
+		const Model& model = GetRenderingModel();
+
+		const FrameBuffer* frame = m_renderer->Render(model, w, h, m_renderingMode, m_shadingMode, m_renderingTimeMs * 0.001f);
+
+		{
 			std::scoped_lock<std::mutex> renderLock(m_renderMtx);
 
 			uint imgSize = static_cast<uint>(imgDisplay->width() * imgDisplay->height());
@@ -164,7 +208,14 @@ void QRenderingWidget::RenderLoopThread()
 			}
 		}
 
-		const auto endTime = std::chrono::high_resolution_clock::now();
+		{
+			std::scoped_lock<std::mutex> modelLock(m_modelSwapMtx);
+			const uint available_index = m_available_model_index;
+			m_available_model_index = m_rendering_model_index;
+			m_rendering_model_index = available_index;
+		}
+
+		const auto endTime = TimeClock::now();
 
 		ConvertChronoDuration<std::chrono::milliseconds>(endTime - beginTime, m_renderingTimeMs); // atomic
 	}
