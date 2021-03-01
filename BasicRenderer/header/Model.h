@@ -31,7 +31,7 @@ namespace BasicRenderer
 		inline uint UpdateFreq()			const	{ return m_updateFreq; }
 		inline TimeDuration UpdateTime()	const	{ return m_updateTime; }
 
-		void SetMainCameraAspectRatio(float w, float h) { m_scene->GetMainCamera().SetAspectRatio(static_cast<int>(w), static_cast<int>(h)); }
+		void SetMainCameraAspectRatio(float w, float h) { m_scene->GetMainCamera().SetAspectRatio(w, h); }
 
 	protected:
 

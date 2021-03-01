@@ -218,7 +218,7 @@ void QRenderingWidget::RenderLoopThread()
 
 		const auto endTime = TimeClock::now();
 
-		ConvertChronoDuration<std::chrono::milliseconds>(endTime - beginTime, m_renderingTimeMs); // atomic
+		m_renderingTimeMs = ConvertChronoDuration<double, std::chrono::milliseconds>(endTime - beginTime); // atomic
 	}
 }
 

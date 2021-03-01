@@ -11,9 +11,9 @@ namespace BasicRenderer
 {
 	const float EPSILON = 0.0000001f;
 
-	template<typename DurationMeasure, typename DurationType, typename OutputType>
-	void ConvertChronoDuration(const DurationType& duration, OutputType& output)
+	template<typename OutputType, typename DurationMeasure, typename DurationType>
+	OutputType ConvertChronoDuration(const DurationType& duration)
 	{
-		output = std::chrono::duration_cast<DurationMeasure>(duration).count();
+		return std::chrono::duration_cast<std::chrono::duration<OutputType, DurationMeasure::period>>(duration).count();
 	}
 }

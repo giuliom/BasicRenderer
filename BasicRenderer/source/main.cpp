@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 	std::unique_ptr<Model> model = std::make_unique<Model>(TestScene());
 
 	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
-	model->update();
+	model->update(model->UpdateTime());
 
 	Raytracer& raytracer = renderer.GetRaytracer();
 	raytracer.m_pixelSamples = pixelSamples;
@@ -140,8 +140,7 @@ int main(int argc, char *argv[])
 	
 	const auto endTime = std::chrono::high_resolution_clock::now();
 
-	double ms = 0.0;
-	ConvertChronoDuration<std::chrono::milliseconds>(endTime - beginTime, ms);
+	double ms = ConvertChronoDuration<double, std::chrono::milliseconds>(endTime - beginTime);
 
 	//Saving Image
 	ImageExporter::ExportToBMP(outputPath, fileName, *frame);
