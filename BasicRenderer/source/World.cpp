@@ -1,6 +1,5 @@
 #include "World.h"
 #include "Ray.h"
-#include "Primitive.h"
 #include "PrimitiveTypes.h"
 #include "Face.h"
 #include "SceneObject.h"
@@ -14,7 +13,7 @@ namespace BasicRenderer
 
 	void World::Add(SceneObject* obj)
 	{
-		if (obj != nullptr && Find(obj->GetId()) == false)
+		if (obj != nullptr)
 		{
 			m_objectList[obj->GetId()].reset(obj);
 		}
@@ -52,8 +51,10 @@ namespace BasicRenderer
 		}
 	}
 
-	void World::ProcessForRendering()
+	void World::ProcessForRendering(std::vector<Primitive*>& outProcessedPrimitives)
 	{
+		outProcessedPrimitives.reserve(m_objectList.size());
+
 		for (auto& [id, obj] : m_objectList)
 		{
 			SceneObject& so = *obj;
@@ -65,14 +66,14 @@ namespace BasicRenderer
 				if (prim != nullptr)
 				{
 					prim->ProcessForRendering(so.GetTransform());
+
+					Primitive* clone = prim->CloneForRendering();
+					outProcessedPrimitives.push_back(clone);
 				}
 			}
 
 			so.GetTransform().SetDirty(false);
 		}
-
-		// TODO partial rebuilding of the bvh?
-		m_bvh.Build(m_objectList.begin(), m_objectList.end());
 	}
 
 	const Primitive* World::OldRaycast(const Ray& r, float tMin, float tMax, HitResult& outHit) const

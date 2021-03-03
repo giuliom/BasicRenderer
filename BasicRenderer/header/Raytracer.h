@@ -26,14 +26,14 @@ namespace BasicRenderer
 
 		Raytracer() {}
 
-		void Render(FrameBuffer& fBuffer, const World& scene, const ShadingFunc& Shading) override;
+		void Render(FrameBuffer& fBuffer, const RenderState& scene, const ShadingFunc& Shading) override;
 		
 	protected:
 
 		std::atomic<float> m_progress = 0.f;
 		static std::mutex m_progressMtx;
 
-		void RenderJob(const World& scene, const uint startRowIndex, const uint endRowIndex);
-		Color RayTrace(const Ray& ray, const World& scene, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& shading);
+		void RenderJob(const RenderState& state, const uint startRowIndex, const uint endRowIndex);
+		Color RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& shading);
 	};
 }

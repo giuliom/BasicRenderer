@@ -294,6 +294,7 @@
     <ClInclude Include="header\Rasterizer.h" />
     <ClInclude Include="header\Ray.h" />
     <ClInclude Include="header\Raytracer.h" />
+    <ClInclude Include="header\RenderState.h" />
     <ClInclude Include="header\RenderSystem.h" />
     <ClInclude Include="header\resource.h" />
     <ClInclude Include="header\SceneObject.h" />
@@ -329,6 +330,7 @@
     <ClCompile Include="source\Rasterizer.cpp" />
     <ClCompile Include="source\Ray.cpp" />
     <ClCompile Include="source\Raytracer.cpp" />
+    <ClCompile Include="source\RenderState.cpp" />
     <ClCompile Include="source\RenderSystem.cpp" />
     <ClCompile Include="source\SceneObject.cpp" />
     <ClCompile Include="source\TestScene.cpp" />

@@ -37,7 +37,7 @@ namespace BasicRenderer
 		, m_worldTransform()
 		, m_transform()
 		, m_children()
-		, m_primitive(new MeshInstance(mesh, mat, ""))
+		, m_primitive(new MeshInstance(mesh, mat, name))
 		, m_enabled(true)
 		, m_visible(true)
 	{

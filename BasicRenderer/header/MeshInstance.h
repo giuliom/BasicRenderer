@@ -15,6 +15,7 @@ namespace BasicRenderer
 		MeshInstance(std::shared_ptr<Mesh>& mesh, std::shared_ptr<Material> mat = nullptr, const std::string& name = "");
 
 		void ProcessForRendering(const Transform& transform) override;
+		Primitive* CloneForRendering() const override;
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
 		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override

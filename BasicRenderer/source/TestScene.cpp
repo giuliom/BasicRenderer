@@ -104,19 +104,19 @@ namespace BasicRenderer
 		//scene->Add(bunny);
 		//scene->Add(teapot);
 
-		scene->Add(sphere);
+		//scene->Add(sphere);
 
 		scene->Add(floor);
-		scene->Add(ceiling);
-		scene->Add(back);
-		scene->Add(front);
-		scene->Add(left);
-		scene->Add(right);
+		//scene->Add(ceiling);
+		//scene->Add(back);
+		//scene->Add(front);
+		//scene->Add(left);
+		//scene->Add(right);
 
-		scene->Add(light);
+		//scene->Add(light);
 
-		scene->Add(cube);
-		scene->Add(cube2);
+		//scene->Add(cube);
+		//scene->Add(cube2);
 
 		return scene;
 	}

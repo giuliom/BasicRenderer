@@ -40,25 +40,21 @@ namespace BasicRenderer
 		return tempPrim;
 	}
 
-	void BoundingVolumeHierarchy::Build(const ObjectList::iterator& begin_it, const ObjectList::iterator& end_it)
+	void BoundingVolumeHierarchy::Build(const PrimitiveList& primitives)
 	{
-		if (begin_it == end_it)
+		if (primitives.size() == 0)
 		{
 			return;
 		}
 
 		// Building the nodes bottom-up
 		std::vector<const BVHnode*> nodes;
-		nodes.reserve(std::distance(begin_it, end_it));
+		nodes.reserve(primitives.size());
 
-		for (auto it = begin_it; it != end_it; ++it)
+		for (const auto& prim : primitives)
 		{
-			const Primitive* prim = it->second->GetPrimitive();
-			if (prim != nullptr)
-			{
-				BVHnode* n = new BVHnode(prim, prim->GetAxisAlignedBoundingBox(), nullptr, nullptr);
+				BVHnode* n = new BVHnode(prim.get(), prim->GetAxisAlignedBoundingBox(), nullptr, nullptr);
 				nodes.emplace_back(n);
-			}
 		}
 
 		// Axis comparator

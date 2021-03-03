@@ -8,6 +8,10 @@ namespace BasicRenderer
 		m_radius = m_originalRadius * transform.GetScale().x;
 		m_boundingBox = UpdateAxisAlignedBoundingBox();
 	}
+	Primitive* Sphere::CloneForRendering() const
+	{
+		return new Sphere(*this);
+	}
 	AxisAlignedBoundingBox Sphere::UpdateAxisAlignedBoundingBox() const
 	{
 		return AxisAlignedBoundingBox(m_pos - Vector3(m_radius, m_radius, m_radius), m_pos + Vector3(m_radius, m_radius, m_radius));
@@ -18,6 +22,11 @@ namespace BasicRenderer
 		m_centre = transform.GetPosition();
 		m_normal = transform.Up();
 		m_boundingBox = UpdateAxisAlignedBoundingBox();
+	}
+
+	Primitive* Plane::CloneForRendering() const
+	{
+		return new Plane(*this);
 	}
 
 	AxisAlignedBoundingBox Plane::UpdateAxisAlignedBoundingBox() const

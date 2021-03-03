@@ -13,6 +13,7 @@
 
 QRenderingWidget::QRenderingWidget(QWidget* parent) 
 	: QOpenGLWidget(parent)
+	, m_model(std::make_unique<Model>(TestScene()))
 	, m_renderer(std::make_unique<Renderer>())
 	, m_renderingTimeMs(0.0)
 	, m_lastUpdateTime(TimeClock::now())
@@ -22,9 +23,8 @@ QRenderingWidget::QRenderingWidget(QWidget* parent)
 	setFocusPolicy(Qt::StrongFocus);
 	setMouseTracking(false);
 
-	m_models[m_updating_model_index] = std::make_unique<Model>(TestScene());
-	m_models[m_available_model_index] = std::make_unique<Model>(TestScene());
-	m_models[m_rendering_model_index] = std::make_unique<Model>(TestScene());
+	m_renderStates[m_available_state_index] = std::make_unique<RenderState>();
+	m_renderStates[m_rendering_state_index] = std::make_unique<RenderState>();
 }
 
 QRenderingWidget::~QRenderingWidget()
@@ -142,8 +142,7 @@ void QRenderingWidget::FixedUpdateLoopThread()
 	{
 		const TimeDuration timeSinceLastUpdate = TimeClock::now() - m_lastUpdateTime;
 
-		Model& model = GetUpdatingModel();
-		const TimeDuration expectedTimeBetweenUpdates = model.UpdateTime();
+		const TimeDuration expectedTimeBetweenUpdates = m_model->UpdateTime();
 
 		if (timeSinceLastUpdate < expectedTimeBetweenUpdates)
 		{
@@ -155,7 +154,7 @@ void QRenderingWidget::FixedUpdateLoopThread()
 		const int w = m_width;
 		const int h = m_height;
 
-		InputManager& inputMgr = model.GetInputManager();
+		InputManager& inputMgr = m_model->GetInputManager();
 		{
 			std::scoped_lock<std::mutex> inputLock(m_inputMtx);
 
@@ -167,21 +166,18 @@ void QRenderingWidget::FixedUpdateLoopThread()
 			m_inputEvents.clear();
 		}
 
-		model.SetMainCameraAspectRatio(static_cast<float>(w), static_cast<float>(h));
+		m_model->SetMainCameraAspectRatio(static_cast<float>(w), static_cast<float>(h));
 		
-		// TODO make it return RenderState only, use only one model 
-		model.Update(expectedTimeBetweenUpdates);
-		
-		//TODO
-		// Make update fixed 
-		// Update current model, copy it, change indices
+		m_model->Update(expectedTimeBetweenUpdates);
 
+		RenderState* newState = m_model->ProcessForRendering();
+		
 		{
 			std::scoped_lock<std::mutex> modelLock(m_modelSwapMtx);
 
-			const uint available_index = m_available_model_index;
-			m_available_model_index = m_updating_model_index;
-			m_updating_model_index = available_index;	
+			// Copy of the updated state
+			auto& availableState = GetAvailableState();
+			availableState.reset(newState);
 		}
 	}
 }
@@ -195,9 +191,9 @@ void QRenderingWidget::RenderLoopThread()
 		const int w = m_width;
 		const int h = m_height;
 
-		const Model& model = GetRenderingModel();
+		const RenderState& renderingState = GetRenderingState();
 
-		const FrameBuffer* frame = m_renderer->Render(model, w, h, m_renderingMode, m_shadingMode, m_renderingTimeMs * 0.001f);
+		const FrameBuffer* frame = m_renderer->Render(renderingState, w, h, m_renderingMode, m_shadingMode, m_renderingTimeMs * 0.001f);
 
 		{
 			std::scoped_lock<std::mutex> renderLock(m_renderMtx);
@@ -213,9 +209,9 @@ void QRenderingWidget::RenderLoopThread()
 		{
 			std::scoped_lock<std::mutex> modelLock(m_modelSwapMtx);
 
-			const uint available_index = m_available_model_index;
-			m_available_model_index = m_rendering_model_index;
-			m_rendering_model_index = available_index;
+			const uint available_index = m_available_state_index;
+			m_available_state_index = m_rendering_state_index;
+			m_rendering_state_index = available_index;
 		}
 
 		const auto endTime = TimeClock::now();

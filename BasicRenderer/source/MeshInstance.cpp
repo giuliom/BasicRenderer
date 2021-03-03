@@ -25,6 +25,11 @@ namespace BasicRenderer
 		}
 	}
 
+	Primitive* MeshInstance::CloneForRendering() const
+	{
+		return new MeshInstance(*this);
+	}
+
 	AxisAlignedBoundingBox MeshInstance::UpdateAxisAlignedBoundingBox() const
 	{
 		if (m_faces.size() > 0)

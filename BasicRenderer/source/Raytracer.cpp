@@ -17,7 +17,7 @@ namespace BasicRenderer
 	std::mutex Raytracer::m_progressMtx;
 
 
-	void Raytracer::Render(FrameBuffer& fBuffer, const World& scene, const ShadingFunc& Shading)
+	void Raytracer::Render(FrameBuffer& fBuffer, const RenderState& state, const ShadingFunc& Shading)
 	{
 		m_fBuffer = &fBuffer;
 		m_shadingFunc = Shading;
@@ -34,7 +34,7 @@ namespace BasicRenderer
 			const uint startRowIndex = rowsPerThread * i;
 			const uint endRowIndex = (startRowIndex + rowsPerThread) < rowCount ? startRowIndex + rowsPerThread : rowCount;
 
-			auto thread = std::thread(&Raytracer::RenderJob, this, std::cref(scene), startRowIndex, endRowIndex);
+			auto thread = std::thread(&Raytracer::RenderJob, this, std::cref(state), startRowIndex, endRowIndex);
 			renderThreads.push_back(std::move(thread));
 		}
 
@@ -47,11 +47,11 @@ namespace BasicRenderer
 		std::cout << "\nRendering completed";
 	}
 
-	void Raytracer::RenderJob(const World& scene, const uint startRowIndex, const uint endRowIndex)
+	void Raytracer::RenderJob(const RenderState& state, const uint startRowIndex, const uint endRowIndex)
 	{
 		FrameBuffer& fBuffer = *m_fBuffer;
 
-		const Camera& camera = scene.GetMainCamera();
+		const Camera& camera = state.m_camera;
 		const float camW = camera.GetViewportWidth();
 		const float camH = camera.GetViewportHeight();
 		const float aspectRatio = camera.GetAspectRatio();
@@ -69,7 +69,7 @@ namespace BasicRenderer
 		const float rowPctg =  100.f / fheight;
 
 		std::vector<const BVHnode*> dfsStack;
-		dfsStack.reserve(scene.GetAccelerationStructure().LevelsCount());
+		dfsStack.reserve(state.GetAccelerationStructure().LevelsCount());
 
 		//Top-left, drawing rows
 		for (uint y = startRowIndex; y < endRowIndex; y++)
@@ -84,7 +84,7 @@ namespace BasicRenderer
 				Color c;
 				for (uint i = 0u; i < m_pixelSamples; i++)
 				{
-					c = c + RayTrace(r, scene, dfsStack, m_shadingFunc);
+					c = c + RayTrace(r, state, dfsStack, m_shadingFunc);
 				}
 
 				c = c * fInversePixelSameples;
@@ -103,7 +103,7 @@ namespace BasicRenderer
 		}
 	}
 
-	Color Raytracer::RayTrace(const Ray& ray, const World& scene, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& Shading)
+	Color Raytracer::RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& Shading)
 	{
 		Vector3 hitPosition, hitNormal;
 		const Primitive* hitObject = nullptr;
@@ -116,7 +116,7 @@ namespace BasicRenderer
 
 		do
 		{
-			if ((hitObject = scene.Raycast(iterationRay, 0.0001f, 999999.99f, dfsStack, hitPosition, hitNormal)) != nullptr)
+			if ((hitObject = Raycast(state.GetAccelerationStructure(), iterationRay, 0.0001f, 999999.99f, dfsStack, hitPosition, hitNormal)) != nullptr)
 			{
 				const Material* material = hitObject->GetMaterial();
 
@@ -203,8 +203,8 @@ namespace BasicRenderer
 			}
 			else // No hit
 			{
-				throughput *= scene.GetAmbientLightColor();
-				resultRadiance += throughput * scene.GetAmbientLightIntensity();
+				throughput *= state.m_environmentSettings.m_ambientLightColor;
+				resultRadiance += throughput * state.m_environmentSettings.m_ambientLightIntensity;
 			}
 
 			bounces++;

@@ -8,6 +8,7 @@
 #include "Raytracer.h"
 #include "SceneObject.h"
 #include "Model.h"
+#include "RenderState.h"
 
 namespace BasicRenderer
 {
@@ -50,7 +51,7 @@ namespace BasicRenderer
 		Rasterizer& GetRasterizer() { return m_rasterizer; }
 		Raytracer& GetRaytracer() { return m_raytracer; }
 
-		const FrameBuffer* Render(const Model& model, uint width, uint height, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, const float deltaTime = 0.f);
+		const FrameBuffer* Render(const RenderState& scene, uint width, uint height, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, const float deltaTime = 0.f);
 
 		static std::string GenerateFilename(const std::string& customPrefix, uint imageHeight, RenderingMode mode, ShadingMode shading, uint pixelSamples = 1u, uint bounces = 0u);
 	};

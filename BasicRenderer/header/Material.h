@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "Primitive.h"
 #include "World.h"
+#include "RenderState.h"
 
 namespace BasicRenderer
 {
@@ -45,8 +46,8 @@ namespace BasicRenderer
 
 		static const Color MissingMaterialColor;
 
-		Color NormalShading(const World& scene, const Vector3& pos, const Vector3& normal) const;
-		Color LitShading(const World& scene, const Vector3& pos, const Vector3& normal) const;
+		Color NormalShading(const RenderState& state, const Vector3& pos, const Vector3& normal) const;
+		Color LitShading(const RenderState& state, const Vector3& pos, const Vector3& normal) const;
 
 		static inline float Schlick(float cos, float refractiveIndex)
 		{

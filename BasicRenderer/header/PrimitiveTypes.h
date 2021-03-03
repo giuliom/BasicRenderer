@@ -29,6 +29,7 @@ namespace BasicRenderer
 		~Sphere() {}
 
 		void ProcessForRendering(const Transform& transform) override;
+		Primitive* CloneForRendering() const override;
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
@@ -75,6 +76,7 @@ namespace BasicRenderer
 		~Plane() {}
 
 		void ProcessForRendering(const Transform& transform) override;
+		Primitive* CloneForRendering() const override;
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override

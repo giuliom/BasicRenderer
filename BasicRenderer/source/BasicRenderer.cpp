@@ -23,7 +23,7 @@ namespace BasicRenderer
 		m_renderSystems.emplace_back(&m_raytracer);
 	}
 
-	const FrameBuffer* Renderer::Render(const Model& model, uint width, uint height, RenderingMode mode, ShadingMode shading, const float deltaTime)
+	const FrameBuffer* Renderer::Render(const RenderState& state, uint width, uint height, RenderingMode mode, ShadingMode shading, const float deltaTime)
 	{
 		assert(width > 0 && height > 0);
 
@@ -36,9 +36,8 @@ namespace BasicRenderer
 			
 		}
 
-		const World& scene = model.GetScene();
-
-		m_fBuffer->Fill(scene.GetAmbientLightColor() * scene.GetAmbientLightIntensity());
+		const EnvironmentSettings& environment = state.m_environmentSettings;
+		m_fBuffer->Fill(environment.m_ambientLightColor * environment.m_ambientLightIntensity);
 
 		auto shadingFunc = &Material::LitShading;
 
@@ -49,16 +48,19 @@ namespace BasicRenderer
 			break;
 		}
 
+		// TODO partial rebuilding of the bvh?
+		state.BuildAccelerationStructure();
+
 		switch (mode)
 		{
 			default:
 			{
-				m_rasterizer.Render(*m_fBuffer, scene, shadingFunc);
+				m_rasterizer.Render(*m_fBuffer, state, shadingFunc);
 			}
 			break;
 			case RenderingMode::RAYTRACER:
 			{
-				m_raytracer.Render(*m_fBuffer, scene, shadingFunc);
+				m_raytracer.Render(*m_fBuffer, state, shadingFunc);
 			}
 			break;
 		}

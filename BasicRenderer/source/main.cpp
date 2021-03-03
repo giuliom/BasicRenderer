@@ -68,18 +68,15 @@ int main(int argc, char *argv[])
 			outputPath = argv[an + 1];
 		}
 		else if (std::strcmp(argv[an], "-r") == 0)
-		{
-		
-			if (std::strcmp(argv[an + 1], "raytracer") == 0)
+		{	
+			if (std::strcmp(argv[an + 1], "rasterizer") == 0)
 			{
 				renderingModeName = argv[an + 1];
-				renderingMode = Renderer::RenderingMode::RAYTRACER;
-			}
-		
+				renderingMode = Renderer::RenderingMode::RASTERIZER;
+			}	
 		}
 		else if (std::strcmp(argv[an], "-s") == 0)
-		{
-				
+		{			
 			if (std::strcmp(argv[an + 1], "normal") == 0)
 			{
 				shadingModeName = argv[an + 1];
@@ -129,6 +126,7 @@ int main(int argc, char *argv[])
 
 	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
 	model->Update(model->UpdateTime());
+	std::unique_ptr<RenderState> renderState(model->ProcessForRendering());
 
 	Raytracer& raytracer = renderer.GetRaytracer();
 	raytracer.m_pixelSamples = pixelSamples;
@@ -136,7 +134,7 @@ int main(int argc, char *argv[])
 
 	const auto beginTime = std::chrono::high_resolution_clock::now();
 	
-	const FrameBuffer* frame = renderer.Render(*model, width, height, renderingMode, shadingMode);
+	const FrameBuffer* frame = renderer.Render(*renderState, width, height, renderingMode, shadingMode);
 	
 	const auto endTime = std::chrono::high_resolution_clock::now();
 

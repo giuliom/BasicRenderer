@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "RenderState.h"
 
 namespace BasicRenderer
 {
@@ -11,9 +12,15 @@ namespace BasicRenderer
 		ProcessInput(m_inputMgr, *m_scene);
 
 		m_scene->Update(deltaTime);
-		
-		//TODO move to rendering thread?
-		m_scene->ProcessForRendering();
+	}
+
+	RenderState* Model::ProcessForRendering()
+	{
+		std::vector<Primitive*> copiedPrimitives;
+
+		m_scene->ProcessForRendering(copiedPrimitives);
+
+		return new RenderState(m_scene->GetMainCamera(), m_scene->GetEnvironmentSettings(), copiedPrimitives);
 	}
 
 	void Model::ProcessInput(InputManager& inputMgr, World& scene)

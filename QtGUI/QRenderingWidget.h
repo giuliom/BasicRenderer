@@ -13,11 +13,11 @@ class QRenderingWidget : public QOpenGLWidget
 	Q_OBJECT
 
 protected:
-	std::unique_ptr<Model> m_models[3];
+	std::unique_ptr<Model> m_model;
+	std::unique_ptr<RenderState> m_renderStates[2];
 	std::unique_ptr<Renderer> m_renderer;
-	uint m_updating_model_index = 0;
-	uint m_rendering_model_index = 1;
-	std::atomic<uint> m_available_model_index = 2;
+	uint m_rendering_state_index = 0;
+	std::atomic<uint> m_available_state_index = 1;
 
 	std::unique_ptr<QImage> imgDisplay;
 	std::unique_ptr<QTimer> timer;
@@ -71,8 +71,8 @@ protected:
 	void CopyFrameBufferToQImage(QImage& img, const FrameBuffer& frame);
 	void CopyQImageToFrameBuffer(FrameBuffer& frame, const QImage& img);
 
-	inline Model& GetUpdatingModel()				{ return *m_models[m_updating_model_index]; }
-	inline const Model& GetRenderingModel() const	{ return *m_models[m_rendering_model_index]; }
+	inline std::unique_ptr<RenderState>& GetAvailableState()	{ return m_renderStates[m_available_state_index]; }
+	inline const RenderState& GetRenderingState() const			{ return *m_renderStates[m_rendering_state_index]; }
 
 	virtual void keyPressEvent(QKeyEvent* event) override;
 	virtual void mousePressEvent(QMouseEvent* event) override;

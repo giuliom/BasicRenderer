@@ -1,17 +1,15 @@
 #pragma once
 
 #include <vector>
-#include <unordered_map>
 #include "Global.h"
 #include "Primitive.h"
-#include "SceneObject.h"
-
 
 namespace BasicRenderer
 {
-	typedef std::unordered_map<uint, std::unique_ptr<SceneObject>> ObjectList;
+	class BoundingVolumeHierarchy;
 
-	class Primitive;
+	typedef BoundingVolumeHierarchy AccelerationStructure;
+	typedef std::vector<std::unique_ptr<Primitive>> PrimitiveList;
 
 	class BVHnode
 	{
@@ -48,10 +46,25 @@ namespace BasicRenderer
 
 		const Primitive* GetHit(const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, HitResult& outHit) const;
 
-		void Build(const ObjectList::iterator& begin_it, const ObjectList::iterator& end_it);
+		void Build(const PrimitiveList& primitives);
 
 
 		void DebugPrint();
 
 	};
+
+	inline const Primitive* Raycast(const AccelerationStructure& accStruct, const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, Vector3& hitPosition, Vector3& hitNormal)
+	{
+		const Primitive* anyHit = nullptr;
+		HitResult hit;
+		anyHit = accStruct.GetHit(r, tMin, tMax, dfsStack, hit);
+
+		if (anyHit != nullptr)
+		{
+			hitPosition = r.GetPoint(hit.t);
+			hitNormal = hit.normal;
+		}
+
+		return anyHit;
+	}
 }

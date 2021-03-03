@@ -122,6 +122,7 @@ namespace BasicRenderer
 
 		Primitive& operator=(const Primitive& other) = delete;
 
+		virtual Primitive* CloneForRendering() const = 0;
 		virtual void ProcessForRendering(const Transform& transform) = 0;
 		virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const = 0;
 

@@ -6,6 +6,8 @@
 
 namespace BasicRenderer
 {
+	struct RenderState;
+
 	class Model
 	{
 	protected:
@@ -25,6 +27,7 @@ namespace BasicRenderer
 		Model& operator=(const Model& other) = delete;
 
 		void Update(const TimeDuration& deltaTime);
+		RenderState* ProcessForRendering();
 
 		inline const World& GetScene()		const	{ return *m_scene; }
 		InputManager& GetInputManager()				{ return m_inputMgr; }
