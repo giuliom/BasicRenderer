@@ -33,25 +33,26 @@ namespace BasicRenderer
 		World() {}
 		~World();
 
-		inline const ObjectList& GetObjects() const { return m_objectList; }
+		inline const ObjectList& GetObjects() const		{ return m_objectList; }
 
-		inline const Camera& GetMainCamera() const { return m_mainCamera; }
-		inline Camera& GetMainCamera() { return m_mainCamera; }
+		inline const Camera& GetMainCamera() const		{ return m_mainCamera; }
+		inline Camera& GetMainCamera()					{ return m_mainCamera; }
 
-		inline const DirectionalLight& GetSun() const { return m_sun; }
-		inline DirectionalLight& GetSun() { return m_sun; }
+		inline const DirectionalLight& GetSun() const	{ return m_sun; }
+		inline DirectionalLight& GetSun()				{ return m_sun; }
 
-		inline float GetAmbientLightIntensity() const { return m_ambientLightIntensity; }
-		inline void SetAmbientLightIntensity(const float intensity) { m_ambientLightIntensity = intensity; }
-		inline const Color& GetAmbientLightColor() const  { return m_ambientLightColor; }
-		inline void SetAmbientLightColor(const Color& color) { m_ambientLightColor = color; }
-		const AccelerationStructure& GetAccelerationStructure() const { return m_bvh; }
+		inline float GetAmbientLightIntensity() const					{ return m_ambientLightIntensity; }
+		inline void SetAmbientLightIntensity(const float intensity)		{ m_ambientLightIntensity = intensity; }
+		inline const Color& GetAmbientLightColor() const				{ return m_ambientLightColor; }
+		inline void SetAmbientLightColor(const Color& color)			{ m_ambientLightColor = color; }
+		const AccelerationStructure& GetAccelerationStructure() const	{ return m_bvh; }
 
-		void Add(Primitive* obj);
+		void Add(SceneObject* obj);
 		bool Remove(const uint id);
-		Primitive* Find(const uint id);
-		const Primitive* Find(const uint id) const;
+		SceneObject* Find(const uint id);
+		const SceneObject* Find(const uint id) const;
 
+		void Update(const TimeDuration& deltaTime);
 		void ProcessForRendering();
 
 		const Primitive* OldRaycast(const Ray& r, float tMin, float tMax, HitResult& outHit) const;

@@ -15,7 +15,7 @@ namespace BasicRenderer
 		DirectionalLight() {}
 		DirectionalLight(float intensity_, const Vector3& dir) : intensity(intensity_), direction(dir) {}
 		DirectionalLight(const DirectionalLight& dl) : intensity(dl.intensity), direction(dl.direction) {}
-		~DirectionalLight() {}
+		virtual ~DirectionalLight() {}
 
 		void SetDirection(const Vector3& dir);
 		inline Vector3 GetDirection() const { return direction; }

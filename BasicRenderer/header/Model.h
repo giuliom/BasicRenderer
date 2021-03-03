@@ -24,7 +24,7 @@ namespace BasicRenderer
 
 		Model& operator=(const Model& other) = delete;
 
-		void update(const TimeDuration deltaTime);
+		void Update(const TimeDuration& deltaTime);
 
 		inline const World& GetScene()		const	{ return *m_scene; }
 		InputManager& GetInputManager()				{ return m_inputMgr; }

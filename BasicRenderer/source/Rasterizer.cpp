@@ -11,78 +11,84 @@ namespace BasicRenderer
 		const uint width = fBuffer.GetWidth();
 		const uint height = fBuffer.GetHeight();
 
-		for (const auto& obj : scene.GetObjects())
+		for (const auto& [id, obj] : scene.GetObjects())
 		{
-			DrawObject(width, height, fBuffer, scene, obj.second.get(), Shading);
+			const SceneObject& so = *obj;
+
+			if (so.GetEnabled() && so.GetVisible())
+			{
+				const Primitive* prim = so.GetPrimitive();
+
+				if (prim != nullptr)
+				{
+					DrawObject(width, height, fBuffer, scene, *prim, Shading);
+				}
+			}
 		}
 	}
 
-	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const World& scene, const Primitive* primitive, const ShadingFunc& Shading)
+	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const World& scene, const Primitive& primitive, const ShadingFunc& Shading)
 	{
 		const Camera& camera = scene.GetMainCamera();
-		const SceneObject* obj = dynamic_cast<const SceneObject*>(primitive);
 
 		const float fwidth = static_cast<float>(width);
 		const float fheight = static_cast<float>(height);
 
-		if (obj != nullptr)
+		const Material* mat = primitive.GetMaterial();
+		Color c = Material::MissingMaterialColor;
+		const Matrix4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix();
+
+		for (auto i = 0u; i < primitive.NumFaces(); i++)
 		{
-			const Material* mat = obj->GetMaterial();
-			Color c = Material::MissingMaterialColor;
-			const Matrix4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix();
+			Face f = primitive.GetFace(i);
 
-			for (uint i = 0; i < obj->NumFaces(); i++)
+			if (mat)
 			{
-				Face f = obj->GetTransformedFace(i);
+				c = Shading(*mat, scene, Vector3::Zero(), f.normal);
+				c.x = c.x < 1.f ? c.x : 1.f;
+				c.y = c.y < 1.f ? c.y : 1.f;
+				c.z = c.z < 1.f ? c.z : 1.f;
+			}
 
-				if (mat)
+			ToMatrixSpace(f, mvp);
+
+			PerspectiveDivide(f);
+			NormalizedToScreenSpace(f, fwidth, fheight);
+
+			Face clippedFaces[4];
+			uint nClippedFaces = Clip(f, clippedFaces);
+
+			for (uint j = 0u; j < nClippedFaces; j++)
+			{
+				f = clippedFaces[j];
+
+				if (CullFace(f)) continue;
+
+				Vector4 bbox = BoundingBox(f, fwidth, fheight);
+				uint bbz = static_cast<uint>(bbox.z);
+				uint bbw = static_cast<uint>(bbox.w);
+				uint bbx = static_cast<uint>(bbox.x);
+				uint bby = static_cast<uint>(bbox.y);
+
+				for (uint x = bbx; x < bbz; ++x)
 				{
-					c = Shading(*mat, scene, Vector3::Zero(), f.normal);
-					c.x = c.x < 1.f ? c.x : 1.f;
-					c.y = c.y < 1.f ? c.y : 1.f;
-					c.z = c.z < 1.f ? c.z : 1.f;
-				}
-
-				ToMatrixSpace(f, mvp);
-
-				PerspectiveDivide(f);
-				NormalizedToScreenSpace(f, fwidth, fheight);
-
-				Face clippedFaces[4];
-				uint nClippedFaces = Clip(f, clippedFaces);
-
-				for (uint j = 0u; j < nClippedFaces; j++)
-				{
-					f = clippedFaces[j];
-
-					if (CullFace(f)) continue;
-
-					Vector4 bbox = BoundingBox(f, fwidth, fheight);
-					uint bbz = static_cast<uint>(bbox.z);
-					uint bbw = static_cast<uint>(bbox.w);
-					uint bbx = static_cast<uint>(bbox.x);
-					uint bby = static_cast<uint>(bbox.y);
-
-					for (uint x = bbx; x < bbz; ++x)
+					for (uint y = bby; y < bbw; ++y)
 					{
-						for (uint y = bby; y < bbw; ++y)
+						Vector3 bary = Barycentre(static_cast<float>(x), static_cast<float>(y), f);
+
+						if (bary.x < 0.0f || bary.y < 0.0f || bary.z < 0.0f) continue;
+
+						float z = f.v0.pos.z * bary.x + f.v1.pos.z * bary.y + f.v2.pos.z * bary.z;
+
+						//Because of the Pinhole model
+						uint index = width * (height - y - 1) + x;
+
+						if (z < fBuffer.GetDepth(index))
 						{
-							Vector3 bary = Barycentre(static_cast<float>(x), static_cast<float>(y), f);
-
-							if (bary.x < 0.0f || bary.y < 0.0f || bary.z < 0.0f) continue;
-
-							float z = f.v0.pos.z * bary.x + f.v1.pos.z * bary.y + f.v2.pos.z * bary.z;
-
-							//Because of the Pinhole model
-							uint index = width * (height - y - 1) + x;
-
-							if (z < fBuffer.GetDepth(index))
-							{
-								fBuffer.WriteToColor(index, c);
-								fBuffer.WriteToDepth(index, z);
-							}
-
+							fBuffer.WriteToColor(index, c);
+							fBuffer.WriteToDepth(index, z);
 						}
+
 					}
 				}
 			}

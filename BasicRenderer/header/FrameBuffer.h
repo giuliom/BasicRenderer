@@ -29,7 +29,7 @@ namespace BasicRenderer
 			depthBuffer = new float[width_ * height_];
 			size = width_ * height_;
 		}
-		~FrameBuffer();
+		virtual ~FrameBuffer();
 
 		FrameBuffer& operator==(const FrameBuffer& buf) = delete;
 		FrameBuffer& operator=(const FrameBuffer& buf) = delete;

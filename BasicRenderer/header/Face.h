@@ -2,11 +2,10 @@
 
 #include "Global.h"
 #include "Vertex.h"
-#include "Primitive.h"
+#include "Ray.h"
 
 namespace BasicRenderer
 {
-	class Ray;
 	struct HitHit;
 
 	struct Face
@@ -20,7 +19,8 @@ namespace BasicRenderer
 		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2) : v0(pV0), v1(pV1), v2(pV2), normal(CalculateNormal(v0.pos, v1.pos, v2.pos)) {}
 		Face(const Position& p0, const Position& p1, const Position& p2, const Face& face);
 		Face(const Face& f) : v0(f.v0), v1(f.v1), v2(f.v2), normal(f.normal) {}
-		Face(Face&& f) : v0(f.v0), v1(f.v1), v2(f.v2), normal(f.normal) {}
+		Face(Face&& f) noexcept : v0(f.v0), v1(f.v1), v2(f.v2), normal(f.normal) {}
+		virtual ~Face() {}
 
 		Face& operator=(const Face& f);
 		Face& operator=(Face&& f);

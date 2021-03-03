@@ -170,7 +170,7 @@ void QRenderingWidget::FixedUpdateLoopThread()
 		model.SetMainCameraAspectRatio(static_cast<float>(w), static_cast<float>(h));
 		
 		// TODO make it return RenderState only, use only one model 
-		model.update(expectedTimeBetweenUpdates);
+		model.Update(expectedTimeBetweenUpdates);
 		
 		//TODO
 		// Make update fixed 
@@ -178,6 +178,7 @@ void QRenderingWidget::FixedUpdateLoopThread()
 
 		{
 			std::scoped_lock<std::mutex> modelLock(m_modelSwapMtx);
+
 			const uint available_index = m_available_model_index;
 			m_available_model_index = m_updating_model_index;
 			m_updating_model_index = available_index;	
@@ -211,6 +212,7 @@ void QRenderingWidget::RenderLoopThread()
 
 		{
 			std::scoped_lock<std::mutex> modelLock(m_modelSwapMtx);
+
 			const uint available_index = m_available_model_index;
 			m_available_model_index = m_rendering_model_index;
 			m_rendering_model_index = available_index;

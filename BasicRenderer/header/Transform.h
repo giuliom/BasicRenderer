@@ -52,10 +52,14 @@ namespace BasicRenderer
 
 
 	public:
-		Transform() : m_matrix(), m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_parent(nullptr), m_object(nullptr) {}
-		Transform(const Transform& t) : m_matrix(t.m_matrix), m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object) {}
-		Transform(Transform&& t) : m_matrix(t.m_matrix), m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object) {}
-		Transform(SceneObject* obj) : m_matrix(), m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_parent(nullptr), m_object(obj) {}
+		Transform() 
+			: m_matrix(), m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_parent(nullptr), m_object(nullptr) {}
+		Transform(const Transform& t) 
+			: m_matrix(t.m_matrix), m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object) {}
+		Transform(Transform&& t) noexcept 
+			: m_matrix(t.m_matrix), m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object) {}
+		Transform(SceneObject* obj) 
+			: m_matrix(), m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_parent(nullptr), m_object(obj) {}
 		Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, Transform* parent = nullptr, SceneObject* obj = nullptr);
 		~Transform() {}
 
@@ -63,15 +67,15 @@ namespace BasicRenderer
 		Transform& operator=(Transform&& t);
 
 		inline const Vector3& GetPosition() const { return m_position; }
-		inline const Vector3& GetScale() const { return m_scale; }
+		inline const Vector3& GetScale()	const { return m_scale; }
 		inline const Vector3& GetRotation() const { return m_rotation; }
 
 		inline bool isDirty() const { return m_dirty; }
 		inline void SetDirty(bool dirty) { m_dirty = dirty; }
 
 		inline const Vector3& Forward() const { return m_forward; }
-		inline const Vector3& Right() const { return m_right; }
-		inline const Vector3& Up() const { return m_up; }
+		inline const Vector3& Right()	const { return m_right; }
+		inline const Vector3& Up()		const { return m_up; }
 
 		void SetPosition(const Vector3& position);
 		void SetScale(const Vector3& scale);
@@ -93,8 +97,8 @@ namespace BasicRenderer
 		void SetParent(Transform* par);
 		Transform Combine(const Transform& other) const;
 
-		inline const Matrix4& GetMatrix() const { return m_matrix; }
-		inline const Matrix4& GetInverseMatrix() const { return m_inverse; }
+		inline const Matrix4& GetMatrix()						const { return m_matrix; }
+		inline const Matrix4& GetInverseMatrix()				const { return m_inverse; }
 		inline Vector4 GetTransformedVector(const Vector4& v)	const { return m_matrix * v; }
 
 	};

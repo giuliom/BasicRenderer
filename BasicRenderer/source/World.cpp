@@ -12,7 +12,7 @@ namespace BasicRenderer
 
 	}
 
-	void World::Add(Primitive* obj)
+	void World::Add(SceneObject* obj)
 	{
 		if (obj != nullptr && Find(obj->GetId()) == false)
 		{
@@ -25,12 +25,12 @@ namespace BasicRenderer
 		return m_objectList.erase(id) > 0;
 	}
 
-	Primitive* World::Find(const uint id)
+	SceneObject* World::Find(const uint id)
 	{
 		return m_objectList[id].get();
 	}
 
-	const Primitive* World::Find(const uint id) const
+	const SceneObject* World::Find(const uint id) const
 	{
 		const auto& it = m_objectList.find(id);
 
@@ -41,11 +41,34 @@ namespace BasicRenderer
 		return nullptr;
 	}
 
+	void World::Update(const TimeDuration& deltaTime)
+	{
+		for (auto& [id, obj] : m_objectList)
+		{
+			if (obj->GetEnabled())
+			{
+				obj->Update(deltaTime);
+			}
+		}
+	}
+
 	void World::ProcessForRendering()
 	{
-		for (auto& obj : m_objectList)
+		for (auto& [id, obj] : m_objectList)
 		{
-			obj.second->ProcessForRendering();
+			SceneObject& so = *obj;
+
+			if (so.GetEnabled() && so.GetVisible())
+			{
+				Primitive* prim = so.GetPrimitive();
+
+				if (prim != nullptr)
+				{
+					prim->ProcessForRendering(so.GetTransform());
+				}
+			}
+
+			so.GetTransform().SetDirty(false);
 		}
 
 		// TODO partial rebuilding of the bvh?
@@ -59,9 +82,10 @@ namespace BasicRenderer
 
 		outHit.t = tMax;
 
-		for (const auto& obj : m_objectList)
+		for (const auto& [id, obj] : m_objectList)
 		{
-			if (obj.second->GetHit(r, tMin, tMax, outHit))
+			const Primitive* prim = obj->GetPrimitive();
+			if (prim && prim->GetHit(r, tMin, tMax, outHit))
 			{
 				if (outHit.t < closestHit)
 				{

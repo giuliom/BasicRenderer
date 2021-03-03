@@ -8,58 +8,65 @@
 
 namespace BasicRenderer
 {
-	class SceneObject : public Primitive
+	class SceneObject
 	{
 	protected:
+		static uint m_idCounter;
+
+		uint m_id;
+		std::string m_name;
 		mutable Transform m_worldTransform;
 		Transform m_transform;
-		Material* m_material;
 		std::vector<Transform*> m_children; //TODO Move to Transform?
-		std::shared_ptr<Mesh> m_mesh = nullptr;
-		std::vector<Face> m_transformedFaces;
+		std::unique_ptr<Primitive> m_primitive;
+		bool m_enabled;
+		bool m_visible;
 
 	public:
-		SceneObject() = delete;
-		SceneObject(Material* mat) = delete;
-		SceneObject(std::shared_ptr<Mesh> mesh, Material* mat, const std::string& name = "");
+		SceneObject();
+		SceneObject(Primitive* primitive, const std::string& name = "");
+		SceneObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> mat, const std::string& name = "");
 		SceneObject(const SceneObject& obj);
 		SceneObject(SceneObject&& obj) noexcept;
 		virtual ~SceneObject();
 
-		//TODO define assigments
+		virtual void Update(const TimeDuration& deltaTime);
 
-		inline Transform& GetTransform() { return m_transform; }
-		inline const Mesh* const GetMesh() const { return m_mesh.get(); }
-		inline const Transform& GetWorldTransform() const { return m_worldTransform; }
-		inline size_t NumFaces() const { return m_transformedFaces.size(); }
-		inline const Face& GetTransformedFace(uint index) const { return m_transformedFaces[index]; }
-		const Material* GetMaterial() const override { return m_material; }
+		inline uint GetId() const							{ return m_id; }
+		inline const std::string& GetName() const			{ return m_name; }
+		inline Transform& GetTransform()					{ return m_transform; }
+		inline const Transform& GetWorldTransform() const	{ return m_worldTransform; }
+		inline const Primitive* GetPrimitive() const		{ return m_primitive.get(); }
+		inline Primitive* GetPrimitive()					{ return m_primitive.get(); }
+		inline bool GetEnabled() const						{ return m_enabled; }
+		inline bool GetVisible() const						{ return m_visible; }
+		inline void SetEnabled(bool enabled)				{ m_enabled = enabled; }
+		inline void SetVisible(bool visible)				{ m_visible = visible; }
 
-		void ProcessForRendering() override;
-		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
+	protected:
 
-		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
+		virtual void UpdateTransform()
 		{
-			outHit.t = tMax;
-			float test = 0.f;
-			bool hit = false;
-			const auto numFaces = m_transformedFaces.size();
+			Transform* parent = m_transform.GetParent();
 
-			for (uint i = 0; i < numFaces; i++)
+			if (m_transform.isDirty())
 			{
-				const Face& f = m_transformedFaces[i];
-				if (Intersection(f, r, tMin, tMax, test))
+				if (parent == nullptr)
 				{
-					hit = true;
-					if (test < outHit.t)
-					{
-						outHit.t = test;
-						outHit.normal = f.normal;
-					}
+					m_worldTransform = m_transform;
 				}
-			}
+				else
+				{
+					m_worldTransform = m_transform.Combine(*parent);
+				}
 
-			return hit;
+				for (auto t : m_children)
+				{
+					t->SetDirty(true);
+				}
+
+				m_worldTransform.SetDirty(true);
+			}
 		}
 	};
 }

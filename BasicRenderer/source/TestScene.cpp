@@ -19,20 +19,20 @@ namespace BasicRenderer
 
 		scene->GetMainCamera().GetTransform().SetPosition(0.f, 0.f, 4.f);
 
-		Material* emissive = new Material({ 1.0f, 1.0f, 1.0f });
+		std::shared_ptr<Material> emissive(new Material({ 1.0f, 1.0f, 1.0f }));
 		emissive->emissive = 10.f;
 
-		Material* white = new Material({ 1.0f, 1.0f, 1.0f });
-		Material* red = new Material({ 1.0f, 0.0f, 0.0f });
-		Material* green = new Material({ 0.0f, 1.0f, 0.0f });
-		Material* blue = new Material({ 0.0f, 0.1f, 1.0f });
+		std::shared_ptr<Material> white(new Material({ 1.0f, 1.0f, 1.0f }));
+		std::shared_ptr<Material> red(new Material({ 1.0f, 0.0f, 0.0f }));
+		std::shared_ptr<Material> green(new Material({ 0.0f, 1.0f, 0.0f }));
+		std::shared_ptr<Material> blue(new Material({ 0.0f, 0.1f, 1.0f }));
 
-		Material* silver = new Material({ 0.972f, 0.960f, 0.915f }, Material::Type::METALLIC);
+		std::shared_ptr<Material> silver(new Material({ 0.972f, 0.960f, 0.915f }, Material::Type::METALLIC));
 		silver->metallic = 1.0f;
-		Material* copper = new Material({ 0.955f, 0.637f, 0.538f });
-		Material* gold = new Material({ 1.0f, 0.766f, 0.336f }, Material::Type::METALLIC);
+		std::shared_ptr<Material> copper(new Material({ 0.955f, 0.637f, 0.538f }));
+		std::shared_ptr<Material> gold(new Material({ 1.0f, 0.766f, 0.336f }, Material::Type::METALLIC));
 		gold->metallic = 0.5f;
-		Material* chromium = new Material({ .550f, 0.556f, 0.554f }, Material::Type::DIELECTRIC);
+		std::shared_ptr<Material> chromium(new Material({ .550f, 0.556f, 0.554f }, Material::Type::DIELECTRIC));
 
 		std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load("../../../assets/bunny.obj"));
 		std::shared_ptr<Mesh> teapotMesh(ObjLoader::Load("../../../assets/teapot.obj"));
@@ -53,49 +53,50 @@ namespace BasicRenderer
 		teapot->GetTransform().SetScale(primitive_scale * 0.05f, primitive_scale * 0.05f, primitive_scale * 0.05f);
 		teapot->GetTransform().SetPosition(box_position + Vector3(primitive_scale * -0.2f, primitive_scale * -0.5f, primitive_scale * 0.03f));
 
-		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, silver, "Sphere");
+		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, silver, "");
+		SceneObject* sphere = new SceneObject(sp, "Spere");
 
-		Quad* floor = new Quad(quadMesh, white, "Floor");
+		SceneObject* floor = new SceneObject(quadMesh, white, "Floor");
 		floor->GetTransform().SetPosition(box_position + Vector3(0.f, -half_primitive_scale, 0.f));
 		floor->GetTransform().RotateDeg(-90.f, 0.f, 0.f);
 		floor->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* ceiling = new Quad(quadMesh, white, "Ceiling");
+		SceneObject* ceiling = new SceneObject(quadMesh, white, "Ceiling");
 		ceiling->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale, 0.f));
 		ceiling->GetTransform().RotateDeg(90.f, 0.f, 0.f);
 		ceiling->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* back = new Quad(quadMesh, white, "Back");
+		SceneObject* back = new SceneObject(quadMesh, white, "Back");
 		back->GetTransform().SetPosition(box_position + Vector3(0.f, 0.f, -half_primitive_scale ));
 		back->GetTransform().RotateDeg(0.f, 0.f, 0.f);
 		back->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* front = new Quad(quadMesh, white, "Front");
+		SceneObject* front = new SceneObject(quadMesh, white, "Front");
 		front->GetTransform().SetPosition(box_position + Vector3(0.f, 0.f, half_primitive_scale));
 		front->GetTransform().RotateDeg(0.f, 180.f, 0.f);
 		front->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* left = new Quad(quadMesh, red, "Left");
+		SceneObject* left = new SceneObject(quadMesh, red, "Left");
 		left->GetTransform().SetPosition(box_position + Vector3(-half_primitive_scale, 0.f, 0.f));
 		left->GetTransform().RotateDeg(0.f, 90.f, 0.f);
 		left->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* right = new Quad(quadMesh, green, "Right");
+		SceneObject* right = new SceneObject(quadMesh, green, "Right");
 		right->GetTransform().SetPosition(box_position + Vector3(half_primitive_scale, 0.f, 0.f));
 		right->GetTransform().RotateDeg(0.f, -90.f, 0.f);
 		right->GetTransform().SetScale(primitive_scale_vector);
 
-		Quad* light = new Quad(quadMesh, emissive, "Light");
+		SceneObject* light = new SceneObject(quadMesh, emissive, "Light");
 		light->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale - 0.05f, 0.f));
 		light->GetTransform().RotateDeg(90.f, 0.f, 0.f);
 		light->GetTransform().SetScale(primitive_scale_vector * 0.3f);
 
-		Cube* cube = new Cube(cubeMesh, white, "Cube");
+		SceneObject* cube = new SceneObject(cubeMesh, white, "Cube");
 		cube->GetTransform().SetPosition(box_position + Vector3(primitive_scale * -0.18f, primitive_scale * -0.15f, primitive_scale * -0.3f ));
 		cube->GetTransform().RotateDeg(0.f, 115.f, 0.f);
 		cube->GetTransform().SetScale(primitive_scale * 0.3f, primitive_scale * 0.7f, primitive_scale * 0.3f);
 
-		Cube* cube2 = new Cube(cubeMesh, white, "Cube2");
+		SceneObject* cube2 = new SceneObject(cubeMesh, white, "Cube2");
 		cube2->GetTransform().SetPosition(box_position + Vector3(primitive_scale * 0.25f, primitive_scale * -0.375f, primitive_scale * -0.25f ));
 		cube2->GetTransform().RotateDeg(0.f, -25.f, 0.f);
 		cube2->GetTransform().SetScale(primitive_scale_vector * 0.25f);
@@ -103,7 +104,7 @@ namespace BasicRenderer
 		//scene->Add(bunny);
 		//scene->Add(teapot);
 
-		scene->Add(sp);
+		scene->Add(sphere);
 
 		scene->Add(floor);
 		scene->Add(ceiling);

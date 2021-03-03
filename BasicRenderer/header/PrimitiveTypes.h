@@ -12,23 +12,24 @@ namespace BasicRenderer
 {
 	class Material;
 
-	//TODO World space assumed for all these primitives
+	//WARNING: World space assumed for all these primitives
 
 	class Sphere : public Primitive
 	{
 	public:
+		const Vector3 m_originalPos;
 		Vector3 m_pos;
+		const float m_originalRadius;
 		float m_radius;
-		Material* m_material;
 
-		Sphere(const std::string& name = "") : Primitive(name), m_radius(1.f) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
-		Sphere(Vector3 pos_, float radius_, const std::string& name = "") : Primitive(name), m_pos(pos_), m_radius(radius_) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
-		Sphere(Vector3 pos_, float radius_, Material* mat, const std::string& name = "") : Primitive(name), m_material(mat), m_pos(pos_), m_radius(radius_) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(const std::string& name = "") 
+			: Primitive({}, nullptr, name), m_originalPos(), m_pos(), m_originalRadius(1.f), m_radius(1.f) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(const Vector3& pos, float radius, std::shared_ptr<Material> mat = nullptr, const std::string& name = "") 
+			: Primitive({}, mat, name), m_originalPos(pos), m_pos(pos), m_originalRadius(radius), m_radius(radius) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		~Sphere() {}
 
-		void ProcessForRendering() override { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		void ProcessForRendering(const Transform& transform) override;
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
-
-		const Material* GetMaterial() const override { return m_material; }
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
@@ -67,15 +68,14 @@ namespace BasicRenderer
 	{
 	public:
 		Vector3 m_centre, m_normal;
-		Material* m_material;
 
 		Plane() = delete;
-		Plane(const Vector3& centre, const Vector3& normal, Material* mat, const std::string& name = "") : Primitive(name), m_centre(centre), m_normal(normal.Normalize()), m_material(mat) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Plane(const Vector3& centre, const Vector3& normal, std::shared_ptr<Material> mat = nullptr, const std::string& name = "") 
+			: Primitive({}, mat, name), m_centre(centre), m_normal(normal.Normalize()) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		~Plane() {}
 
-		void ProcessForRendering() override { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		void ProcessForRendering(const Transform& transform) override;
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
-
-		const Material* GetMaterial() const override { return m_material; }
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
@@ -98,66 +98,5 @@ namespace BasicRenderer
 			return false;
 		}
 
-	};
-
-
-	class Quad : public SceneObject
-	{
-		//Face f0 = Face(Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
-		//Face f1 = Face(Vertex({ -0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ 0.5f, -0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}), Vertex({ -0.5f, 0.5f, 0.f }, { 0.f, 0.f, 1.f }, {}));
-
-	public:
-		Quad(std::shared_ptr<Mesh> mesh_) = delete;
-		Quad(std::shared_ptr<Mesh> mesh_, Material* mat, const std::string& name = "") : SceneObject(mesh_, mat, name) {}
-		Quad(const SceneObject& obj) = delete;
-		Quad(const Quad& quad) : SceneObject(quad) {}
-		virtual ~Quad() {}
-	};
-
-
-	struct Cube : public SceneObject
-	{
-		Vector3 topN = { 0.f, 1.f, 0.f };
-		Vector3 bottomN = { 0.f, -1.f, 0.f };
-		Vector3 backN = { 0.f, 0.f, -1.f };
-		Vector3 frontN = { 0.f, 0.f, 1.f };
-		Vector3 leftN = { -1.f, 0.f, 0.f };
-		Vector3 rightN = { 1.f, 0.f, 0.f };
-
-		Vector3 topFrontLeft = { -0.5f, 0.5f, 0.5f };
-		Vector3 topFrontRight = { 0.5f, 0.5f, 0.5f };
-		Vector3 topBackLeft = { -0.5f, 0.5f, -0.5f };
-		Vector3 topBackRight = { 0.5f, 0.5f, -0.5f };
-
-		Vector3 bottomFrontLeft = { -0.5f, -0.5f, 0.5f };
-		Vector3 bottomFrontRight = { 0.5f, -0.5f, 0.5f };
-		Vector3 bottomBackLeft = { -0.5f, -0.5f, -0.5f };
-		Vector3 bottomBackRight = { 0.5f, -0.5f, -0.5f };
-
-
-		//Face back_f0 = Face(Vertex(bottomBackRight, backN, {}), Vertex(topBackLeft, backN, {}), Vertex(topBackRight, backN, {}));
-		//Face back_f1 = Face(Vertex(bottomBackLeft, backN, {}), Vertex(bottomBackRight, backN, {}), Vertex(topBackLeft, backN, {}));
-
-		//Face front_f0 = Face(Vertex(topFrontLeft, frontN, {}), Vertex(topFrontRight, frontN, {}), Vertex(bottomFrontRight, frontN, {}));
-		//Face front_f1 = Face(Vertex(bottomFrontLeft, frontN, {}), Vertex(topFrontLeft, frontN, {}), Vertex(bottomFrontRight, frontN, {}));
-
-		//Face top_f0 = Face(Vertex(topBackLeft, topN, {}), Vertex(topFrontRight, topN, {}), Vertex(topBackRight, topN, {}));
-		//Face top_f1 = Face(Vertex(topFrontLeft, topN, {}), Vertex(topFrontRight, topN, {}), Vertex(topBackRight, topN, {}));
-
-		//Face bottom_f0 = Face(Vertex(bottomFrontLeft, bottomN, {}), Vertex(bottomBackLeft, bottomN, {}), Vertex(bottomFrontRight, bottomN, {}));
-		//Face bottom_f1 = Face(Vertex(bottomBackLeft, bottomN, {}), Vertex(bottomBackRight, bottomN, {}), Vertex(bottomFrontRight, bottomN, {}));
-
-		//Face left_f0 = Face(Vertex(topFrontLeft, leftN, {}), Vertex(bottomBackLeft, leftN, {}), Vertex(topBackLeft, leftN, {}));
-		//Face left_f1 = Face(Vertex(bottomFrontLeft, leftN, {}), Vertex(bottomBackLeft, leftN, {}), Vertex(topFrontLeft, leftN, {}));
-
-		//Face right_f0 = Face(Vertex(topFrontRight, rightN, {}), Vertex(bottomBackRight, rightN, {}), Vertex(topBackRight, rightN, {}));
-		//Face right_f1 = Face(Vertex(bottomBackRight, rightN, {}), Vertex(topFrontRight, rightN, {}), Vertex(bottomFrontRight, rightN, {}));
-
-	public:
-		Cube(std::shared_ptr<Mesh> mesh_) = delete;
-		Cube(std::shared_ptr<Mesh> mesh_, Material* mat, const std::string& name = "") : SceneObject(mesh_, mat, name) {}
-		Cube(const SceneObject& obj) = delete;
-		Cube(const Cube& cube) : SceneObject(cube) {}
-		virtual ~Cube() {}
 	};
 }

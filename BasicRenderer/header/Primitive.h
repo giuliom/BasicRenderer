@@ -3,15 +3,19 @@
 #include <memory>
 #include <algorithm>
 #include <string>
+#include <vector>
 #include "Global.h"
 #include "Vector3.h"
 #include "Ray.h"
 #include "Matrix4.h"
+#include "Transform.h"
+#include "Face.h"
 
 namespace BasicRenderer
 {
 	class Material;
 	class Primitive;
+	struct Face;
 
 	struct HitResult
 	{
@@ -101,27 +105,31 @@ namespace BasicRenderer
 	class Primitive
 	{
 	protected:
-		//TODO temporary implementation
-		static uint m_idCounter;
+
 		std::string m_name;
-		uint m_id;
+		std::shared_ptr<Material> m_material; //TODO support material instances
+		std::vector<Face> m_faces;
 		AxisAlignedBoundingBox m_boundingBox;
 
 		virtual AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const = 0;
 
 	public:
-		Primitive(const std::string& name = "") : m_name(name), m_id(m_idCounter++), m_boundingBox() {}
-		Primitive(const Primitive& other) : m_name(other.m_name), m_id(m_idCounter++), m_boundingBox(other.m_boundingBox) {}
+		Primitive(const std::vector<Face>& faces, std::shared_ptr<Material> mat = nullptr, const std::string& name = "") 
+			: m_name(name), m_material(mat), m_faces(faces), m_boundingBox() {}
+		Primitive(const Primitive& other) 
+			: m_name(other.m_name), m_material(other.m_material), m_faces(other.m_faces), m_boundingBox(other.m_boundingBox) {}
+		virtual ~Primitive() {}
 
 		Primitive& operator=(const Primitive& other) = delete;
 
-		inline uint GetId() const { return m_id; }
-		inline const std::string& GetName() const { return m_name; }
-
-		virtual void ProcessForRendering() = 0;
+		virtual void ProcessForRendering(const Transform& transform) = 0;
 		virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const = 0;
 
-		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox() const { return m_boundingBox; }
-		virtual const Material* GetMaterial() const = 0;
+		inline const std::string& GetName()									const	{ return m_name; }
+		inline const std::vector<Face>& GetFaces()							const	{ return m_faces; }
+		inline const Face& GetFace(uint index)								const	{ return m_faces[index]; }
+		inline size_t NumFaces()											const	{ return m_faces.size(); }
+		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox()	const	{ return m_boundingBox; }
+		inline const Material* GetMaterial()								const	{ return m_material.get(); }
 	};
 }

@@ -6,9 +6,13 @@ namespace BasicRenderer
 	{
 	}
 
-	void Model::update(const TimeDuration deltaTime)
+	void Model::Update(const TimeDuration& deltaTime)
 	{
 		ProcessInput(m_inputMgr, *m_scene);
+
+		m_scene->Update(deltaTime);
+		
+		//TODO move to rendering thread?
 		m_scene->ProcessForRendering();
 	}
 

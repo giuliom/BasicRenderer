@@ -31,7 +31,7 @@ namespace BasicRenderer
 
 	public:
 		Camera();
-		~Camera();
+		virtual ~Camera();
 
 		void SetAspectRatio(float w, float h);
 		void SetFov(float f);

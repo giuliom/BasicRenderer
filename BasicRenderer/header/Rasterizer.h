@@ -21,7 +21,7 @@ namespace BasicRenderer
 
 	protected:
 
-		void DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const World& scene, const Primitive* primitive, const ShadingFunc& Shading);
+		void DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const World& scene, const Primitive& primitive, const ShadingFunc& Shading);
 
 		inline void PerspectiveDivide(Face& f) const;
 		inline void NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const;

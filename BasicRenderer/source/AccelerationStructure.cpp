@@ -1,5 +1,4 @@
 #include "AccelerationStructure.h"
-
 #include <algorithm>
 #include <iostream>
 
@@ -54,8 +53,12 @@ namespace BasicRenderer
 
 		for (auto it = begin_it; it != end_it; ++it)
 		{
-			BVHnode* n = new BVHnode(it->second.get(), it->second->GetAxisAlignedBoundingBox(), nullptr, nullptr);
-			nodes.emplace_back(n);
+			const Primitive* prim = it->second->GetPrimitive();
+			if (prim != nullptr)
+			{
+				BVHnode* n = new BVHnode(prim, prim->GetAxisAlignedBoundingBox(), nullptr, nullptr);
+				nodes.emplace_back(n);
+			}
 		}
 
 		// Axis comparator

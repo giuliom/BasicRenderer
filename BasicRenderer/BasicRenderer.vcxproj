@@ -285,6 +285,7 @@
     <ClInclude Include="header\Material.h" />
     <ClInclude Include="header\Matrix4.h" />
     <ClInclude Include="header\Mesh.h" />
+    <ClInclude Include="header\MeshInstance.h" />
     <ClInclude Include="header\Model.h" />
     <ClInclude Include="header\ObjLoader.h" />
     <ClInclude Include="header\PointLight.h" />
@@ -319,6 +320,7 @@
     <ClCompile Include="source\Material.cpp" />
     <ClCompile Include="source\Matrix4.cpp" />
     <ClCompile Include="source\Mesh.cpp" />
+    <ClCompile Include="source\MeshInstance.cpp" />
     <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\ObjLoader.cpp" />
     <ClCompile Include="source\PointLight.cpp" />

@@ -4,11 +4,14 @@
 #include <unordered_map>
 #include "Global.h"
 #include "Primitive.h"
+#include "SceneObject.h"
 
 
 namespace BasicRenderer
 {
-	typedef std::unordered_map<uint, std::unique_ptr<Primitive>> ObjectList;
+	typedef std::unordered_map<uint, std::unique_ptr<SceneObject>> ObjectList;
+
+	class Primitive;
 
 	class BVHnode
 	{

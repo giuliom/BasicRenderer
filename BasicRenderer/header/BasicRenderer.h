@@ -45,7 +45,7 @@ namespace BasicRenderer
 	public:
 
 		Renderer();
-		~Renderer() {}
+		virtual ~Renderer() {}
 
 		Rasterizer& GetRasterizer() { return m_rasterizer; }
 		Raytracer& GetRaytracer() { return m_raytracer; }

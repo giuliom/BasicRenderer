@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 	std::unique_ptr<Model> model = std::make_unique<Model>(TestScene());
 
 	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
-	model->update(model->UpdateTime());
+	model->Update(model->UpdateTime());
 
 	Raytracer& raytracer = renderer.GetRaytracer();
 	raytracer.m_pixelSamples = pixelSamples;

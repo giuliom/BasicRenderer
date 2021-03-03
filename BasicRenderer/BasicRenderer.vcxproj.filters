@@ -121,6 +121,9 @@
     <ClInclude Include="header\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="header\MeshInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\AccelerationStructure.cpp">
@@ -214,6 +217,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\MeshInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
