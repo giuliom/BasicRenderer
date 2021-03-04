@@ -209,9 +209,14 @@ void QRenderingWidget::RenderLoopThread()
 		{
 			std::scoped_lock<std::mutex> modelLock(m_modelSwapMtx);
 
-			const uint available_index = m_available_state_index;
-			m_available_state_index = m_rendering_state_index;
-			m_rendering_state_index = available_index;
+			auto& availableState = GetAvailableState();
+
+			if (availableState->CreationTime() > GetRenderingState().CreationTime())
+			{
+				const uint available_index = m_available_state_index;
+				m_available_state_index = m_rendering_state_index;
+				m_rendering_state_index = available_index;
+			}
 		}
 
 		const auto endTime = TimeClock::now();

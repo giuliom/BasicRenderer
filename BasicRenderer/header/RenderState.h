@@ -12,15 +12,16 @@ namespace BasicRenderer
 		PrimitiveList m_primitives;
 
 		RenderState()
-			: m_camera(), m_environmentSettings(), m_primitives() {}
+			: m_camera(), m_environmentSettings(), m_primitives(), m_creationTime(), m_bvh() {}
 		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, std::vector<Primitive*>& primitives);
 		~RenderState() {}
 
 		const AccelerationStructure& GetAccelerationStructure()	const { return m_bvh; }
 		void BuildAccelerationStructure() const;
+		const TimePoint& CreationTime() const { return m_creationTime; }
 
 	private:
-
+		TimePoint m_creationTime;
 		mutable AccelerationStructure m_bvh;
 
 	};

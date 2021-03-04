@@ -55,9 +55,9 @@ namespace BasicRenderer
 		Transform() 
 			: m_matrix(), m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_parent(nullptr), m_object(nullptr) {}
 		Transform(const Transform& t) 
-			: m_matrix(t.m_matrix), m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object) {}
+			: m_matrix(t.m_matrix), m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object) { UpdateTransform();	}
 		Transform(Transform&& t) noexcept 
-			: m_matrix(t.m_matrix), m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object) {}
+			: m_matrix(t.m_matrix), m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object) { UpdateTransform();	}
 		Transform(SceneObject* obj) 
 			: m_matrix(), m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_parent(nullptr), m_object(obj) {}
 		Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, Transform* parent = nullptr, SceneObject* obj = nullptr);

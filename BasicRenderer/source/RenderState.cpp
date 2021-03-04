@@ -3,7 +3,10 @@
 namespace BasicRenderer
 {
 	RenderState::RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, std::vector<Primitive*>& primitives)
-		: m_camera(camera), m_environmentSettings(environmentSettings)
+		: m_camera(camera)
+		, m_environmentSettings(environmentSettings)
+		, m_creationTime(TimeClock::now())
+		, m_bvh()
 	{
 		m_primitives.resize(primitives.size());
 
