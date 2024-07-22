@@ -40,8 +40,11 @@ release/
 LibDebug/
 LibRelease/
 
-# Visual Studio 2015 database file
+# Cmake
+BasicRenderer/build
 
+# Visual Studio 2015 database file
+.vscode/
 *.VC.db
 *.VC.VC.opendb
 
