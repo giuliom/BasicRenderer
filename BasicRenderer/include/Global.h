@@ -15,6 +15,6 @@ namespace BasicRenderer
 	template<typename OutputType, typename DurationMeasure, typename DurationType>
 	OutputType ConvertChronoDuration(const DurationType& duration)
 	{
-		return std::chrono::duration_cast<std::chrono::duration<OutputType, DurationMeasure::period>>(duration).count();
+		return std::chrono::duration_cast<std::chrono::duration<OutputType, typename DurationMeasure::period>>(duration).count();
 	}
 }

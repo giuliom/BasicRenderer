@@ -36,9 +36,9 @@ namespace BasicRenderer
 
 	protected:
 
-		inline Matrix4 GetTranslationMatrix(const Vector3& position);
-		inline Matrix4 GetScaleMatrix(const Vector3& scale);
-		inline Matrix4 GetRotationMatrix(const Vector3& rotation);
+		Matrix4 GetTranslationMatrix(const Vector3& position);
+		Matrix4 GetScaleMatrix(const Vector3& scale);
+		Matrix4 GetRotationMatrix(const Vector3& rotation);
 
 		inline void UpdateTransform()
 		{
