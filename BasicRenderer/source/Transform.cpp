@@ -1,5 +1,5 @@
 #include "Transform.h"
-#include <math.h>
+#include <cmath>
 #include "SceneObject.h"
 
 namespace BasicRenderer

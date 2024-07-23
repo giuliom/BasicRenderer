@@ -1,6 +1,6 @@
 #pragma once
 
-#include <math.h>
+#include <cmath>
 #include "Vector4.h"
 
 namespace BasicRenderer

@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include "PrimitiveTypes.h"
 #include "Ray.h"
-#include <math.h>
+#include <cmath>
 
 namespace BasicRenderer
 {
