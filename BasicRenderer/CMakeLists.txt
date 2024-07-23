@@ -26,7 +26,7 @@ file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/source/*.cpp" "${PROJECT_SOURCE_DIR}/in
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC BasicCppLibrary m)
+target_link_libraries(${PROJECT_NAME} PUBLIC BasicCppLibrary)
 add_dependencies(${PROJECT_NAME} BasicCppLibrary)
 
 # ------ Google Test ----- #
