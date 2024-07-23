@@ -224,17 +224,20 @@ namespace BasicRenderer
 
 	inline Vector4 Rasterizer::BoundingBox(const Face& f, const float fwidth, const float fheight) const
 	{
-		Vector2 v0 = Vector2(f.v0.pos.x, f.v0.pos.y);
-		Vector2 v1 = Vector2(f.v1.pos.x, f.v1.pos.y);
-		Vector2 v2 = Vector2(f.v2.pos.x, f.v2.pos.y);
+		const Vector2 v0 = Vector2(f.v0.pos.x, f.v0.pos.y);
+		const Vector2 v1 = Vector2(f.v1.pos.x, f.v1.pos.y);
+		const Vector2 v2 = Vector2(f.v2.pos.x, f.v2.pos.y);
 
-		Vector2 mini = Vector2::Min(Vector2::Min(v0, v1), v2);
-		Vector2 maxi = Vector2::Max(Vector2::Max(v0, v1), v2);
+		const Vector2 mini = Vector2::Min(Vector2::Min(v0, v1), v2);
+		const Vector2 maxi = Vector2::Max(Vector2::Max(v0, v1), v2);
 
-		Vector2 lim = Vector2(fwidth - 1.0f, fheight - 1.0f);
+		const Vector2 lim = Vector2(fwidth - 1.0f, fheight - 1.0f);
 
-		Vector2 finalMin = Clamp(Vector2::Min(mini, maxi), Vector2(0.0f, 0.0f), lim);
-		Vector2 finalMax = Clamp(Vector2::Max(mini, maxi), Vector2(0.0f, 0.0f), lim);
+		Vector2 finalMin = Vector2::Min(mini, maxi);
+		Vector2 finalMax = Vector2::Max(mini, maxi);
+
+		Clamp(finalMin, Vector2::Zero(), lim);
+		Clamp(finalMax, Vector2::Zero(), lim);
 
 		return Vector4(finalMin.x, finalMin.y, finalMax.x, finalMax.y);
 	}

@@ -45,16 +45,14 @@ World* TestScene()
 }
 
 
-TEST(SUITE_NAME, Render)
+TEST(SUITE_NAME, Raytracer)
 {
-	// TODO
 	Renderer renderer;
 	std::unique_ptr<Model> model = std::make_unique<Model>(TestScene());
 
 	const uint width = 320;
 	const uint height = 240;
 	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
-	model->Update(model->UpdateTime());
 	std::unique_ptr<RenderState> renderState(model->ProcessForRendering());
 
 	Raytracer& raytracer = renderer.GetRaytracer();
@@ -64,6 +62,21 @@ TEST(SUITE_NAME, Render)
 	const auto beginTime = std::chrono::high_resolution_clock::now();
 	
 	const FrameBuffer* frame = renderer.Render(*renderState, width, height, Renderer::RenderingMode::RAYTRACER, Renderer::ShadingMode::LIT);
+	
+	EXPECT_TRUE(frame != nullptr);
+}
+
+TEST(SUITE_NAME, Rasterizer)
+{
+	Renderer renderer;
+	std::unique_ptr<Model> model = std::make_unique<Model>(TestScene());
+
+	const uint width = 320;
+	const uint height = 240;
+	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
+	std::unique_ptr<RenderState> renderState(model->ProcessForRendering());
+	
+	const FrameBuffer* frame = renderer.Render(*renderState, width, height, Renderer::RenderingMode::RASTERIZER, Renderer::ShadingMode::LIT);
 	
 	EXPECT_TRUE(frame != nullptr);
 }

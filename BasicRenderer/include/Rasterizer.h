@@ -44,7 +44,7 @@ namespace BasicRenderer
 			return { (uv1.z - (uv1.x + uv1.y)) * (1.0f / uv1.z), uv1.y * (1.0f / uv1.z), uv1.x * (1.0f / uv1.z) };
 		}
 
-		inline Vector2 Clamp(Vector2& v, const Vector2& min, const Vector2& max) const
+		inline void Clamp(Vector2& v, const Vector2& min, const Vector2& max) const
 		{
 			if (v.x < min.x)
 			{
@@ -62,7 +62,6 @@ namespace BasicRenderer
 			{
 				v.y = max.y;
 			}
-			return v;
 		}
 	};
 }
