@@ -2,6 +2,7 @@
 #include <iostream>
 #include <chrono>
 #include <string>
+#include <cstring>
 #include <iomanip>
 #include "Global.h"
 #include "BasicRenderer.h"
