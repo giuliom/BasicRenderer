@@ -96,7 +96,7 @@ namespace BasicRenderer
 			}
 
 #if !LIB_DEBUG && !LIB_RELEASE
-			const std::scoped_lock<std::mutex> lock(m_progressMtx);
+			std::scoped_lock<std::mutex> lock(m_progressMtx);
 			m_progress = m_progress + rowPctg;
 			std::cout << "Progress: " << static_cast<uint>(std::roundf(m_progress)) << "% \r";
 #endif
