@@ -1,5 +1,6 @@
 #include "FrameBuffer.h"
 #include <cmath>
+#include <cstring>
 
 namespace BasicRenderer
 {

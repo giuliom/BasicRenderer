@@ -41,6 +41,7 @@ LibDebug/
 LibRelease/
 
 # Cmake
+build/
 BasicRenderer/build
 
 # Visual Studio 2015 database file
