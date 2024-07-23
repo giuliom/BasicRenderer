@@ -28,7 +28,7 @@ namespace BasicRenderer
 		// deltaTime not used because of buffered input
 		while (inputMgr.Empty() == false)
 		{
-			auto& event = inputMgr.PopFrontEvent();
+			auto event = inputMgr.PopFrontEvent();
 
 			switch (event->GetCategory())
 			{
