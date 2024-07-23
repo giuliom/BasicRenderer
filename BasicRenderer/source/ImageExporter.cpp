@@ -1,6 +1,7 @@
 #include "ImageExporter.h"
 #include <fstream>
 #include <filesystem>
+#include <cstring>
 #include "ImageFormats.h"
 
 namespace BasicRenderer
