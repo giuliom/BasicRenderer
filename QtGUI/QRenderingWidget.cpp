@@ -239,9 +239,9 @@ void QRenderingWidget::CopyFrameBufferToQImage(QImage& img, const FrameBuffer& f
 		for (uint i = 0; i < size; ++i)
 		{
 			uint ua = 255u << 24;
-			ua |= static_cast<uint>(c[i].x * 255.999f) << 16;
-			ua |= static_cast<uint>(c[i].y * 255.999f) << 8;
-			ua |= static_cast<uint>(c[i].z * 255.999f);
+			ua |= static_cast<uint>(c[i].r * 255.999f) << 16;
+			ua |= static_cast<uint>(c[i].g * 255.999f) << 8;
+			ua |= static_cast<uint>(c[i].b * 255.999f);
 
 			rgb[i] = ua;
 		}
