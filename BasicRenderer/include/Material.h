@@ -5,11 +5,10 @@
 #include "Primitive.h"
 #include "World.h"
 #include "RenderState.h"
+#include "Color.h"
 
 namespace BasicRenderer
 {
-	using Color = Vector3;
-
 	class Material
 	{
 	public:

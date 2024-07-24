@@ -25,9 +25,9 @@ namespace BasicRenderer
 			for (int j = 0; j < width; j++)
 			{
 				Color c = fBuf.GetColor(i * width + j);
-				int r = int(255.99f * c.x);
-				int g = int(255.99f * c.y);
-				int b = int(255.99f * c.z);
+				int r = int(255.99f * c.r);
+				int g = int(255.99f * c.g);
+				int b = int(255.99f * c.b);
 
 				outfile << r << " " << g << " " << b << "\n";
 			}
@@ -92,9 +92,9 @@ namespace BasicRenderer
 				//BGR
 				uint32_t index = (height - j - 1) * width + i;
 				Color c = cBuf[index];
-				bmpData.emplace_back((uint8_t)(c.z * 255.999f));
-				bmpData.emplace_back((uint8_t)(c.y * 255.999f));
-				bmpData.emplace_back((uint8_t)(c.x * 255.999f));
+				bmpData.emplace_back((uint8_t)(c.r * 255.999f));
+				bmpData.emplace_back((uint8_t)(c.g * 255.999f));
+				bmpData.emplace_back((uint8_t)(c.b * 255.999f));
 			}
 
 			uint32_t padding = bmpData.size() % 4;

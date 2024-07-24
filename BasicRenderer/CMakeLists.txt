@@ -10,16 +10,6 @@ include(FetchContent)
 cmake_policy(SET CMP0135 NEW)
 
 
-# ------ BasicCppLibrary ----- #
-
-FetchContent_Declare(
-  BasicCppLibrary
-  GIT_REPOSITORY https://github.com/giuliom/BasicCppLibrary.git
-  GIT_TAG        main
-)
-FetchContent_MakeAvailable(BasicCppLibrary)
-
-
 # ------ BasicRenderer Library ----- #
 
 set (LIBRARY_NAME BasicRendererLib)
@@ -29,9 +19,6 @@ list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/source/main.cpp")
 add_library(${LIBRARY_NAME} STATIC ${SOURCES})
 set_target_properties(${LIBRARY_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
-target_link_libraries(${LIBRARY_NAME} PUBLIC BasicCppLibrary)
-add_dependencies(${LIBRARY_NAME} BasicCppLibrary)
 
 # Set the library version (optional)
 set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION 1.0 SOVERSION 1)

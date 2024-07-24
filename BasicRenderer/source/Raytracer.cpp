@@ -88,9 +88,9 @@ namespace BasicRenderer
 				}
 
 				c = c * fInversePixelSameples;
-				c.x = c.x > 1.f ? 1.f : c.x;
-				c.y = c.y > 1.f ? 1.f : c.y;
-				c.z = c.z > 1.f ? 1.f : c.z;
+				c.r = c.r > 1.f ? 1.f : c.r;
+				c.g = c.g > 1.f ? 1.f : c.g;
+				c.b = c.b > 1.f ? 1.f : c.b;
 
 				fBuffer.WriteToColor((int)(y * fwidth + x), c);
 			}

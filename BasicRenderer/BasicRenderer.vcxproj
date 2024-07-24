@@ -305,11 +305,13 @@
     <ClInclude Include="header\Vector4.h" />
     <ClInclude Include="header\Vertex.h" />
     <ClInclude Include="header\World.h" />
+    <ClInclude Include="include\Color.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\AccelerationStructure.cpp" />
     <ClCompile Include="source\BasicRenderer.cpp" />
     <ClCompile Include="source\Camera.cpp" />
+    <ClCompile Include="source\Color.cpp" />
     <ClCompile Include="source\DirectionalLight.cpp" />
     <ClCompile Include="source\Face.cpp" />
     <ClCompile Include="source\FrameBuffer.cpp" />

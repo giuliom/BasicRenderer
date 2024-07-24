@@ -9,7 +9,7 @@ namespace BasicRenderer
 	//TODO Use variadic functions for shading?
 	Color Material::NormalShading(const RenderState& state, const Vector3& pos, const Vector3& normal) const
 	{
-		return (normal + 1.0f) * 0.5f;
+		return {(normal + 1.0f) * 0.5f};
 	}
 
 	Color Material::LitShading(const RenderState& state, const Vector3& pos, const Vector3& normal) const

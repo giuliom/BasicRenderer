@@ -5,12 +5,12 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Transform.h"
+#include "Color.h"
 
 namespace BasicRenderer
 {
 	using Position = Vector4;
 	using Normal = Vector4;
-	using Color = Vector3;
 	using UV = Vector2;
 
 

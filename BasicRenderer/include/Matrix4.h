@@ -50,6 +50,8 @@ namespace BasicRenderer
 
 		Matrix4& operator=(const Matrix4& m);
 		Matrix4& operator=(Matrix4&& m);
+		bool	operator==(const Matrix4& m) const;
+		bool	operator!=(const Matrix4& m) const;
 
 		inline Vector4 operator*(const Vector4& v) const
 		{
