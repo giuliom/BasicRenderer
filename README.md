@@ -8,6 +8,8 @@ A simple renderer
 
 Basic Renderer is a simple renderer made with fun and learning in mind.
 
+Development is currently on hold.
+
 Features planned:
 * Rasterization
 * Classic Ray-Tracing
