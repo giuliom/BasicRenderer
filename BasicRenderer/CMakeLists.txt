@@ -13,7 +13,7 @@ cmake_policy(SET CMP0135 NEW)
 # ------ BasicRenderer Library ----- #
 
 set (LIBRARY_NAME BasicRendererLib)
-file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/source/*.cpp" "${PROJECT_SOURCE_DIR}/include/*.h")
+file(GLOB SOURCES CONFIGURE_DEPENDS "${PROJECT_SOURCE_DIR}/source/*.cpp" "${PROJECT_SOURCE_DIR}/include/*.h")
 list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/source/main.cpp")
 
 add_library(${LIBRARY_NAME} STATIC ${SOURCES})
