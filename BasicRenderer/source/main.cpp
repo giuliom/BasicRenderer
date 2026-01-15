@@ -19,12 +19,12 @@ using namespace BasicRenderer;
 
 int main(int argc, char *argv[])
 {
-	std::string file = "../../../assets/bunny.obj";
+	std::string file = "../../assets/bunny.obj";
 
 	int width = 1280;
 	int height = 720;
 
-	std::string outputPath = "../../../output/";
+	std::string outputPath = "../../output/";
 
 	std::string renderingModeName = "raytracer";
 	std::string shadingModeName = "lit";

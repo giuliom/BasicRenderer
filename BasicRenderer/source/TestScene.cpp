@@ -34,10 +34,10 @@ namespace BasicRenderer
 		gold->metallic = 0.5f;
 		std::shared_ptr<Material> chromium(new Material({ .550f, 0.556f, 0.554f }, Material::Type::DIELECTRIC));
 
-		std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load("../../../assets/bunny.obj"));
-		std::shared_ptr<Mesh> teapotMesh(ObjLoader::Load("../../../assets/teapot.obj"));
-		std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("../../../assets/cube.obj"));
-		std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../../assets/quad.obj"));
+		std::shared_ptr<Mesh> bunnyMesh(ObjLoader::Load("../../assets/bunny.obj"));
+		std::shared_ptr<Mesh> teapotMesh(ObjLoader::Load("../../assets/teapot.obj"));
+		std::shared_ptr<Mesh> cubeMesh(ObjLoader::Load("../../assets/cube.obj"));
+		std::shared_ptr<Mesh> quadMesh(ObjLoader::Load("../../assets/quad.obj"));
 
 		// TODO move to transform hierarchy when ready
 		const float primitive_scale = 4.f;
