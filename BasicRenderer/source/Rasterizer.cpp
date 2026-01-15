@@ -142,7 +142,8 @@ namespace BasicRenderer
 			abs(f.v1.pos.z) < f.v1.pos.w &&
 			abs(f.v2.pos.z) < f.v2.pos.w)
 		{
-			return 0;
+			clippedFaces[0] = f;
+			return 1;
 		}
 		else
 		{

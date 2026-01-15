@@ -81,15 +81,13 @@ namespace BasicRenderer
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
-			tMin; 
-			tMax;
 			const float div = Vector3::Dot(m_normal, r.direction);
 
 			if (abs(div) > 0.0001f)
 			{
 				float t = Vector3::Dot(m_centre - r.origin, m_normal) / div;
 
-				if (t >= 0.0001f)
+				if (t >= tMin && t <= tMax)
 				{
 					outHit.t = t;
 					outHit.normal = m_normal;

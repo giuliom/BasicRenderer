@@ -46,9 +46,9 @@ namespace BasicRenderer
 		m_projection.y2 = m_nearClip / top;
 
 		m_projection.z3 = - (m_farClip + m_nearClip) / (m_farClip - m_nearClip);
-		m_projection.z4 = -1.f;
+		m_projection.w4 = -1.f;
 
-		m_projection.w3 = -2.f * m_farClip * m_nearClip / (m_farClip - m_nearClip);
+		m_projection.z4 = -2.f * m_farClip * m_nearClip / (m_farClip - m_nearClip);
 	}
 
 	Ray Camera::GetCameraRay(const float u, const float v) const

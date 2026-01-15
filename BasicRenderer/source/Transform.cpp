@@ -168,7 +168,7 @@ namespace BasicRenderer
 
 	Transform Transform::Combine(const Transform& other) const
 	{
-		return Transform(m_position + other.m_position, m_rotation + other.m_rotation, m_scale + other.m_scale, other.m_parent, other.m_object);
+		return Transform(m_position + other.m_position, m_scale + other.m_scale, m_rotation + other.m_rotation, other.m_parent, other.m_object);
 	}
 }
 

@@ -114,7 +114,7 @@ namespace BasicRenderer
 		outfile.write((const char*)data, bmpData.size());
 		outfile.close();
 
-		return false;
+		return true;
 	}
 
 	void ImageExporter::Fill4Bytes(std::vector<uint8_t>& dest, const uint32_t value)

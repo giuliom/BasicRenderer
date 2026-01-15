@@ -11,7 +11,7 @@ namespace BasicRenderer
 
 		for (int i = 0; i < size; ++i)
 		{
-			uint32_t ua;
+			uint32_t ua = 0;
 			ua |= static_cast<uint32_t>(c[i].r * 255.99f) << 24;
 			ua |= static_cast<uint32_t>(c[i].g * 255.99f) << 16;
 			ua |= static_cast<uint32_t>(c[i].b * 255.99f) << 8;
