@@ -61,6 +61,7 @@ namespace BasicRenderer
 
 	void SceneObject::Update(const TimeDuration& deltaTime)
 	{
+		(void)deltaTime;
 		UpdateTransform();
 	}
 }

@@ -41,10 +41,11 @@ namespace BasicRenderer
 		AxisAlignedBoundingBox() : m_minimum({ 0.f, 0.f, 0.f }), m_maximum({ 0.f, 0.f, 0.f }), m_size(0.f) {}
 		AxisAlignedBoundingBox(const Vector3& minimum, const Vector3& maximum) : m_minimum(minimum), m_maximum(maximum), m_size((maximum - minimum).Length()) {}
 		AxisAlignedBoundingBox(const AxisAlignedBoundingBox& other) : m_minimum(other.m_minimum), m_maximum(other.m_maximum), m_size(other.m_size) {}
+		AxisAlignedBoundingBox& operator=(const AxisAlignedBoundingBox& other) { m_minimum = other.m_minimum; m_maximum = other.m_maximum; m_size = other.m_size; return *this; }
 
 		inline const Vector3& GetMinimum() const { return m_minimum; }
 		inline const Vector3& GetMaximum() const { return m_maximum; }
-		inline const float GetSize() const { return m_size; }
+		inline float GetSize() const { return m_size; }
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax) const
 		{

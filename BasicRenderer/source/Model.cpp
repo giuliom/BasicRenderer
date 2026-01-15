@@ -104,6 +104,9 @@ namespace BasicRenderer
 			{
 				break;
 			}
+
+			default:
+				break;
 			}
 		}
 		else if (input.GetButtonState() == ButtonState::RELEASED)
@@ -119,6 +122,9 @@ namespace BasicRenderer
 			{
 				break;
 			}
+
+			default:
+				break;
 			}
 		}
 

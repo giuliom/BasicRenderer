@@ -18,6 +18,7 @@ namespace BasicRenderer
 
 	public:
 		InputEvent(const Vector2& pos, bool validPos) : m_position(pos), m_validPosition(validPos) {}
+		virtual ~InputEvent() {}
 
 		inline virtual InputCategory GetCategory() const = 0;
 		inline bool HasValidPosition() { return m_validPosition; }

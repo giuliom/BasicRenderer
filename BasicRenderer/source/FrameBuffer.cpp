@@ -36,7 +36,7 @@ namespace BasicRenderer
 		return colorBuffer[width * h + w];
 	}
 
-	const Color* const FrameBuffer::GetColorBuffer() const
+	const Color* FrameBuffer::GetColorBuffer() const
 	{
 		return colorBuffer;
 	}

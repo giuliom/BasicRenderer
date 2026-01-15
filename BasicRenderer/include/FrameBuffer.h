@@ -40,7 +40,7 @@ namespace BasicRenderer
 		const Color& GetColor(uint w, uint h) const;
 
 		Color* GetColorBufferCopy() const;
-		const Color* const GetColorBuffer() const;
+		const Color* GetColorBuffer() const;
 
 
 		inline uint GetWidth() const { return width; }

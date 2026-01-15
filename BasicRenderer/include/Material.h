@@ -28,7 +28,7 @@ namespace BasicRenderer
 		float roughness = 0.0f;
 		float refractiveIndex = 1.5f;
 
-		Material(const Color& base, Type type = Type::DIFFUSE) : baseColor(base), type(type) {}
+		Material(const Color& base, Type type = Type::DIFFUSE) : type(type), baseColor(base) {}
 
 		static inline bool Refract(const Vector3& v, const Vector3& normal, float ni_nt, Vector3& refracted)
 		{

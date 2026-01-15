@@ -52,9 +52,6 @@ namespace BasicRenderer
 		FrameBuffer& fBuffer = *m_fBuffer;
 
 		const Camera& camera = state.m_camera;
-		const float camW = camera.GetViewportWidth();
-		const float camH = camera.GetViewportHeight();
-		const float aspectRatio = camera.GetAspectRatio();
 
 		const uint width = fBuffer.GetWidth();
 		const uint height = fBuffer.GetHeight();
@@ -105,6 +102,7 @@ namespace BasicRenderer
 
 	Color Raytracer::RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& Shading)
 	{
+		(void)Shading;
 		Vector3 hitPosition, hitNormal;
 		const Primitive* hitObject = nullptr;
 

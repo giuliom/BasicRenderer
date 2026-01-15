@@ -25,6 +25,7 @@ namespace BasicRenderer
 
 	const FrameBuffer* Renderer::Render(const RenderState& state, uint width, uint height, RenderingMode mode, ShadingMode shading, const float deltaTime)
 	{
+		(void)deltaTime;
 		assert(width > 0 && height > 0);
 
 		if (width != m_width || height != m_height || m_fBuffer == nullptr)
@@ -45,6 +46,9 @@ namespace BasicRenderer
 		{
 		case ShadingMode::NORMAL:
 			shadingFunc = &Material::NormalShading;
+			break;
+		case ShadingMode::LIT:
+		default:
 			break;
 		}
 

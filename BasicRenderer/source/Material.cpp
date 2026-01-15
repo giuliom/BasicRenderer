@@ -9,11 +9,14 @@ namespace BasicRenderer
 	//TODO Use variadic functions for shading?
 	Color Material::NormalShading(const RenderState& state, const Vector3& pos, const Vector3& normal) const
 	{
+		(void)state;
+		(void)pos;
 		return {(normal + 1.0f) * 0.5f};
 	}
 
 	Color Material::LitShading(const RenderState& state, const Vector3& pos, const Vector3& normal) const
 	{ 
+		(void)pos;
 		const EnvironmentSettings& environment = state.m_environmentSettings;
 		return baseColor * (std::fmaxf(0.0f, Vector3::Dot(normal, environment.m_sun.GetDirection() * -1.f)) + emissive + environment.m_ambientLightIntensity);
 	}

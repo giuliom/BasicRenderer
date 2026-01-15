@@ -141,14 +141,14 @@ namespace BasicRenderer
 
 		if (rawVertices.size() == rawNormals.size() && rawVertices.size() == rawUVs.size() && rawVertices.size() > 0)
 		{
-			for (int i = 0; i < rawVertices.size(); ++i)
+			for (size_t i = 0; i < rawVertices.size(); ++i)
 			{
 				vertices.push_back(Vertex(rawVertices[i], rawNormals[i], rawUVs[i]));
 			}
 		}
 		else if (rawVertices.size() > 3 && vIndices.size() > 1)
 		{
-			for (int i = 0; i < rawVertices.size(); ++i)
+			for (size_t i = 0; i < rawVertices.size(); ++i)
 			{
 				vertices.push_back(Vertex(rawVertices[i], Vector4::Zero(), Vector2::Zero()));
 			}
@@ -158,7 +158,7 @@ namespace BasicRenderer
 			return nullptr;
 		}
 
-		for (int i = 0; i < vIndices.size(); i++)
+		for (size_t i = 0; i < vIndices.size(); i++)
 		{
 			Face f(vertices[vIndices[i].i0], vertices[vIndices[i].i1], vertices[vIndices[i].i2]);
 			faces.push_back(f);

@@ -58,8 +58,6 @@ TEST(SUITE_NAME, Raytracer)
 	Raytracer& raytracer = renderer.GetRaytracer();
 	raytracer.m_pixelSamples = 4;
 	raytracer.m_maxBounces = 2;
-
-	const auto beginTime = std::chrono::high_resolution_clock::now();
 	
 	const FrameBuffer* frame = renderer.Render(*renderState, width, height, Renderer::RenderingMode::RAYTRACER, Renderer::ShadingMode::LIT);
 	

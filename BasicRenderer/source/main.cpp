@@ -19,12 +19,12 @@ using namespace BasicRenderer;
 
 int main(int argc, char *argv[])
 {
-	std::string file = "../../assets/bunny.obj";
+	std::string file = "../assets/bunny.obj";
 
 	int width = 1280;
 	int height = 720;
 
-	std::string outputPath = "../../output/";
+	std::string outputPath = "../output/";
 
 	std::string renderingModeName = "raytracer";
 	std::string shadingModeName = "lit";
@@ -147,9 +147,6 @@ int main(int argc, char *argv[])
 	std::cout << std::fixed << std::setprecision(0);
 	std::cout << std::endl << "Rendering Time: " << ms << " ms " << "\n\n";
 	std::cout << std::scientific;
-	
-	std::cin.get();
-	
 }
 
 #endif

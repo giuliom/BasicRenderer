@@ -14,7 +14,7 @@ namespace BasicRenderer
 	{
 		if (transform.isDirty())
 		{
-			for (int i = 0; i < m_faces.size(); ++i)
+			for (size_t i = 0; i < m_faces.size(); ++i)
 			{
 				Face f = m_originalMesh->GetFace(i);
 				ToMatrixSpace(f, transform.m_matrix);
