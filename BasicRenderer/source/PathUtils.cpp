@@ -3,8 +3,11 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
-#include <mach-o/dyld.h>
 #include <limits.h>
+#include <unistd.h>
+#ifdef __APPLE__
+#include <mach-o/dyld.h>
+#endif
 #endif
 
 namespace BasicRenderer
@@ -23,7 +26,7 @@ namespace BasicRenderer
 		{
 			execPath = execPath.substr(0, pos);
 		}
-#else
+#elif __APPLE__
 		char buffer[PATH_MAX];
 		uint32_t size = sizeof(buffer);
 		if (_NSGetExecutablePath(buffer, &size) == 0)
@@ -38,6 +41,20 @@ namespace BasicRenderer
 			{
 				execPath = buffer;
 			}
+			// Find last slash
+			size_t pos = execPath.find_last_of('/');
+			if (pos != std::string::npos)
+			{
+				execPath = execPath.substr(0, pos);
+			}
+		}
+#else  // Linux
+		char buffer[PATH_MAX];
+		ssize_t len = readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+		if (len != -1)
+		{
+			buffer[len] = '\0';
+			execPath = buffer;
 			// Find last slash
 			size_t pos = execPath.find_last_of('/');
 			if (pos != std::string::npos)
