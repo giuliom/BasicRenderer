@@ -80,7 +80,7 @@ namespace BasicRenderer
 
 			return customPrefix + "_"
 			+ renderingModeStrings[std::underlying_type_t<RenderingMode>(mode)] + "_"
-			+ shadingModeStrings[std::underlying_type_t<RenderingMode>(shading)] + "_"
+			+ shadingModeStrings[std::underlying_type_t<ShadingMode>(shading)] + "_"
 			+ std::to_string(imageHeight) + "p" + rtInfo;
 	}
 

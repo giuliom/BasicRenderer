@@ -52,7 +52,7 @@ namespace BasicRenderer
 		inline float GetAmbientLightIntensity()						const	{ return m_environmentSettings.m_ambientLightIntensity; }
 		inline void SetAmbientLightIntensity(const float intensity)			{ m_environmentSettings.m_ambientLightIntensity = intensity; }
 		inline const Color& GetAmbientLightColor()					const	{ return m_environmentSettings.m_ambientLightColor; }
-		inline void SetAmbientLightColor(const Color& color)				{ m_environmentSettings. m_ambientLightColor = color; }
+		inline void SetAmbientLightColor(const Color& color)				{ m_environmentSettings.m_ambientLightColor = color; }
 
 		void Add(SceneObject* obj);
 		bool Remove(const uint id);

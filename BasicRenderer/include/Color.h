@@ -20,7 +20,7 @@ namespace BasicRenderer
 		Color(const Vector3& v) : r(v.x), g(v.y), b(v.z) {}
 		~Color() {}
 
-		inline Color Normalibe() const
+		inline Color Normalize() const
 		{
 			float l = Length();
 			l = 1.f / l;

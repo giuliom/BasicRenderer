@@ -6,7 +6,7 @@
 
 namespace BasicRenderer
 {
-	struct HitHit;
+	struct HitResult;
 
 	struct Face
 	{
@@ -36,7 +36,7 @@ namespace BasicRenderer
 		f.normal = CalculateNormal(f);
 	}
 
-	//Möller–Trumbore intersection algorithm
+	//Mï¿½llerï¿½Trumbore intersection algorithm
 	inline bool Intersection(const Face& face, const Ray& r, float tMin, float tMax, float& tHit)
 	{
 		const Vector3 edge1(face.v1.pos - face.v0.pos);
