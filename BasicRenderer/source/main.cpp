@@ -5,6 +5,7 @@
 #include <cstring>
 #include <iomanip>
 #include "Global.h"
+#include "PathUtils.h"
 #include "BasicRenderer.h"
 #include "Model.h"
 #include "ObjLoader.h"
@@ -19,21 +20,21 @@ using namespace BasicRenderer;
 
 int main(int argc, char *argv[])
 {
-	std::string file = "../assets/bunny.obj";
+	std::string file = GetAssetPath("assets/bunny.obj");
 
 	int width = 1280;
 	int height = 720;
 
-	std::string outputPath = "../output/";
+	int pixelSamples = 4;
+	int maxBounces = 3;
+
+	std::string outputPath = GetAssetPath("output/");
 
 	std::string renderingModeName = "raytracer";
 	std::string shadingModeName = "lit";
 
 	Renderer::RenderingMode renderingMode = Renderer::RenderingMode::RAYTRACER;
 	Renderer::ShadingMode shadingMode = Renderer::ShadingMode::LIT;
-
-	int pixelSamples = 4;
-	int maxBounces = 3;
 
 	for (int an = 1; an < argc; ++an)
 	{

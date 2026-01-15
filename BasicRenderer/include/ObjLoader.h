@@ -7,7 +7,7 @@ namespace BasicRenderer
 	class ObjLoader
 	{
 	public:
-		static Mesh* Load(const char* filename);
+		static Mesh* Load(const std::string& filename);
 	};
 
 	struct FaceIndices

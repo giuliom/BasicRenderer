@@ -37,9 +37,9 @@ namespace BasicRenderer
 
 
 	/** TODO expand to support textures and materials */
-	Mesh* ObjLoader::Load(const char* path_name_extension)
+	Mesh* ObjLoader::Load(const std::string& path_name_extension)
 	{
-		assert(path_name_extension != nullptr);
+		assert(!path_name_extension.empty());
 
 		std::ifstream file(path_name_extension);
 
