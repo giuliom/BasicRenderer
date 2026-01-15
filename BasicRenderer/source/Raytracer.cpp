@@ -63,7 +63,7 @@ namespace BasicRenderer
 		const float inverseHeight = 1.0f / fheight;
 		const float fInversePixelSameples = 1.0f / static_cast<float>(m_pixelSamples);
 
-		const float rowPctg =  100.f / fheight;
+		const float pixelPctg =  100.f / (fheight * fwidth);
 
 		std::vector<const BVHnode*> dfsStack;
 		dfsStack.reserve(state.GetAccelerationStructure().LevelsCount());
@@ -90,13 +90,13 @@ namespace BasicRenderer
 				c.b = c.b > 1.f ? 1.f : c.b;
 
 				fBuffer.WriteToColor((int)(y * fwidth + x), c);
-			}
 
 #if !LIB_DEBUG && !LIB_RELEASE
-			std::scoped_lock<std::mutex> lock(m_progressMtx);
-			m_progress = m_progress + rowPctg;
-			std::cout << "Progress: " << static_cast<uint>(std::roundf(m_progress)) << "% \r";
+				std::scoped_lock<std::mutex> lock(m_progressMtx);
+				m_progress = m_progress + pixelPctg;
+				std::cout << "Progress: " << static_cast<uint>(std::roundf(m_progress)) << "% \r";
 #endif
+			}
 		}
 	}
 
