@@ -38,7 +38,7 @@ namespace BasicRenderer
 
 	void Camera::UpdateProjection()
 	{
-		const float height_scale = tanf(m_radVerticalFov * 0.5f) * m_fovFactor;
+		const float height_scale = tanf(m_radVerticalFov * 0.5f) * m_nearClip;
 		const float right = m_aspectRatio * height_scale;
 		const float top = height_scale;
 
@@ -46,7 +46,8 @@ namespace BasicRenderer
 		m_projection.y2 = m_nearClip / top;
 
 		m_projection.z3 = - (m_farClip + m_nearClip) / (m_farClip - m_nearClip);
-		m_projection.w4 = -1.f;
+		m_projection.w3 = -1.f;
+		m_projection.w4 = 0.f;
 
 		m_projection.z4 = -2.f * m_farClip * m_nearClip / (m_farClip - m_nearClip);
 	}
