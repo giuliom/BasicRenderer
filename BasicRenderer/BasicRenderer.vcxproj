@@ -164,6 +164,18 @@
     <OutDir>$(SolutionDir)build\bin\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)build\bin\</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)build\bin\</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)build\bin\</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)build\bin\</LocalDebuggerWorkingDirectory>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -288,6 +300,7 @@
     <ClInclude Include="header\MeshInstance.h" />
     <ClInclude Include="header\Model.h" />
     <ClInclude Include="header\ObjLoader.h" />
+    <ClInclude Include="header\PathUtils.h" />
     <ClInclude Include="header\PointLight.h" />
     <ClInclude Include="header\Primitive.h" />
     <ClInclude Include="header\PrimitiveTypes.h" />
@@ -326,6 +339,7 @@
     <ClCompile Include="source\MeshInstance.cpp" />
     <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\ObjLoader.cpp" />
+    <ClCompile Include="source\PathUtils.cpp" />
     <ClCompile Include="source\PointLight.cpp" />
     <ClCompile Include="source\Primitive.cpp" />
     <ClCompile Include="source\PrimitiveTypes.cpp" />

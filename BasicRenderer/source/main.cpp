@@ -20,7 +20,7 @@ using namespace BasicRenderer;
 
 int main(int argc, char *argv[])
 {
-	std::string file = GetAssetPath("assets/bunny.obj");
+	std::string file = GetAssetPath("bunny.obj");
 
 	int width = 1280;
 	int height = 720;
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	int pixelSamples = 4;
 	int maxBounces = 3;
 
-	std::string outputPath = GetAssetPath("output/");
+	std::string outputPath = GetProjectRootDirectory() + "/output/";
 
 	std::string renderingModeName = "raytracer";
 	std::string shadingModeName = "lit";

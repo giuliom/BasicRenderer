@@ -98,9 +98,9 @@ namespace BasicRenderer
 		std::string root = GetProjectRootDirectory();
 		
 #ifdef _WIN32
-		return root + "\\" + relativePath;
+		return root + "\\assets\\" + relativePath;
 #else
-		return root + "/" + relativePath;
+		return root + "/assets/" + relativePath;
 #endif
 	}
 }
