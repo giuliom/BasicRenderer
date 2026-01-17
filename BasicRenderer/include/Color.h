@@ -13,7 +13,7 @@ namespace BasicRenderer
 		float b = 0.0f;
 
 	public:
-		Color() {}
+		Color() : r(0.0f), g(0.0f), b(0.0f) {}
 		Color(float r_, float g_, float b_) : r(r_), g(g_), b(b_) {}
 		Color(const Color& v) : r(v.r), g(v.g), b(v.b) {}
 		Color(Color&& v) : r(v.r), g(v.g), b(v.b) {}

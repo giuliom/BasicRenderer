@@ -26,13 +26,18 @@ namespace BasicRenderer
 		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u;
 		const uint rowCount = fBuffer.GetHeight();
 		const uint rowsPerThread = rowCount / threadCount;
+		const uint remainderRows = rowCount % threadCount;
 
+		std::cout << "\nRendering with " << threadCount << " threads\n";
 		std::cout << "Progress: " << 0u << "% \r";
 
+		uint currentRow = 0u;
 		for (uint i = 0u; i < threadCount; i++)
 		{
-			const uint startRowIndex = rowsPerThread * i;
-			const uint endRowIndex = (startRowIndex + rowsPerThread) < rowCount ? startRowIndex + rowsPerThread : rowCount;
+			const uint startRowIndex = currentRow;
+			const uint extraRow = i < remainderRows ? 1u : 0u;
+			const uint endRowIndex = startRowIndex + rowsPerThread + extraRow;
+			currentRow = endRowIndex;
 
 			auto thread = std::thread(&Raytracer::RenderJob, this, std::cref(state), startRowIndex, endRowIndex);
 			renderThreads.push_back(std::move(thread));
@@ -73,23 +78,24 @@ namespace BasicRenderer
 		{
 			for (uint x = 0u; x < width; x++)
 			{
-				const float u = static_cast<float>(x) * inverseWidth;
-				const float v = static_cast<float>(y) * inverseHeight;
-
-				Ray r = camera.GetCameraRay(u, v);
-
 				Color c;
 				for (uint i = 0u; i < m_pixelSamples; i++)
 				{
+					const float jitterX = UniformDist() - 0.5f;
+					const float jitterY = UniformDist() - 0.5f;
+					const float u = (static_cast<float>(x) + 0.5f + jitterX) * inverseWidth;
+					const float v = (static_cast<float>(y) + 0.5f + jitterY) * inverseHeight;
+
+					Ray r = camera.GetCameraRay(u, v);
 					c = c + RayTrace(r, state, dfsStack, m_shadingFunc);
 				}
 
 				c = c * fInversePixelSameples;
-				c.r = c.r > 1.f ? 1.f : c.r;
-				c.g = c.g > 1.f ? 1.f : c.g;
-				c.b = c.b > 1.f ? 1.f : c.b;
+				c.r = std::min(c.r, 1.f);
+				c.g = std::min(c.g, 1.f);
+				c.b = std::min(c.b, 1.f);
 
-				fBuffer.WriteToColor((int)(y * fwidth + x), c);
+				fBuffer.WriteToColor(y * width + x, c);
 
 #if !LIB_DEBUG && !LIB_RELEASE
 				std::scoped_lock<std::mutex> lock(m_progressMtx);
