@@ -34,6 +34,6 @@ namespace BasicRenderer
 		static std::mutex m_progressMtx;
 
 		void RenderJob(const RenderState& state, const uint startRowIndex, const uint endRowIndex);
-		Color RayTrace(const Ray& ray, const RenderState& state, const ShadingFunc& shading);
+		Color RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& shading);
 	};
 }

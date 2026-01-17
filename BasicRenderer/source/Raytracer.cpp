@@ -23,6 +23,7 @@ namespace BasicRenderer
 		m_fBuffer = &fBuffer;
 		m_shadingFunc = Shading;
 		m_progress = 0.f;
+		m_pixelSamples = std::max(1u, m_pixelSamples);
 
 		std::vector<std::thread> renderThreads;
 		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u;
@@ -68,9 +69,12 @@ namespace BasicRenderer
 
 		const float inverseWidth = 1.0f / fwidth;
 		const float inverseHeight = 1.0f / fheight;
-		const float fInversePixelSameples = 1.0f / static_cast<float>(m_pixelSamples);
+		const float fInversePixelSamples = 1.0f / static_cast<float>(m_pixelSamples);
 
 		const float pixelPctg =  100.f / (fheight * fwidth);
+
+		std::vector<const BVHnode*> dfsStack;
+		dfsStack.reserve(state.GetAccelerationStructure().LevelsCount());
 
 		//Top-left, drawing rows
 		for (uint y = startRowIndex; y < endRowIndex; y++)
@@ -86,10 +90,10 @@ namespace BasicRenderer
 					const float v = (static_cast<float>(y) + 0.5f + jitterY) * inverseHeight;
 
 					Ray r = camera.GetCameraRay(u, v);
-					c = c + RayTrace(r, state, m_shadingFunc);
+					c = c + RayTrace(r, state, dfsStack, m_shadingFunc);
 				}
 
-				c = c * fInversePixelSameples;
+				c = c * fInversePixelSamples;
 				c.r = std::min(c.r, 1.f);
 				c.g = std::min(c.g, 1.f);
 				c.b = std::min(c.b, 1.f);
@@ -105,7 +109,7 @@ namespace BasicRenderer
 		}
 	}
 
-	Color Raytracer::RayTrace(const Ray& ray, const RenderState& state, const ShadingFunc& Shading)
+	Color Raytracer::RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& Shading)
 	{
 		(void)Shading;
 		Vector3 hitPosition, hitNormal;
@@ -116,9 +120,6 @@ namespace BasicRenderer
 		Ray iterationRay = ray;
 		Color throughput = { 1.f, 1.f, 1.f };
 		Color resultRadiance = { 0.f, 0.f, 0.f };
-
-		std::vector<const BVHnode*> dfsStack;
-		dfsStack.reserve(state.GetAccelerationStructure().LevelsCount());
 
 		do
 		{
