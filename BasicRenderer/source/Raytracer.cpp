@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <thread>
@@ -21,6 +22,7 @@ namespace BasicRenderer
 	{
 		m_fBuffer = &fBuffer;
 		m_shadingFunc = Shading;
+		m_progress = 0.f;
 
 		std::vector<std::thread> renderThreads;
 		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u;
@@ -70,9 +72,6 @@ namespace BasicRenderer
 
 		const float pixelPctg =  100.f / (fheight * fwidth);
 
-		std::vector<const BVHnode*> dfsStack;
-		dfsStack.reserve(state.GetAccelerationStructure().LevelsCount());
-
 		//Top-left, drawing rows
 		for (uint y = startRowIndex; y < endRowIndex; y++)
 		{
@@ -87,7 +86,7 @@ namespace BasicRenderer
 					const float v = (static_cast<float>(y) + 0.5f + jitterY) * inverseHeight;
 
 					Ray r = camera.GetCameraRay(u, v);
-					c = c + RayTrace(r, state, dfsStack, m_shadingFunc);
+					c = c + RayTrace(r, state, m_shadingFunc);
 				}
 
 				c = c * fInversePixelSameples;
@@ -106,7 +105,7 @@ namespace BasicRenderer
 		}
 	}
 
-	Color Raytracer::RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& Shading)
+	Color Raytracer::RayTrace(const Ray& ray, const RenderState& state, const ShadingFunc& Shading)
 	{
 		(void)Shading;
 		Vector3 hitPosition, hitNormal;
@@ -117,6 +116,9 @@ namespace BasicRenderer
 		Ray iterationRay = ray;
 		Color throughput = { 1.f, 1.f, 1.f };
 		Color resultRadiance = { 0.f, 0.f, 0.f };
+
+		std::vector<const BVHnode*> dfsStack;
+		dfsStack.reserve(state.GetAccelerationStructure().LevelsCount());
 
 		do
 		{
@@ -135,7 +137,7 @@ namespace BasicRenderer
 					case Material::Type::METALLIC:
 					{
 						Vector3 reflected = Vector3::Reflect(iterationRay.direction, hitNormal);
-						iterationRay = Ray(hitPosition, reflected + UniforSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
+						iterationRay = Ray(hitPosition, reflected + UniformSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
 						success = (Vector3::Dot(iterationRay.direction, hitNormal) > 0);
 					}
 					break;
