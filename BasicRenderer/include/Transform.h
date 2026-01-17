@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Global.h"
 #include "Matrix4.h"
 #include "Vector3.h"
 
@@ -7,7 +8,6 @@ namespace BasicRenderer
 {
 	class SceneObject;
 
-	constexpr float PI = 3.1415926f;
 	constexpr float PDF = 1.f / (2.f * PI);
 	constexpr float TO_RADIANS = PI / 180.f;
 

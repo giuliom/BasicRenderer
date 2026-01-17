@@ -23,7 +23,7 @@ namespace BasicRenderer
 		BVHnode(const Primitive* primitive, const AxisAlignedBoundingBox& box, const BVHnode* left, const BVHnode* right) : m_primitive(primitive), m_box(box), m_left(left), m_right(right) {}
 
 		inline const Primitive* GetPrimitive() const { return m_primitive; }
-		inline const AxisAlignedBoundingBox GetAxisAlignedBoundingBox() const { return m_box; }
+		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox() const { return m_box; }
 		inline const BVHnode* GetLeft() const { return m_left.get(); }
 		inline const BVHnode* GetRight() const { return m_right.get(); }
 

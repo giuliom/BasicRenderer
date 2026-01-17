@@ -56,11 +56,5 @@ namespace BasicRenderer
 		}
 	};
 
-	Vector3 UniforSampleInHemisphere(const Vector3& normal);
-
-	//Returns a random float between 0 and 1
-	inline float UnitRandf()
-	{
-		return ((float)rand() / (RAND_MAX));
-	}
+	Vector3 UniformSampleInHemisphere(const Vector3& normal);
 }

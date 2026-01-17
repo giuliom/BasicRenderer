@@ -47,45 +47,45 @@ namespace BasicRenderer
 		inline const Vector3& GetMaximum() const { return m_maximum; }
 		inline float GetSize() const { return m_size; }
 
-		inline bool GetHit(const Ray& r, float tMin, float tMax) const
+		inline bool GetHit(const Ray& r, const float tMin, const float tMax) const
 		{
-			if (m_size > 0.f)
+			if (m_size <= 0.f)
 			{
-				for (uint a = 0; a < 3; ++a)
-				{
-					const float direction = *((&r.direction.x) + a);
-					const float origin = *((&r.origin.x) + a);
-					const float min = *((&m_minimum.x) + a);
-					const float max = *((&m_maximum.x) + a);
-
-					const float invD = 1.0f / direction;
-					float t0 = (min - origin) * invD;
-					float t1 = (max - origin) * invD;
-
-					if (invD < 0.0f)
-					{
-						const float temp = t0;
-						t0 = t1;
-						t1 = temp;
-					}
-
-					tMin = t0 > tMin ? t0 : tMin;
-					tMax = t1 < tMax ? t1 : tMax;
-
-					if (tMax < tMin)
-					{
-						return false;
-					}
-				}
-
-				return true;
-			}
-			else if (m_size == 0.f) 
-			{
-				return false;
+				// Empty boxes are non-hittable but negative sized ones are
+				return m_size < 0.f;
 			}
 
-			return true; // Special case for always hittable boxes
+			// X axis
+			{
+				float t0 = (m_minimum.x - r.origin.x) * r.invDirection.x;
+				float t1 = (m_maximum.x - r.origin.x) * r.invDirection.x;
+				if (r.invDirection.x < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
+				float localtMin = t0 > tMin ? t0 : tMin;
+				float localtMax = t1 < tMax ? t1 : tMax;
+				if (localtMax < localtMin) return false;
+			}
+
+			// Y axis
+			{
+				float t0 = (m_minimum.y - r.origin.y) * r.invDirection.y;
+				float t1 = (m_maximum.y - r.origin.y) * r.invDirection.y;
+				if (r.invDirection.y < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
+				float localtMin = t0 > tMin ? t0 : tMin;
+				float localtMax = t1 < tMax ? t1 : tMax;
+				if (localtMax < localtMin) return false;
+			}
+
+			// Z axis
+			{
+				float t0 = (m_minimum.z - r.origin.z) * r.invDirection.z;
+				float t1 = (m_maximum.z - r.origin.z) * r.invDirection.z;
+				if (r.invDirection.z < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
+				float localtMin = t0 > tMin ? t0 : tMin;
+				float localtMax = t1 < tMax ? t1 : tMax;
+				if (localtMax < localtMin) return false;
+			}
+
+			return true;
 		}
 
 		// Return the bounding box of the two boxes combined

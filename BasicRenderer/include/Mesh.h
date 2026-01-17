@@ -23,7 +23,7 @@ namespace BasicRenderer
 		Mesh& operator=(Mesh&& m);
 
 		inline size_t NumFaces()					const { return m_faces.size(); }
-		inline const std::vector<Face> GetFaces()	const { return m_faces; }
+		inline const std::vector<Face>& GetFaces()	const { return m_faces; }
 		inline const Face& GetFace(uint index)		const { return m_faces[index]; }
 	};
 }
