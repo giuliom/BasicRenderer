@@ -134,7 +134,7 @@ namespace BasicRenderer
 					{
 					case Material::Type::METALLIC:
 					{
-						Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
+						Vector3 reflected = Vector3::Reflect(iterationRay.direction, hitNormal);
 						iterationRay = Ray(hitPosition, reflected + UniforSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
 						success = (Vector3::Dot(iterationRay.direction, hitNormal) > 0);
 					}
@@ -143,25 +143,25 @@ namespace BasicRenderer
 					case Material::Type::DIELECTRIC:
 					{
 						Vector3 outNormal;
-						Vector3 reflected = Vector3::Reflect(ray.direction, hitNormal);
+						Vector3 reflected = Vector3::Reflect(iterationRay.direction, hitNormal);
 						float ni_nt;
 						Vector3 refracted;
 						float reflectionProb;
 						float cos;
-						if (Vector3::Dot(ray.direction, hitNormal) > 0.f)
+						if (Vector3::Dot(iterationRay.direction, hitNormal) > 0.f)
 						{
 							outNormal = hitNormal * -1.f;
 							ni_nt = mat.refractiveIndex;
-							cos = (Vector3::Dot(ray.direction, hitNormal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
+							cos = (Vector3::Dot(iterationRay.direction, hitNormal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
 						}
 						else
 						{
 							outNormal = hitNormal;
 							ni_nt = 1.f / mat.refractiveIndex;
-							cos = -(Vector3::Dot(ray.direction, hitNormal)); // / rayIn.direction.Length(); == 1.f
+							cos = -(Vector3::Dot(iterationRay.direction, hitNormal)); // / rayIn.direction.Length(); == 1.f
 						}
 
-						if (Material::Refract(ray.direction, outNormal, ni_nt, refracted))
+						if (Material::Refract(iterationRay.direction, outNormal, ni_nt, refracted))
 						{
 							reflectionProb = Material::Schlick(cos, mat.refractiveIndex);
 						}
@@ -170,7 +170,7 @@ namespace BasicRenderer
 							reflectionProb = 1.f;
 						}
 
-						if (UnitRandf() < reflectionProb)
+						if (UniformDist() < reflectionProb)
 						{
 							iterationRay = Ray(hitPosition, reflected);
 						}
@@ -185,7 +185,7 @@ namespace BasicRenderer
 
 					default:
 					{
-						Vector3 target = hitPosition + UniforSampleInHemisphere(hitNormal);
+						Vector3 target = hitPosition + UniformSampleInHemisphere(hitNormal);
 						iterationRay = Ray(hitPosition, target - hitPosition);
 						success = true;
 					}
@@ -209,6 +209,7 @@ namespace BasicRenderer
 			{
 				throughput *= state.m_environmentSettings.m_ambientLightColor;
 				resultRadiance += throughput * state.m_environmentSettings.m_ambientLightIntensity;
+				success = false;
 			}
 
 			bounces++;
