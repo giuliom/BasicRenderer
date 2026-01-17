@@ -90,6 +90,7 @@ namespace BasicRenderer
 					const float v = (static_cast<float>(y) + 0.5f + jitterY) * inverseHeight;
 
 					Ray r = camera.GetCameraRay(u, v);
+					r.direction = r.direction.Normalize();
 					c = c + RayTrace(r, state, dfsStack, m_shadingFunc);
 				}
 
