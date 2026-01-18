@@ -54,7 +54,7 @@ namespace BasicRenderer
 				break;
 			}
 			const uint32_t percent = static_cast<uint32_t>((rendered * 100u) / m_totalPixels);
-			std::cout << "Progress: " << percent << "% \r";
+		std::cout << "Progress: " << percent << "% \r" << std::flush;
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 #endif
@@ -113,7 +113,7 @@ namespace BasicRenderer
 			}
 
 #if !LIB_DEBUG && !LIB_RELEASE
-				m_pixelsRendered.fetch_add(static_cast<uint64_t>(width), std::memory_order_relaxed);
+			m_pixelsRendered.fetch_add(static_cast<uint64_t>(width), std::memory_order_relaxed);
 #endif
 		}
 	}

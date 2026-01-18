@@ -1,4 +1,6 @@
 #include "BasicRenderer.h"
+#include "FrameBuffer.h"
+#include "RenderState.h"
 #include "World.h"
 #include "Ray.h"
 #include "Material.h"

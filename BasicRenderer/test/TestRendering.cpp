@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <BasicRenderer.h>
+#include <Model.h>
 
 #define SUITE_NAME TestRendering
 

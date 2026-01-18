@@ -47,7 +47,7 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 file (GLOB TESTS "test/*.h" "test/*.cpp")
-add_executable(BasicRendererTest ${TESTS} ${SOURCES})
+add_executable(BasicRendererTest ${TESTS})
 target_include_directories(BasicRendererTest PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
 target_link_libraries(
@@ -61,7 +61,7 @@ gtest_discover_tests(BasicRendererTest)
 
 # ------ BasicRenderer Executable ----- #
 
-add_executable(${PROJECT_NAME} ${SOURCES} "${PROJECT_SOURCE_DIR}/source/main.cpp")
+add_executable(${PROJECT_NAME} "${PROJECT_SOURCE_DIR}/source/main.cpp")
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBRARY_NAME})

@@ -1,19 +1,16 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <vector>
 #include "Global.h"
-#include "FrameBuffer.h"
 #include "Rasterizer.h"
 #include "Raytracer.h"
-#include "SceneObject.h"
-#include "Model.h"
-#include "RenderState.h"
 
 namespace BasicRenderer
 {
-	class Ray;
-	class Hitable;
+	class FrameBuffer;
+	struct RenderState;
 
 	class Renderer
 	{
