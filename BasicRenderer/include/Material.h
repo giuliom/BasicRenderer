@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "Ray.h"
 #include "Vector3.h"
 #include "Primitive.h"
@@ -37,7 +38,7 @@ namespace BasicRenderer
 			float discriminant = 1.f - ni_nt * ni_nt * (1.f - dt * dt);
 			if (discriminant > 0.f)
 			{
-				refracted = (uv - normal * dt) * ni_nt - normal * sqrtf(discriminant);
+				refracted = (uv - normal * dt) * ni_nt - normal * std::sqrt(discriminant);
 				return true;
 			}
 			return false;

@@ -1,7 +1,6 @@
 #include "Global.h"
 #include "Camera.h"
 #include "PrimitiveTypes.h"
-#include "Ray.h"
 #include <cmath>
 
 namespace BasicRenderer
@@ -50,12 +49,5 @@ namespace BasicRenderer
 		m_projection.w4 = 0.f;
 
 		m_projection.z4 = -2.f * m_farClip * m_nearClip / (m_farClip - m_nearClip);
-	}
-
-	Ray Camera::GetCameraRay(const float u, const float v) const
-	{
-		// u,v come from Top-left coordinates
-		Vector3 direction = m_viewportUpperLeft + Vector3(u * m_viewportWidth, -v * m_viewportHeight, 0);
-		return Ray(m_transform.GetPosition(), (m_transform.GetMatrix() * (direction) - m_transform.GetPosition()).Normalize());
 	}
 }

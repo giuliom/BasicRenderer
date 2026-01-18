@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Transform.h"
+#include "Ray.h"
 
 namespace BasicRenderer
 {
@@ -46,7 +47,12 @@ namespace BasicRenderer
 		inline float GetMovementSpeed() const { return m_movementSpeed; }
 		inline float GetRotationSpeed() const { return m_rotationSpeed; }
 
-		Ray GetCameraRay(const float u, const float v) const;
+		Ray GetCameraRay(const float u, const float v) const
+		{
+			// u,v come from Top-left coordinates
+			Vector3 direction = m_viewportUpperLeft + Vector3(u * m_viewportWidth, -v * m_viewportHeight, 0);
+			return Ray(m_transform.GetPosition(), m_transform.GetMatrix() * (direction) - m_transform.GetPosition());
+		}
 
 	protected:
 		void UpdateProjection();

@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <thread>
+#include <chrono>
 #include "Raytracer.h"
 #include "BasicRenderer.h"
 #include "FrameBuffer.h"
@@ -13,17 +14,15 @@
 
 namespace BasicRenderer
 {
-	// Mutexes
-	
-	std::mutex Raytracer::m_progressMtx;
 
 
 	void Raytracer::Render(FrameBuffer& fBuffer, const RenderState& state, const ShadingFunc& Shading)
 	{
 		m_fBuffer = &fBuffer;
 		m_shadingFunc = Shading;
-		m_progress = 0.f;
 		m_pixelSamples = std::max(1u, m_pixelSamples);
+		m_pixelsRendered = 0u;
+		m_totalPixels = static_cast<uint64_t>(fBuffer.GetWidth()) * static_cast<uint64_t>(fBuffer.GetHeight());
 
 		std::vector<std::thread> renderThreads;
 		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u;
@@ -45,6 +44,20 @@ namespace BasicRenderer
 			auto thread = std::thread(&Raytracer::RenderJob, this, std::cref(state), startRowIndex, endRowIndex);
 			renderThreads.push_back(std::move(thread));
 		}
+
+#if !LIB_DEBUG && !LIB_RELEASE
+		while (true)
+		{
+			const uint64_t rendered = m_pixelsRendered.load(std::memory_order_relaxed);
+			if (rendered >= m_totalPixels)
+			{
+				break;
+			}
+			const uint32_t percent = static_cast<uint32_t>((rendered * 100u) / m_totalPixels);
+			std::cout << "Progress: " << percent << "% \r";
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
+#endif
 
 		for (auto& t : renderThreads)
 		{
@@ -71,8 +84,6 @@ namespace BasicRenderer
 		const float inverseHeight = 1.0f / fheight;
 		const float fInversePixelSamples = 1.0f / static_cast<float>(m_pixelSamples);
 
-		const float pixelPctg =  100.f / (fheight * fwidth);
-
 		std::vector<const BVHnode*> dfsStack;
 		dfsStack.reserve(state.GetAccelerationStructure().LevelsCount());
 
@@ -90,7 +101,6 @@ namespace BasicRenderer
 					const float v = (static_cast<float>(y) + 0.5f + jitterY) * inverseHeight;
 
 					Ray r = camera.GetCameraRay(u, v);
-					r.direction = r.direction.Normalize();
 					c = c + RayTrace(r, state, dfsStack, m_shadingFunc);
 				}
 
@@ -100,13 +110,11 @@ namespace BasicRenderer
 				c.b = std::min(c.b, 1.f);
 
 				fBuffer.WriteToColor(y * width + x, c);
+			}
 
 #if !LIB_DEBUG && !LIB_RELEASE
-				std::scoped_lock<std::mutex> lock(m_progressMtx);
-				m_progress = m_progress + pixelPctg;
-				std::cout << "Progress: " << static_cast<uint>(std::roundf(m_progress)) << "% \r";
+				m_pixelsRendered.fetch_add(static_cast<uint64_t>(width), std::memory_order_relaxed);
 #endif
-			}
 		}
 	}
 

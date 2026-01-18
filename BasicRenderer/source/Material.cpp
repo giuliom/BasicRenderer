@@ -1,6 +1,7 @@
 #include "Global.h"
 #include "Material.h"
 #include "PrimitiveTypes.h"
+#include <cmath>
 
 namespace BasicRenderer
 {
@@ -24,14 +25,14 @@ namespace BasicRenderer
 	Vector3 UniformSampleInHemisphere(const Vector3& normal)
 	{
 		const Vector3 nt = std::fabs(normal.x) > std::fabs(normal.y) 
-			? Vector3(normal.z, 0.f, -normal.x) / sqrtf(normal.x * normal.x + normal.z * normal.z)
-			: Vector3(0.f, -normal.z, normal.y) / sqrtf(normal.y * normal.y + normal.z * normal.z);
+			? Vector3(normal.z, 0.f, -normal.x) / std::sqrt(normal.x * normal.x + normal.z * normal.z)
+			: Vector3(0.f, -normal.z, normal.y) / std::sqrt(normal.y * normal.y + normal.z * normal.z);
 
 		const Vector3 nb = Vector3::CrossProduct(normal, nt);
 
 		const float r1 = UniformDist();
 		const float r2 = UniformDist();
-		const float sinTheta = sqrtf(1.f - r1 * r1);
+		const float sinTheta = std::sqrt(1.f - r1 * r1);
 		const float phi = TWO_PI * r2;
 		const float x = sinTheta * cosf(phi);
 		const float z = sinTheta * sinf(phi);

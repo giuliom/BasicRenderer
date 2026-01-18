@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Global.h"
-#include <mutex>
 #include <atomic>
 #include "RenderSystem.h"
 #include "Vertex.h"
@@ -30,8 +29,8 @@ namespace BasicRenderer
 		
 	protected:
 
-		std::atomic<float> m_progress = 0.f;
-		static std::mutex m_progressMtx;
+		std::atomic<uint64_t> m_pixelsRendered = 0u;
+		uint64_t m_totalPixels = 0u;
 
 		void RenderJob(const RenderState& state, const uint startRowIndex, const uint endRowIndex);
 		Color RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& shading);

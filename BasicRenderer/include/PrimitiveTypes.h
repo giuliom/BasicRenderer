@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
@@ -39,10 +40,10 @@ namespace BasicRenderer
 			const float b = Vector3::Dot(oc, r.direction);
 			const float c = Vector3::Dot(oc, oc) - m_radius * m_radius;
 			const float discriminant = b * b - a * c;
-			const float sqDiscr = sqrtf(discriminant);
 
 			if (discriminant > 0.f)
 			{
+				const float sqDiscr = std::sqrt(discriminant);
 				float temp = (-b - sqDiscr) / a;
 				if (temp > tMin && temp < tMax)
 				{

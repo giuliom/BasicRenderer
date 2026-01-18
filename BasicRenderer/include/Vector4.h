@@ -26,7 +26,7 @@ namespace BasicRenderer
 			return Vector4(x * l, y * l, z * l, w * l);
 		}
 
-		inline float Length() const { return sqrtf((x * x) + (y * y) + (z * z) + (w * w)); }
+		inline float Length() const { return std::sqrt((x * x) + (y * y) + (z * z) + (w * w)); }
 
 		Vector4& operator=(const Vector4& v);
 		Vector4& operator=(Vector4&& v);

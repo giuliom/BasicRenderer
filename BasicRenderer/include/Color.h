@@ -27,7 +27,7 @@ namespace BasicRenderer
 			return (*this) * l;
 		}
 
-		inline float Length() const { return sqrtf((r * r) + (g * g) + (b * b)); }
+		inline float Length() const { return std::sqrt((r * r) + (g * g) + (b * b)); }
 		inline float SquaredLength() const { return (r * r) + (g * g) + (b * b); }
 
 		Color& operator=(const Color& v);
