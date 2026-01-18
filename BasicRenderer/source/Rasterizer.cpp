@@ -45,15 +45,15 @@ namespace BasicRenderer
 
 			ToMatrixSpace(f, mvp);
 
-			PerspectiveDivide(f);
-			NormalizedToScreenSpace(f, fwidth, fheight);
-
 			Face clippedFaces[4];
 			uint nClippedFaces = Clip(f, clippedFaces);
 
 			for (uint j = 0u; j < nClippedFaces; j++)
 			{
 				f = clippedFaces[j];
+
+				PerspectiveDivide(f);
+				NormalizedToScreenSpace(f, fwidth, fheight);
 
 				if (CullFace(f)) continue;
 
@@ -185,7 +185,7 @@ namespace BasicRenderer
 
 		if (!v0Inside && !v1Inside)
 		{
-			return 0;
+			return size;
 		}
 		else if (v0Inside != v1Inside)
 		{
@@ -205,7 +205,7 @@ namespace BasicRenderer
 			}
 		}
 
-		if ((size == 0 || !(vertices[size - 1] != n_v0)) && size < 5)
+		if ((size == 0 || vertices[size - 1] != n_v0) && size < 5)
 		{
 			vertices[size] = n_v0;
 			++size;
