@@ -129,10 +129,11 @@ namespace BasicRenderer
 		Ray iterationRay = ray;
 		Color throughput = { 1.f, 1.f, 1.f };
 		Color resultRadiance = { 0.f, 0.f, 0.f };
+		const AccelerationStructure& acc = state.GetAccelerationStructure();
 
 		do
 		{
-			if ((hitObject = Raycast(state.GetAccelerationStructure(), iterationRay, 0.0001f, 999999.99f, dfsStack, hitPosition, hitNormal)) != nullptr)
+			if ((hitObject = Raycast(acc, iterationRay, 0.0001f, 999999.99f, dfsStack, hitPosition, hitNormal)) != nullptr)
 			{
 				const Material* material = hitObject->GetMaterial();
 
@@ -166,13 +167,13 @@ namespace BasicRenderer
 						{
 							outNormal = hitNormal * -1.f;
 							ni_nt = mat.refractiveIndex;
-							cos = (dotResult * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
+							cos = dotResult * mat.refractiveIndex;
 						}
 						else
 						{
 							outNormal = hitNormal;
 							ni_nt = 1.f / mat.refractiveIndex;
-							cos = -(dotResult); // / rayIn.direction.Length(); == 1.f
+							cos = -dotResult;
 						}
 
 						if (Material::Refract(iterationRay, outNormal, ni_nt, refracted))
@@ -199,8 +200,7 @@ namespace BasicRenderer
 
 					default:
 					{
-						Vector3 target = hitPosition + UniformSampleInHemisphere(hitNormal);
-						iterationRay = Ray(hitPosition, target - hitPosition);
+						iterationRay = Ray(hitPosition, UniformSampleInHemisphere(hitNormal));
 						success = true;
 					}
 					break;
