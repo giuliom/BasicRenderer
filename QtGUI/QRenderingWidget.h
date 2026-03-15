@@ -4,6 +4,7 @@
 #include <qopenglwidget.h>
 #include <QTimer>
 #include <mutex>
+#include "Model.h"
 #include "BasicRenderer.h"
 
 using namespace BasicRenderer;

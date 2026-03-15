@@ -283,44 +283,6 @@
     <Image Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="header\AccelerationStructure.h" />
-    <ClInclude Include="header\BasicRenderer.h" />
-    <ClInclude Include="header\Camera.h" />
-    <ClInclude Include="header\DirectionalLight.h" />
-    <ClInclude Include="header\Face.h" />
-    <ClInclude Include="header\FrameBuffer.h" />
-    <ClInclude Include="header\Global.h" />
-    <ClInclude Include="header\ImageExporter.h" />
-    <ClInclude Include="header\ImageFormats.h" />
-    <ClInclude Include="header\InputEvent.h" />
-    <ClInclude Include="header\InputManager.h" />
-    <ClInclude Include="header\Material.h" />
-    <ClInclude Include="header\Matrix4.h" />
-    <ClInclude Include="header\Mesh.h" />
-    <ClInclude Include="header\MeshInstance.h" />
-    <ClInclude Include="header\Model.h" />
-    <ClInclude Include="header\ObjLoader.h" />
-    <ClInclude Include="header\PathUtils.h" />
-    <ClInclude Include="header\PointLight.h" />
-    <ClInclude Include="header\Primitive.h" />
-    <ClInclude Include="header\PrimitiveTypes.h" />
-    <ClInclude Include="header\Rasterizer.h" />
-    <ClInclude Include="header\Ray.h" />
-    <ClInclude Include="header\Raytracer.h" />
-    <ClInclude Include="header\RenderState.h" />
-    <ClInclude Include="header\RenderSystem.h" />
-    <ClInclude Include="header\resource.h" />
-    <ClInclude Include="header\SceneObject.h" />
-    <ClInclude Include="header\TestScene.h" />
-    <ClInclude Include="header\Transform.h" />
-    <ClInclude Include="header\Vector2.h" />
-    <ClInclude Include="header\Vector3.h" />
-    <ClInclude Include="header\Vector4.h" />
-    <ClInclude Include="header\Vertex.h" />
-    <ClInclude Include="header\World.h" />
-    <ClInclude Include="include\Color.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="source\AccelerationStructure.cpp" />
     <ClCompile Include="source\BasicRenderer.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -356,6 +318,44 @@
     <ClCompile Include="source\Vector4.cpp" />
     <ClCompile Include="source\Vertex.cpp" />
     <ClCompile Include="source\World.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\AccelerationStructure.h" />
+    <ClInclude Include="include\BasicRenderer.h" />
+    <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\Color.h" />
+    <ClInclude Include="include\DirectionalLight.h" />
+    <ClInclude Include="include\Face.h" />
+    <ClInclude Include="include\FrameBuffer.h" />
+    <ClInclude Include="include\Global.h" />
+    <ClInclude Include="include\ImageExporter.h" />
+    <ClInclude Include="include\ImageFormats.h" />
+    <ClInclude Include="include\InputEvent.h" />
+    <ClInclude Include="include\InputManager.h" />
+    <ClInclude Include="include\Material.h" />
+    <ClInclude Include="include\Matrix4.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\MeshInstance.h" />
+    <ClInclude Include="include\Model.h" />
+    <ClInclude Include="include\ObjLoader.h" />
+    <ClInclude Include="include\PathUtils.h" />
+    <ClInclude Include="include\PointLight.h" />
+    <ClInclude Include="include\Primitive.h" />
+    <ClInclude Include="include\PrimitiveTypes.h" />
+    <ClInclude Include="include\Rasterizer.h" />
+    <ClInclude Include="include\Ray.h" />
+    <ClInclude Include="include\Raytracer.h" />
+    <ClInclude Include="include\RenderState.h" />
+    <ClInclude Include="include\RenderSystem.h" />
+    <ClInclude Include="include\resource.h" />
+    <ClInclude Include="include\SceneObject.h" />
+    <ClInclude Include="include\TestScene.h" />
+    <ClInclude Include="include\Transform.h" />
+    <ClInclude Include="include\Vector2.h" />
+    <ClInclude Include="include\Vector3.h" />
+    <ClInclude Include="include\Vector4.h" />
+    <ClInclude Include="include\Vertex.h" />
+    <ClInclude Include="include\World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
