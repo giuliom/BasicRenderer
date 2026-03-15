@@ -31,14 +31,14 @@ namespace BasicRenderer
 
 		Material(const Color& base, Type type = Type::DIFFUSE) : type(type), baseColor(base) {}
 
-		static inline bool Refract(const Vector3& v, const Vector3& normal, float ni_nt, Vector3& refracted)
+		// Ray directions are always normalized
+		static inline bool Refract(const Ray& r, const Vector3& normal, float ni_nt, Vector3& refracted)
 		{
-			Vector3 uv = v.Normalize();
-			float dt = Vector3::Dot(uv, normal);
+			float dt = Vector3::Dot(r.GetDirection(), normal);
 			float discriminant = 1.f - ni_nt * ni_nt * (1.f - dt * dt);
 			if (discriminant > 0.f)
 			{
-				refracted = (uv - normal * dt) * ni_nt - normal * std::sqrt(discriminant);
+				refracted = (r.GetDirection() - normal * dt) * ni_nt - normal * std::sqrt(discriminant);
 				return true;
 			}
 			return false;

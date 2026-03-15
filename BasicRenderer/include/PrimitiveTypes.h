@@ -35,9 +35,9 @@ namespace BasicRenderer
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
-			const Vector3 oc = r.origin - m_pos;
-			const float a = Vector3::Dot(r.direction, r.direction);
-			const float b = Vector3::Dot(oc, r.direction);
+			const Vector3 oc = r.GetOrigin() - m_pos;
+			const float a = Vector3::Dot(r.GetDirection(), r.GetDirection());
+			const float b = Vector3::Dot(oc, r.GetDirection());
 			const float c = Vector3::Dot(oc, oc) - m_radius * m_radius;
 			const float discriminant = b * b - a * c;
 
@@ -82,11 +82,11 @@ namespace BasicRenderer
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
-			const float div = Vector3::Dot(m_normal, r.direction);
+			const float div = Vector3::Dot(m_normal, r.GetDirection());
 
 			if (abs(div) > 0.0001f)
 			{
-				float t = Vector3::Dot(m_centre - r.origin, m_normal) / div;
+				float t = Vector3::Dot(m_centre - r.GetOrigin(), m_normal) / div;
 
 				if (t >= tMin && t <= tMax)
 				{

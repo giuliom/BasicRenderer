@@ -20,7 +20,6 @@ namespace BasicRenderer
 		Face(const Position& p0, const Position& p1, const Position& p2, const Face& face);
 		Face(const Face& f) : v0(f.v0), v1(f.v1), v2(f.v2), normal(f.normal) {}
 		Face(Face&& f) noexcept : v0(f.v0), v1(f.v1), v2(f.v2), normal(f.normal) {}
-		virtual ~Face() {}
 
 		Face& operator=(const Face& f);
 		Face& operator=(Face&& f);
@@ -36,12 +35,12 @@ namespace BasicRenderer
 		f.normal = CalculateNormal(f);
 	}
 
-	//M�ller�Trumbore intersection algorithm
+	//Moller-Trumbore intersection algorithm
 	inline bool Intersection(const Face& face, const Ray& r, float tMin, float tMax, float& tHit)
 	{
 		const Vector3 edge1(face.v1.pos - face.v0.pos);
 		const Vector3 edge2(face.v2.pos - face.v0.pos);
-		const Vector3 h(Vector3::CrossProduct(r.direction, edge2));
+		const Vector3 h(Vector3::CrossProduct(r.GetDirection(), edge2));
 		const float a = Vector3::Dot(edge1, h);
 
 		if (a < EPSILON || std::abs(a) < EPSILON)
@@ -50,7 +49,7 @@ namespace BasicRenderer
 		}
 
 		const float f = 1.0f / a;
-		const Vector3 s(r.origin - face.v0.pos);
+		const Vector3 s(r.GetOrigin() - face.v0.pos);
 		const float u = f * Vector3::Dot(s, h);
 
 		if (u < 0.0f || u > 1.0f)
@@ -59,7 +58,7 @@ namespace BasicRenderer
 		}
 
 		const Vector3 q(Vector3::CrossProduct(s, edge1));
-		const float v = f * Vector3::Dot(r.direction, q);
+		const float v = f * Vector3::Dot(r.GetDirection(), q);
 
 		if (v < 0.0f || u + v > 1.0f)
 		{

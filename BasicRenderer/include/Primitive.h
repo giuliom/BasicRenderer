@@ -57,9 +57,9 @@ namespace BasicRenderer
 
 			// X axis
 			{
-				float t0 = (m_minimum.x - r.origin.x) * r.invDirection.x;
-				float t1 = (m_maximum.x - r.origin.x) * r.invDirection.x;
-				if (r.invDirection.x < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
+				float t0 = (m_minimum.x - r.GetOrigin().x) * r.GetInvDirection().x;
+				float t1 = (m_maximum.x - r.GetOrigin().x) * r.GetInvDirection().x;
+				if (r.GetInvDirection().x < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
 				float localtMin = t0 > tMin ? t0 : tMin;
 				float localtMax = t1 < tMax ? t1 : tMax;
 				if (localtMax < localtMin) return false;
@@ -67,9 +67,9 @@ namespace BasicRenderer
 
 			// Y axis
 			{
-				float t0 = (m_minimum.y - r.origin.y) * r.invDirection.y;
-				float t1 = (m_maximum.y - r.origin.y) * r.invDirection.y;
-				if (r.invDirection.y < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
+				float t0 = (m_minimum.y - r.GetOrigin().y) * r.GetInvDirection().y;
+				float t1 = (m_maximum.y - r.GetOrigin().y) * r.GetInvDirection().y;
+				if (r.GetInvDirection().y < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
 				float localtMin = t0 > tMin ? t0 : tMin;
 				float localtMax = t1 < tMax ? t1 : tMax;
 				if (localtMax < localtMin) return false;
@@ -77,9 +77,9 @@ namespace BasicRenderer
 
 			// Z axis
 			{
-				float t0 = (m_minimum.z - r.origin.z) * r.invDirection.z;
-				float t1 = (m_maximum.z - r.origin.z) * r.invDirection.z;
-				if (r.invDirection.z < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
+				float t0 = (m_minimum.z - r.GetOrigin().z) * r.GetInvDirection().z;
+				float t1 = (m_maximum.z - r.GetOrigin().z) * r.GetInvDirection().z;
+				if (r.GetInvDirection().z < 0.0f) { const float temp = t0; t0 = t1; t1 = temp; }
 				float localtMin = t0 > tMin ? t0 : tMin;
 				float localtMax = t1 < tMax ? t1 : tMax;
 				if (localtMax < localtMin) return false;

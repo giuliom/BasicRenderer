@@ -101,10 +101,10 @@ namespace BasicRenderer
 					const float v = (static_cast<float>(y) + 0.5f + jitterY) * inverseHeight;
 
 					Ray r = camera.GetCameraRay(u, v);
-					c = c + RayTrace(r, state, dfsStack, m_shadingFunc);
+					c += RayTrace(r, state, dfsStack, m_shadingFunc);
 				}
 
-				c = c * fInversePixelSamples;
+				c *= fInversePixelSamples;
 				c.r = std::min(c.r, 1.f);
 				c.g = std::min(c.g, 1.f);
 				c.b = std::min(c.b, 1.f);
@@ -146,34 +146,36 @@ namespace BasicRenderer
 					{
 					case Material::Type::METALLIC:
 					{
-						Vector3 reflected = Vector3::Reflect(iterationRay.direction, hitNormal);
+						Vector3 reflected = Vector3::Reflect(iterationRay.GetDirection(), hitNormal);
 						iterationRay = Ray(hitPosition, reflected + UniformSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
-						success = (Vector3::Dot(iterationRay.direction, hitNormal) > 0);
+						success = (Vector3::Dot(iterationRay.GetDirection(), hitNormal) > 0);
 					}
 					break;
 
 					case Material::Type::DIELECTRIC:
 					{
 						Vector3 outNormal;
-						Vector3 reflected = Vector3::Reflect(iterationRay.direction, hitNormal);
+						Vector3 reflected = Vector3::Reflect(iterationRay.GetDirection(), hitNormal);
 						float ni_nt;
 						Vector3 refracted;
 						float reflectionProb;
 						float cos;
-						if (Vector3::Dot(iterationRay.direction, hitNormal) > 0.f)
+						const auto dotResult = Vector3::Dot(iterationRay.GetDirection(), hitNormal);
+
+						if (dotResult > 0.f)
 						{
 							outNormal = hitNormal * -1.f;
 							ni_nt = mat.refractiveIndex;
-							cos = (Vector3::Dot(iterationRay.direction, hitNormal) * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
+							cos = (dotResult * mat.refractiveIndex); // / rayIn.direction.Length(); == 1.f
 						}
 						else
 						{
 							outNormal = hitNormal;
 							ni_nt = 1.f / mat.refractiveIndex;
-							cos = -(Vector3::Dot(iterationRay.direction, hitNormal)); // / rayIn.direction.Length(); == 1.f
+							cos = -(dotResult); // / rayIn.direction.Length(); == 1.f
 						}
 
-						if (Material::Refract(iterationRay.direction, outNormal, ni_nt, refracted))
+						if (Material::Refract(iterationRay, outNormal, ni_nt, refracted))
 						{
 							reflectionProb = Material::Schlick(cos, mat.refractiveIndex);
 						}
