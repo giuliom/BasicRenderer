@@ -5,6 +5,12 @@ project(BasicRenderer)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    add_compile_options(-march=native -ffast-math)
+elseif(MSVC)
+    add_compile_options(/fp:fast)
+endif()
+
 # Output directories for all configurations
 set(PROJECT_ROOT_DIR ${CMAKE_SOURCE_DIR}/..)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_ROOT_DIR}/build/bin)

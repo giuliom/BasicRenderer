@@ -53,7 +53,10 @@ namespace BasicRenderer
 		{
 			float r0 = (1.f - refractiveIndex) / (1.f + refractiveIndex);
 			r0 *= r0;
-			return r0 + (1.f - r0) * powf(1.f - cos, 5.f);
+			const float x = 1.f - cos;
+			const float x2 = x * x;
+			const float x5 = x2 * x2 * x;
+			return r0 + (1.f - r0) * x5;
 		}
 	};
 

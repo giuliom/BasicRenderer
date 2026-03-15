@@ -28,14 +28,11 @@ namespace BasicRenderer
 			for (uint i = 0; i < numFaces; i++)
 			{
 				const Face& f = m_faces[i];
-				if (Intersection(f, r, tMin, tMax, test))
+				if (Intersection(f, r, tMin, outHit.t, test))
 				{
 					hit = true;
-					if (test < outHit.t)
-					{
-						outHit.t = test;
-						outHit.normal = f.normal;
-					}
+					outHit.t = test;
+					outHit.normal = f.normal;
 				}
 			}
 
