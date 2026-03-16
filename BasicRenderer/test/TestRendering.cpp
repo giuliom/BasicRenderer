@@ -7,9 +7,9 @@
 
 using namespace BasicRenderer;
 
-World* TestScene()
+std::unique_ptr<World> TestScene()
 {
-	World* scene = new World();
+	auto scene = std::make_unique<World>();
 
 	scene->GetSun().SetDirection({ 0.5f, -1.0f, -1.0f });
 	scene->GetSun().intensity = 1.f;
@@ -44,7 +44,6 @@ World* TestScene()
 
 	return scene;
 }
-
 
 TEST(SUITE_NAME, Raytracer)
 {
