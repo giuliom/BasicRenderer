@@ -10,6 +10,7 @@
 #include "ImageExporter.h"
 #include "Material.h"
 #include "SceneLoader.h"
+#include "PathUtils.h"
 
 QRenderingWidget::QRenderingWidget(QWidget* parent) 
 	: QOpenGLWidget(parent)
