@@ -13,6 +13,7 @@
 #include "Material.h"
 #include "ImageExporter.h"
 #include "TestScene.h"
+#include "SceneLoader.h"
 
 #if !LIB_DEBUG && !LIB_RELEASE
 
@@ -20,7 +21,7 @@ using namespace BasicRenderer;
 
 int main(int argc, char *argv[])
 {
-	std::string file = GetAssetPath("bunny.obj");
+	std::string sceneFile = GetAssetPath("scenes/cornell_box.json");
 
 	int width = 1280;
 	int height = 720;
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
 		}
 		else if (std::strcmp(argv[an], "-f") == 0)
 		{
-			file = argv[an + 1];
+			sceneFile = argv[an + 1];
 		}
 		else if (std::strcmp(argv[an], "-p") == 0)
 		{
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
 
 	std::cout << "\n----- PARAMETERS -----" << std::endl;
 	std::cout << "Output: " + outputPath + fileName + ".bmp" << std::endl;
-	std::cout << "Input: " + file << std::endl;
+	std::cout << "Input: " + sceneFile << std::endl;
 	std::cout << "Width: " << width << std::endl;
 	std::cout << "Height: " << height << std::endl;
 	std::cout << "Rendering: " + renderingModeName << std::endl;
@@ -120,11 +121,17 @@ int main(int argc, char *argv[])
 	std::cout << "Pixel Samples: " << pixelSamples << std::endl;
 	std::cout << "Max Bounces: " << maxBounces << std::endl;
 
-	std::cout << "\n----- RENDERING -----\n"<<std::endl;
+	std::cout << "\n----- RENDERING -----"<<std::endl;
 
 	
 	Renderer renderer;
-	std::unique_ptr<Model> model = std::make_unique<Model>(TestScene());
+	std::unique_ptr<World> scene = SceneLoader::LoadFromFile(sceneFile);
+	if (!scene)
+	{
+		std::cerr << "Failed to load scene from file: " << sceneFile << std::endl;
+		return 1;
+	}
+	std::unique_ptr<Model> model = std::make_unique<Model>(std::move(scene));
 
 	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
 	model->Update(model->UpdateTime());

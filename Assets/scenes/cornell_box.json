@@ -1,0 +1,179 @@
+{
+    "environment": {
+        "sun": {
+            "direction": [0.5, -1.0, -1.0],
+            "intensity": 1.0
+        },
+        "ambientLightIntensity": 0.1,
+        "ambientLightColor": [0.529, 0.808, 0.922]
+    },
+
+    "camera": {
+        "position": [0.0, 0.0, 4.0]
+    },
+
+    "materials": {
+        "emissive": {
+            "baseColor": [1.0, 1.0, 1.0],
+            "emissive": 10.0
+        },
+        "white": {
+            "baseColor": [1.0, 1.0, 1.0]
+        },
+        "red": {
+            "baseColor": [1.0, 0.0, 0.0]
+        },
+        "green": {
+            "baseColor": [0.0, 1.0, 0.0]
+        },
+        "blue": {
+            "baseColor": [0.0, 0.1, 1.0]
+        },
+        "silver": {
+            "baseColor": [0.972, 0.960, 0.915],
+            "type": "metallic",
+            "metallic": 1.0
+        },
+        "copper": {
+            "baseColor": [0.955, 0.637, 0.538]
+        },
+        "gold": {
+            "baseColor": [1.0, 0.766, 0.336],
+            "type": "metallic",
+            "metallic": 0.5
+        },
+        "chromium": {
+            "baseColor": [0.550, 0.556, 0.554],
+            "type": "dielectric"
+        }
+    },
+
+    "meshes": {
+        "bunny":  { "file": "bunny.obj" },
+        "teapot": { "file": "teapot.obj" },
+        "cube":   { "file": "cube.obj" },
+        "quad":   { "file": "quad.obj" }
+    },
+
+    "objects": [
+        {
+            "name": "Spere",
+            "primitive": "sphere",
+            "position": [-1.0, -1.0, 0.8],
+            "radius": 0.6,
+            "material": "silver"
+        },
+        {
+            "name": "Floor",
+            "mesh": "quad",
+            "material": "white",
+            "transform": {
+                "position": [0.0, -2.0, 0.0],
+                "rotation": [-90.0, 0.0, 0.0],
+                "scale": [4.0, 4.0, 4.0]
+            }
+        },
+        {
+            "name": "Ceiling",
+            "mesh": "quad",
+            "material": "white",
+            "transform": {
+                "position": [0.0, 2.0, 0.0],
+                "rotation": [90.0, 0.0, 0.0],
+                "scale": [4.0, 4.0, 4.0]
+            }
+        },
+        {
+            "name": "Back",
+            "mesh": "quad",
+            "material": "white",
+            "transform": {
+                "position": [0.0, 0.0, -2.0],
+                "rotation": [0.0, 0.0, 0.0],
+                "scale": [4.0, 4.0, 4.0]
+            }
+        },
+        {
+            "name": "Front",
+            "mesh": "quad",
+            "material": "white",
+            "transform": {
+                "position": [0.0, 0.0, 2.0],
+                "rotation": [0.0, 180.0, 0.0],
+                "scale": [4.0, 4.0, 4.0]
+            }
+        },
+        {
+            "name": "Left",
+            "mesh": "quad",
+            "material": "red",
+            "transform": {
+                "position": [-2.0, 0.0, 0.0],
+                "rotation": [0.0, 90.0, 0.0],
+                "scale": [4.0, 4.0, 4.0]
+            }
+        },
+        {
+            "name": "Right",
+            "mesh": "quad",
+            "material": "green",
+            "transform": {
+                "position": [2.0, 0.0, 0.0],
+                "rotation": [0.0, -90.0, 0.0],
+                "scale": [4.0, 4.0, 4.0]
+            }
+        },
+        {
+            "name": "Light",
+            "mesh": "quad",
+            "material": "emissive",
+            "transform": {
+                "position": [0.0, 1.95, 0.0],
+                "rotation": [90.0, 0.0, 0.0],
+                "scale": [1.2, 1.2, 1.2]
+            }
+        },
+        {
+            "name": "Cube",
+            "mesh": "cube",
+            "material": "white",
+            "transform": {
+                "position": [-0.72, -0.6, -1.2],
+                "rotation": [0.0, 115.0, 0.0],
+                "scale": [1.2, 2.8, 1.2]
+            }
+        },
+        {
+            "name": "Cube2",
+            "mesh": "cube",
+            "material": "white",
+            "transform": {
+                "position": [1.0, -1.5, -1.0],
+                "rotation": [0.0, -25.0, 0.0],
+                "scale": [1.0, 1.0, 1.0]
+            }
+        },
+        {
+            "name": "Teapot",
+            "mesh": "teapot",
+            "material": "copper",
+            "enabled": false,
+            "transform": {
+                "position": [0.7, -1.7,-0.2],
+                "rotation": [0.0, 30.0, 0.0],
+                "scale": [0.4, 0.4, 0.4]
+            }
+        },
+        {
+            "name": "Bunny",
+            "mesh": "bunny",
+            "material": "gold",
+            "visible": false,
+            "transform": {
+                "position": [1.0, -2.4, -0.2],
+                "rotation": [0.0, 0.0, 0.0],
+                "scale": [12.0, 12.0, 12.0]
+            }
+        }
+    ]
+}

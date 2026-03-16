@@ -30,7 +30,7 @@ namespace BasicRenderer
 		const uint rowsPerThread = rowCount / threadCount;
 		const uint remainderRows = rowCount % threadCount;
 
-		std::cout << "\nRendering with " << threadCount << " threads\n";
+		std::cout << "Rendering with " << threadCount << " threads\n";
 		std::cout << "Progress: " << 0u << "% \r";
 
 		uint currentRow = 0u;

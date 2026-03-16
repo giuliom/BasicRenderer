@@ -34,6 +34,9 @@ The project root folder contains a BasicRenderer.sln Visual Studio file but this
   - The executable `BasicRenderer`
   - The Google Test executable `BasicRendererTest`
 
+### Scene File Format
+Support for a very simple json base scene file format is provided, see the scene included in the assets folder for an example
+
 ### QtGUI
 Due to time constraints this project only supports Windows
 - Install Qt 5.15.0

@@ -164,8 +164,6 @@ namespace BasicRenderer
 			faces.push_back(f);
 		}
 
-		std::cout << "Loaded .obj file: " << path_name_extension << std::endl;
-
 		file.close();
 
 		return new Mesh((int)vertices.size(), vertices.data(), (int)faces.size(), faces.data()); ;

@@ -24,6 +24,16 @@ include(FetchContent)
 cmake_policy(SET CMP0135 NEW)
 
 
+# ------ nlohmann/json ----- #
+
+FetchContent_Declare(
+  json
+  GIT_REPOSITORY https://github.com/nlohmann/json.git
+  GIT_TAG        v3.11.3
+)
+FetchContent_MakeAvailable(json)
+
+
 # ------ BasicRenderer Library ----- #
 
 set (LIBRARY_NAME BasicRendererLib)
@@ -33,6 +43,11 @@ list(REMOVE_ITEM SOURCES "${PROJECT_SOURCE_DIR}/source/main.cpp")
 add_library(${LIBRARY_NAME} STATIC ${SOURCES})
 set_target_properties(${LIBRARY_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(${LIBRARY_NAME} PUBLIC nlohmann_json::nlohmann_json)
+
+# Suppress warnings from nlohmann/json headers (e.g. -ffast-math vs infinity)
+get_target_property(JSON_INCLUDE_DIRS nlohmann_json::nlohmann_json INTERFACE_INCLUDE_DIRECTORIES)
+target_include_directories(${LIBRARY_NAME} SYSTEM PUBLIC ${JSON_INCLUDE_DIRS})
 
 # Set the library version (optional)
 set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION 1.0 SOVERSION 1)

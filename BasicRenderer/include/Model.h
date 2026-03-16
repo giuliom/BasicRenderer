@@ -20,7 +20,7 @@ namespace BasicRenderer
 
 	public:
 
-		Model(World* scene) : m_scene(scene), m_inputMgr() {}
+		Model(std::unique_ptr<World> scene) : m_scene(std::move(scene)), m_inputMgr() {}
 		Model(const Model& other) = delete;
 		virtual ~Model();
 
