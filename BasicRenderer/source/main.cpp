@@ -2,7 +2,6 @@
 #include <iostream>
 #include <chrono>
 #include <string>
-#include <cstring>
 #include <iomanip>
 #include "Global.h"
 #include "PathUtils.h"
@@ -13,6 +12,7 @@
 #include "Material.h"
 #include "ImageExporter.h"
 #include "SceneLoader.h"
+#include <argvnaut.h>
 
 #if !LIB_DEBUG && !LIB_RELEASE
 
@@ -20,93 +20,63 @@ using namespace BasicRenderer;
 
 int main(int argc, char *argv[])
 {
-	std::string sceneFile = GetAssetPath("scenes/cornell_box.json");
+	ArgvNaut::Parser parser("BasicRenderer");
 
-	int width = 1280;
-	int height = 720;
+	parser.addFlag("help", "h");
+	parser.addOption("width", "w", ArgvNaut::OptionType::INTEGER, "1280");
+	parser.addOption("height", "e", ArgvNaut::OptionType::INTEGER, "720");
+	parser.addOption("output", "o", ArgvNaut::OptionType::STRING, "");
+	parser.addOption("rendering", "r", ArgvNaut::OptionType::STRING, "raytracer");
+	parser.addOption("shading", "s", ArgvNaut::OptionType::STRING, "lit");
+	parser.addOption("file", "f", ArgvNaut::OptionType::STRING, "");
+	parser.addOption("samples", "p", ArgvNaut::OptionType::INTEGER, "4");
+	parser.addOption("bounces", "b", ArgvNaut::OptionType::INTEGER, "3");
 
-	int pixelSamples = 4;
-	int maxBounces = 3;
+	if (!parser.parse(argc, const_cast<const char**>(argv)))
+	{
+		std::cerr << "Error: invalid arguments. Use --help for usage information." << std::endl;
+		return 1;
+	}
 
-	std::string outputPath = GetProjectRootDirectory() + "/output/";
+	if (parser.getFlag("help"))
+	{
+		std::cout << "\n*** Basic Renderer ***\n\nThe following options are available:" << std::endl << std::endl
+		<< "-o, --output    output image name and path" << std::endl
+		<< "-f, --file      input scene file name and path" << std::endl
+		<< "-w, --width     output image width" << std::endl
+		<< "-e, --height    output image height" << std::endl
+		<< "-r, --rendering rendering mode [rasterizer, raytracer]" << std::endl
+		<< "-s, --shading   shading mode [lit, normal]" << std::endl
+		<< "-p, --samples   pixel samples" << std::endl
+		<< "-b, --bounces   max bounces" << std::endl
+		<< std::endl;
+		return 0;
+	}
 
-	std::string renderingModeName = "raytracer";
-	std::string shadingModeName = "lit";
+	int width = parser.getInt("width").value_or(1280);
+	int height = parser.getInt("height").value_or(720);
+	int pixelSamples = parser.getInt("samples").value_or(4);
+	int maxBounces = parser.getInt("bounces").value_or(3);
+
+	std::string sceneFile = parser.getString("file").value_or("");
+	if (sceneFile.empty())
+		sceneFile = GetAssetPath("scenes/cornell_box.json");
+
+	std::string outputPath = parser.getString("output").value_or("");
+	if (outputPath.empty())
+		outputPath = GetProjectRootDirectory() + "/output/";
+
+	std::string renderingModeName = parser.getString("rendering").value_or("raytracer");
+	std::string shadingModeName = parser.getString("shading").value_or("lit");
 
 	Renderer::RenderingMode renderingMode = Renderer::RenderingMode::RAYTRACER;
 	Renderer::ShadingMode shadingMode = Renderer::ShadingMode::LIT;
 
-	for (int an = 1; an < argc; ++an)
-	{
-		if (std::strcmp(argv[an], "help") == 0)
-		{
-			std::cout << "\n*** Basic Renderer ***\n\nThe following options are available:" << std::endl << std::endl
-			<< "-n output image name and path" << std::endl
-			<< "-f input obj file name and path" << std::endl
-			<< "-w output image width" << std::endl
-			<< "-h output image height" << std::endl
-			<< "-r rendering mode [rasterizer, raytracer]" << std::endl
-			<< "-s shading mode [lit, normal]" << std::endl
-			<< "-p pixel samples" << std::endl 
-			<< "-b max bounces" << std::endl
-			<< std::endl;
-			std::cin.get();
-			return 0;
-		}
-	}
+	if (renderingModeName == "rasterizer")
+		renderingMode = Renderer::RenderingMode::RASTERIZER;
 
-	for (int an = 1; an < argc -1;)
-	{
-		if (std::strcmp(argv[an], "-w") == 0)
-		{
-			width = atoi(argv[an + 1]);
-		}
-		else if (std::strcmp(argv[an], "-h") == 0)
-		{
-			height = atoi(argv[an + 1]);
-		}
-		else if (std::strcmp(argv[an], "-n") == 0)
-		{
-			outputPath = argv[an + 1];
-		}
-		else if (std::strcmp(argv[an], "-r") == 0)
-		{	
-			if (std::strcmp(argv[an + 1], "rasterizer") == 0)
-			{
-				renderingModeName = argv[an + 1];
-				renderingMode = Renderer::RenderingMode::RASTERIZER;
-			}	
-		}
-		else if (std::strcmp(argv[an], "-s") == 0)
-		{			
-			if (std::strcmp(argv[an + 1], "normal") == 0)
-			{
-				shadingModeName = argv[an + 1];
-				shadingMode = Renderer::ShadingMode::NORMAL;
-			}
-		}
-		else if (std::strcmp(argv[an], "-f") == 0)
-		{
-			sceneFile = argv[an + 1];
-		}
-		else if (std::strcmp(argv[an], "-p") == 0)
-		{
-			pixelSamples = atoi(argv[an + 1]);
-		}
-		else if (std::strcmp(argv[an], "-b") == 0)
-		{
-			maxBounces = atoi(argv[an + 1]);
-		}
-		else
-		{
-			if (std::strcmp(argv[an], "help") != 0) std::cout << std::string(argv[an]) + " is not valid.";
-			std::cout<< "Digit 'help' to show the available options" << std::endl;
-			std::cin.get();
-			return 0;
-		}
-
-		an += 2;
-	}
+	if (shadingModeName == "normal")
+		shadingMode = Renderer::ShadingMode::NORMAL;
 
 	const std::string fileName = Renderer::GenerateFilename("cmd", height, renderingMode, shadingMode, pixelSamples, maxBounces);
 
