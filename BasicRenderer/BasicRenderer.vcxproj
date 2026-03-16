@@ -311,7 +311,6 @@
     <ClCompile Include="source\RenderState.cpp" />
     <ClCompile Include="source\RenderSystem.cpp" />
     <ClCompile Include="source\SceneObject.cpp" />
-    <ClCompile Include="source\TestScene.cpp" />
     <ClCompile Include="source\Transform.cpp" />
     <ClCompile Include="source\Vector2.cpp" />
     <ClCompile Include="source\Vector3.cpp" />
@@ -349,7 +348,6 @@
     <ClInclude Include="include\RenderSystem.h" />
     <ClInclude Include="include\resource.h" />
     <ClInclude Include="include\SceneObject.h" />
-    <ClInclude Include="include\TestScene.h" />
     <ClInclude Include="include\Transform.h" />
     <ClInclude Include="include\Vector2.h" />
     <ClInclude Include="include\Vector3.h" />

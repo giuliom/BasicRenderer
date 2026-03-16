@@ -11,38 +11,38 @@ World* TestScene()
 {
 	World* scene = new World();
 
-		scene->GetSun().SetDirection({ 0.5f, -1.0f, -1.0f });
-		scene->GetSun().intensity = 1.f;
-		scene->SetAmbientLightIntensity(0.1f);
-		scene->SetAmbientLightColor({ 0.529f, 0.808f, 0.922f });
+	scene->GetSun().SetDirection({ 0.5f, -1.0f, -1.0f });
+	scene->GetSun().intensity = 1.f;
+	scene->SetAmbientLightIntensity(0.1f);
+	scene->SetAmbientLightColor({ 0.529f, 0.808f, 0.922f });
 
-		scene->GetMainCamera().GetTransform().SetPosition(0.f, 0.f, 4.f);
+	scene->GetMainCamera().GetTransform().SetPosition(0.f, 0.f, 4.f);
 
-		std::shared_ptr<Material> emissive(new Material({ 1.0f, 1.0f, 1.0f }));
-		emissive->emissive = 10.f;
+	std::shared_ptr<Material> emissive(new Material({ 1.0f, 1.0f, 1.0f }));
+	emissive->emissive = 10.f;
 
-		std::shared_ptr<Material> gold(new Material({ 1.0f, 0.766f, 0.336f }, Material::Type::METALLIC));
-		gold->metallic = 0.5f;
+	std::shared_ptr<Material> gold(new Material({ 1.0f, 0.766f, 0.336f }, Material::Type::METALLIC));
+	gold->metallic = 0.5f;
 
-		// TODO move to transform hierarchy when ready
-		const float primitive_scale = 4.f;
-		const float half_primitive_scale = primitive_scale * 0.5f;
-		const Vector3 primitive_scale_vector = { primitive_scale, primitive_scale, primitive_scale };
-		const Vector3 box_position = { 0.f, 0.f, 0.f };
+	// TODO move to transform hierarchy when ready
+	const float primitive_scale = 4.f;
+	const float half_primitive_scale = primitive_scale * 0.5f;
+	const Vector3 primitive_scale_vector = { primitive_scale, primitive_scale, primitive_scale };
+	const Vector3 box_position = { 0.f, 0.f, 0.f };
 
-		Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, gold, "");
-		SceneObject* sphere = new SceneObject(sp, "Spere");
+	Sphere* sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, gold, "");
+	SceneObject* sphere = new SceneObject(sp, "Spere");
 
-		Sphere* light_sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, emissive, "");
-		SceneObject* light = new SceneObject(light_sp, "Light");
-		light->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale - 0.05f, 0.f));
-		light->GetTransform().RotateDeg(90.f, 0.f, 0.f);
-		light->GetTransform().SetScale(primitive_scale_vector * 0.3f);
+	Sphere* light_sp = new Sphere(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, emissive, "");
+	SceneObject* light = new SceneObject(light_sp, "Light");
+	light->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale - 0.05f, 0.f));
+	light->GetTransform().RotateDeg(90.f, 0.f, 0.f);
+	light->GetTransform().SetScale(primitive_scale_vector * 0.3f);
 
-		scene->Add(sphere);
-		scene->Add(light);
+	scene->Add(sphere);
+	scene->Add(light);
 
-		return scene;
+	return scene;
 }
 
 

@@ -9,11 +9,11 @@
 #include "ObjLoader.h"
 #include "ImageExporter.h"
 #include "Material.h"
-#include "TestScene.h"
+#include "SceneLoader.h"
 
 QRenderingWidget::QRenderingWidget(QWidget* parent) 
 	: QOpenGLWidget(parent)
-	, m_model(std::make_unique<Model>(TestScene()))
+	, m_model(std::make_unique<Model>(SceneLoader::LoadFromFile(GetAssetPath("scenes/cornell_box.json"))))
 	, m_renderer(std::make_unique<Renderer>())
 	, m_renderingTimeMs(0.0)
 	, m_lastUpdateTime(TimeClock::now())

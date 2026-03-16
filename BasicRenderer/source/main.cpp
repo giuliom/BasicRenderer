@@ -12,7 +12,6 @@
 #include "SceneObject.h"
 #include "Material.h"
 #include "ImageExporter.h"
-#include "TestScene.h"
 #include "SceneLoader.h"
 
 #if !LIB_DEBUG && !LIB_RELEASE
