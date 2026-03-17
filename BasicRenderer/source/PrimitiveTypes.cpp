@@ -4,8 +4,10 @@ namespace BasicRenderer
 {
 	void Sphere::ProcessForRendering(const Transform& transform)
 	{
-		m_pos = m_originalPos + transform.GetPosition();
-		m_radius = m_originalRadius * transform.GetScale().x;
+		m_pos = m_originalPos + transform.GetWorldPosition();
+		Matrix4 wm = transform.GetWorldMatrix();
+		float worldScaleX = Vector3(wm.x1, wm.y1, wm.z1).Length();
+		m_radius = m_originalRadius * worldScaleX;
 		m_boundingBox = UpdateAxisAlignedBoundingBox();
 	}
 	Primitive* Sphere::CloneForRendering() const
@@ -19,8 +21,9 @@ namespace BasicRenderer
 
 	void Plane::ProcessForRendering(const Transform& transform)
 	{
-		m_centre = transform.GetPosition();
-		m_normal = transform.Up();
+		m_centre = transform.GetWorldPosition();
+		Matrix4 wm = transform.GetWorldMatrix();
+		m_normal = Vector3(wm.x2, wm.y2, wm.z2).Normalize();
 		m_boundingBox = UpdateAxisAlignedBoundingBox();
 	}
 

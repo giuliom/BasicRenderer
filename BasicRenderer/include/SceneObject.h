@@ -17,7 +17,6 @@ namespace BasicRenderer
 		std::string m_name;
 		mutable Transform m_worldTransform;
 		Transform m_transform;
-		std::vector<Transform*> m_children; //TODO Move to Transform?
 		std::unique_ptr<Primitive> m_primitive;
 		bool m_enabled;
 		bool m_visible;
@@ -47,25 +46,12 @@ namespace BasicRenderer
 
 		virtual void UpdateTransform()
 		{
-			Transform* parent = m_transform.GetParent();
-
 			if (m_transform.isDirty())
 			{
-				if (parent == nullptr)
-				{
-					m_worldTransform = m_transform;
-				}
-				else
-				{
-					m_worldTransform = m_transform.Combine(*parent);
-				}
-
-				for (auto t : m_children)
+				for (auto t : m_transform.m_children)
 				{
 					t->SetDirty(true);
 				}
-
-				m_worldTransform.SetDirty(true);
 			}
 		}
 	};

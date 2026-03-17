@@ -55,125 +55,131 @@
         "quad":   { "file": "quad.obj" }
     },
 
-    "objects": [
-        {
-            "name": "Spere",
-            "primitive": "sphere",
-            "position": [-1.0, -1.0, 0.8],
-            "radius": 0.6,
-            "material": "silver"
-        },
-        {
-            "name": "Floor",
-            "mesh": "quad",
-            "material": "white",
-            "transform": {
-                "position": [0.0, -2.0, 0.0],
-                "rotation": [-90.0, 0.0, 0.0],
-                "scale": [4.0, 4.0, 4.0]
+    "root": {
+        "children": [
+            {
+                "name": "Spere",
+                "primitive": "sphere",
+                "position": [-1.0, -1.0, 0.8],
+                "radius": 0.6,
+                "material": "silver"
+            },
+            {
+                "name": "Floor",
+                "mesh": "quad",
+                "material": "white",
+                "transform": {
+                    "position": [0.0, -2.0, 0.0],
+                    "rotation": [-90.0, 0.0, 0.0],
+                    "scale": [4.0, 4.0, 4.0]
+                },
+                "children": [
+                   {
+                        "name": "Ceiling",
+                        "mesh": "quad",
+                        "material": "white",
+                        "transform": {
+                            "position": [0.0, 0.0, 1.0],
+                            "rotation": [180.0, 0.0, 0.0],
+                            "scale": [1.0, 1.0, 1.0]
+                        }
+                    },
+                    {
+                        "name": "Back",
+                        "mesh": "quad",
+                        "material": "white",
+                        "transform": {
+                            "position": [0.0, 0.5, 0.5],
+                            "rotation": [90.0, 0.0, 0.0],
+                            "scale": [1.0, 1.0, 1.0]
+                        }
+                    },
+                    {
+                        "name": "Front",
+                        "mesh": "quad",
+                        "material": "white",
+                        "transform": {
+                            "position": [0.0, -0.5, 0.5],
+                            "rotation": [-90.0, 180.0, 0.0],
+                            "scale": [1.0, 1.0, 1.0]
+                        }
+                    },
+                    {
+                        "name": "Left",
+                        "mesh": "quad",
+                        "material": "red",
+                        "transform": {
+                            "position": [-0.5, 0.0, 0.5],
+                            "rotation": [0.0, 90.0, 90.0],
+                            "scale": [1.0, 1.0, 1.0]
+                        }
+                    },
+                    {
+                        "name": "Right",
+                        "mesh": "quad",
+                        "material": "green",
+                        "transform": {
+                            "position": [0.5, 0.0, 0.5],
+                            "rotation": [0.0, -90.0, -90.0],
+                            "scale": [1.0, 1.0, 1.0]
+                        }
+                    },
+                    {
+                        "name": "Light",
+                        "mesh": "quad",
+                        "material": "emissive",
+                        "transform": {
+                            "position": [0.0, 0.0, 0.9875],
+                            "rotation": [180.0, 0.0, 0.0],
+                            "scale": [0.3, 0.3, 0.3]
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Cube",
+                "mesh": "cube",
+                "material": "white",
+                "transform": {
+                    "position": [-0.72, -0.6, -1.2],
+                    "rotation": [0.0, 115.0, 0.0],
+                    "scale": [1.2, 2.8, 1.2]
+                }
+            },
+            {
+                "name": "Cube2",
+                "mesh": "cube",
+                "material": "white",
+                "transform": {
+                    "position": [1.0, -1.5, -1.0],
+                    "rotation": [0.0, -25.0, 0.0],
+                    "scale": [1.0, 1.0, 1.0]
+                }
+            },
+            {
+                "name": "Bunny",
+                "mesh": "bunny",
+                "material": "gold",
+                "visible": false,
+                "transform": {
+                    "position": [1.0, -2.4, -0.2],
+                    "rotation": [0.0, 0.0, 0.0],
+                    "scale": [12.0, 12.0, 12.0]
+                },
+                "children": [
+                    {
+                        "name": "Teapot",
+                        "mesh": "teapot",
+                        "material": "copper",
+                        "enabled": true,
+                        "transform": {
+                            "position": [-0.025, 0.058333, 0.0],
+                            "rotation": [0.0, 30.0, 0.0],
+                            "scale": [0.033333, 0.033333, 0.033333]
+                        }
+                    }
+                ]
             }
-        },
-        {
-            "name": "Ceiling",
-            "mesh": "quad",
-            "material": "white",
-            "transform": {
-                "position": [0.0, 2.0, 0.0],
-                "rotation": [90.0, 0.0, 0.0],
-                "scale": [4.0, 4.0, 4.0]
-            }
-        },
-        {
-            "name": "Back",
-            "mesh": "quad",
-            "material": "white",
-            "transform": {
-                "position": [0.0, 0.0, -2.0],
-                "rotation": [0.0, 0.0, 0.0],
-                "scale": [4.0, 4.0, 4.0]
-            }
-        },
-        {
-            "name": "Front",
-            "mesh": "quad",
-            "material": "white",
-            "transform": {
-                "position": [0.0, 0.0, 2.0],
-                "rotation": [0.0, 180.0, 0.0],
-                "scale": [4.0, 4.0, 4.0]
-            }
-        },
-        {
-            "name": "Left",
-            "mesh": "quad",
-            "material": "red",
-            "transform": {
-                "position": [-2.0, 0.0, 0.0],
-                "rotation": [0.0, 90.0, 0.0],
-                "scale": [4.0, 4.0, 4.0]
-            }
-        },
-        {
-            "name": "Right",
-            "mesh": "quad",
-            "material": "green",
-            "transform": {
-                "position": [2.0, 0.0, 0.0],
-                "rotation": [0.0, -90.0, 0.0],
-                "scale": [4.0, 4.0, 4.0]
-            }
-        },
-        {
-            "name": "Light",
-            "mesh": "quad",
-            "material": "emissive",
-            "transform": {
-                "position": [0.0, 1.95, 0.0],
-                "rotation": [90.0, 0.0, 0.0],
-                "scale": [1.2, 1.2, 1.2]
-            }
-        },
-        {
-            "name": "Cube",
-            "mesh": "cube",
-            "material": "white",
-            "transform": {
-                "position": [-0.72, -0.6, -1.2],
-                "rotation": [0.0, 115.0, 0.0],
-                "scale": [1.2, 2.8, 1.2]
-            }
-        },
-        {
-            "name": "Cube2",
-            "mesh": "cube",
-            "material": "white",
-            "transform": {
-                "position": [1.0, -1.5, -1.0],
-                "rotation": [0.0, -25.0, 0.0],
-                "scale": [1.0, 1.0, 1.0]
-            }
-        },
-        {
-            "name": "Teapot",
-            "mesh": "teapot",
-            "material": "copper",
-            "enabled": false,
-            "transform": {
-                "position": [0.7, -1.7,-0.2],
-                "rotation": [0.0, 30.0, 0.0],
-                "scale": [0.4, 0.4, 0.4]
-            }
-        },
-        {
-            "name": "Bunny",
-            "mesh": "bunny",
-            "material": "gold",
-            "visible": false,
-            "transform": {
-                "position": [1.0, -2.4, -0.2],
-                "rotation": [0.0, 0.0, 0.0],
-                "scale": [12.0, 12.0, 12.0]
-            }
-        }
-    ]
+        ]
+    }
 }

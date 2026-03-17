@@ -2,18 +2,17 @@
 
 #include <fstream>
 #include <iostream>
+#include <stack>
 #include <unordered_map>
-#include <nlohmann/json.hpp>
 
 #include "World.h"
 #include "Material.h"
 #include "Mesh.h"
+#include "MeshInstance.h"
 #include "ObjLoader.h"
 #include "SceneObject.h"
 #include "PrimitiveTypes.h"
 #include "PathUtils.h"
-
-using json = nlohmann::json;
 
 namespace BasicRenderer
 {
@@ -32,6 +31,103 @@ namespace BasicRenderer
 		if (typeStr == "metallic")  return Material::Type::METALLIC;
 		if (typeStr == "dielectric") return Material::Type::DIELECTRIC;
 		return Material::Type::DIFFUSE;
+	}
+
+	static std::unique_ptr<Primitive> parsePrimitive(const json& objJson, const std::string& name, const MeshMap& meshes, const MaterialMap& materials)
+	{
+		std::string primitiveType = objJson.value("primitive", "");
+
+		// Resolve material
+		std::shared_ptr<Material> mat;
+		if (objJson.contains("material"))
+		{
+			const std::string& matName = objJson["material"].get<std::string>();
+			auto it = materials.find(matName);
+			if (it != materials.end())
+				mat = it->second;
+			else
+				std::cerr << "SceneLoader: Unknown material '" << matName << "' for object '" << name << "'" << std::endl;
+		}
+
+		if (primitiveType == "sphere")
+		{
+			Vector3 pos = Vector3(0.f, 0.f, 0.f);
+			float radius = 1.0f;
+
+			if (objJson.contains("position"))
+				pos = ParseVector3(objJson["position"]);
+			if (objJson.contains("radius"))
+				radius = objJson["radius"].get<float>();
+
+			return std::make_unique<Sphere>(pos, radius, mat, name);
+		}
+		else if (primitiveType == "plane")
+		{
+			Vector3 centre = Vector3(0.f, 0.f, 0.f);
+			Vector3 normal = Vector3(0.f, 1.f, 0.f);
+
+			if (objJson.contains("centre"))
+				centre = ParseVector3(objJson["centre"]);
+			if (objJson.contains("normal"))
+				normal = ParseVector3(objJson["normal"]);
+
+			return std::make_unique<Plane>(centre, normal, mat, name);
+		}
+		else
+		{
+			// Mesh-based object
+			if (objJson.contains("mesh"))
+			{
+				const std::string& meshName = objJson["mesh"].get<std::string>();
+				auto it = meshes.find(meshName);
+				if (it != meshes.end())
+				{
+					auto meshPtr = it->second;
+					return std::make_unique<MeshInstance>(meshPtr, mat, name);
+				}
+				else
+					std::cerr << "parsePrimitive: Unknown mesh '" << meshName << "' for object '" << name << "'" << std::endl;
+			}
+		}
+		return nullptr;
+	}
+
+
+	// --- Helper: parse a single node ---
+	std::unique_ptr<SceneObject> SceneLoader::parseSceneObject(const json& objJson, const MeshMap& meshes, const MaterialMap& materials)
+	{
+		const std::string name = objJson.value("name", "unnamed");
+		std::unique_ptr<Primitive> primitive = parsePrimitive(objJson, name, meshes, materials);
+		auto sceneObj = std::make_unique<SceneObject>(primitive.release(), name);
+
+		if (objJson.contains("transform"))
+		{
+			const auto& t = objJson["transform"];
+
+			if (t.contains("position"))
+				sceneObj->GetTransform().SetPosition(ParseVector3(t["position"]));
+
+			if (t.contains("rotation"))
+				sceneObj->GetTransform().RotateDeg(ParseVector3(t["rotation"]));
+
+			if (t.contains("scale"))
+			{
+				const auto& s = t["scale"];
+				if (s.is_array())
+					sceneObj->GetTransform().SetScale(ParseVector3(s));
+				else
+				{
+					float uniform = s.get<float>();
+					sceneObj->GetTransform().SetScale(uniform, uniform, uniform);
+				}
+			}
+		}
+
+		if (objJson.contains("enabled"))
+			sceneObj->SetEnabled(objJson["enabled"].get<bool>());
+		if (objJson.contains("visible"))
+			sceneObj->SetVisible(objJson["visible"].get<bool>());
+		return sceneObj;
 	}
 
 	std::unique_ptr<World> SceneLoader::LoadFromFile(const std::string& filepath)
@@ -90,7 +186,7 @@ namespace BasicRenderer
 		}
 
 		// --- Materials ---
-		std::unordered_map<std::string, std::shared_ptr<Material>> materials;
+		MaterialMap materials;
 
 		if (sceneJson.contains("materials"))
 		{
@@ -120,7 +216,7 @@ namespace BasicRenderer
 		}
 
 		// --- Meshes ---
-		std::unordered_map<std::string, std::shared_ptr<Mesh>> meshes;
+		MeshMap meshes;
 
 		if (sceneJson.contains("meshes"))
 		{
@@ -135,102 +231,42 @@ namespace BasicRenderer
 			}
 		}
 
-		// --- Objects ---
-		if (sceneJson.contains("objects"))
+		// --- Scene Objects (iterative traversal) ---
+		if (sceneJson.contains("root"))
 		{
-			for (const auto& objJson : sceneJson["objects"])
+			const auto& root = sceneJson["root"];
+			if (root.contains("children"))
 			{
-				std::string name = objJson.value("name", "");
+				// Stack entries: (json node, parent transform pointer)
+				std::stack<std::pair<const json*, Transform*>> stack;
 
-				// Resolve material
-				std::shared_ptr<Material> mat;
-				if (objJson.contains("material"))
+				// Push root children in reverse order to preserve original ordering
+				const auto& rootChildren = root["children"];
+				for (auto it = rootChildren.rbegin(); it != rootChildren.rend(); ++it)
 				{
-					const std::string& matName = objJson["material"].get<std::string>();
-					auto it = materials.find(matName);
-					if (it != materials.end())
-						mat = it->second;
-					else
-						std::cerr << "SceneLoader: Unknown material '" << matName << "' for object '" << name << "'" << std::endl;
+					stack.push({ &(*it), nullptr });
 				}
 
-				SceneObject* sceneObj = nullptr;
-
-				std::string primitiveType = objJson.value("primitive", "");
-
-				if (primitiveType == "sphere")
+				while (!stack.empty())
 				{
-					Vector3 pos = Vector3(0.f, 0.f, 0.f);
-					float radius = 1.0f;
+					auto [nodeJson, parentTransform] = stack.top();
+					stack.pop();
 
-					if (objJson.contains("position"))
-						pos = ParseVector3(objJson["position"]);
-					if (objJson.contains("radius"))
-						radius = objJson["radius"].get<float>();
+					auto sceneObj = SceneLoader::parseSceneObject(*nodeJson, meshes, materials);
+					Transform* currentTransform = &sceneObj->GetTransform();
 
-					Sphere* sphere = new Sphere(pos, radius, mat, name);
-					sceneObj = new SceneObject(sphere, name);
-				}
-				else if (primitiveType == "plane")
-				{
-					Vector3 centre = Vector3(0.f, 0.f, 0.f);
-					Vector3 normal = Vector3(0.f, 1.f, 0.f);
+					scene->Add(std::move(sceneObj), parentTransform);
 
-					if (objJson.contains("centre"))
-						centre = ParseVector3(objJson["centre"]);
-					if (objJson.contains("normal"))
-						normal = ParseVector3(objJson["normal"]);
-
-					Plane* plane = new Plane(centre, normal, mat, name);
-					sceneObj = new SceneObject(plane, name);
-				}
-				else
-				{
-					// Mesh-based object
-					if (objJson.contains("mesh"))
+					// Push children in reverse order to preserve original ordering
+					if (nodeJson->contains("children"))
 					{
-						const std::string& meshName = objJson["mesh"].get<std::string>();
-						auto it = meshes.find(meshName);
-						if (it != meshes.end())
-							sceneObj = new SceneObject(it->second, mat, name);
-						else
-							std::cerr << "SceneLoader: Unknown mesh '" << meshName << "' for object '" << name << "'" << std::endl;
-					}
-				}
-
-				if (sceneObj == nullptr)
-					continue;
-
-				// Apply transform
-				if (objJson.contains("transform"))
-				{
-					const auto& t = objJson["transform"];
-
-					if (t.contains("position"))
-						sceneObj->GetTransform().SetPosition(ParseVector3(t["position"]));
-
-					if (t.contains("rotation"))
-						sceneObj->GetTransform().RotateDeg(ParseVector3(t["rotation"]));
-
-					if (t.contains("scale"))
-					{
-						const auto& s = t["scale"];
-						if (s.is_array())
-							sceneObj->GetTransform().SetScale(ParseVector3(s));
-						else
+						const auto& children = (*nodeJson)["children"];
+						for (auto it = children.rbegin(); it != children.rend(); ++it)
 						{
-							float uniform = s.get<float>();
-							sceneObj->GetTransform().SetScale(uniform, uniform, uniform);
+							stack.push({ &(*it), currentTransform });
 						}
 					}
 				}
-
-                if (objJson.contains("enabled"))
-                    sceneObj->SetEnabled(objJson["enabled"].get<bool>());
-                if (objJson.contains("visible"))
-                    sceneObj->SetVisible(objJson["visible"].get<bool>());
-
-				scene->Add(sceneObj);
 			}
 		}
 

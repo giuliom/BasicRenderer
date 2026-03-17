@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_set>
+
 #include "Global.h"
 #include "Matrix4.h"
 #include "Vector3.h"
@@ -21,7 +23,8 @@ namespace BasicRenderer
 		Vector3 m_position;
 		Vector3 m_scale;
 		Vector3 m_rotation;
-		Transform* m_parent = nullptr; //TODO
+		Transform* m_parent = nullptr;
+		std::unordered_set<Transform*> m_children;
 		SceneObject* m_object = nullptr;
 		mutable bool m_dirty = true;
 
@@ -48,19 +51,22 @@ namespace BasicRenderer
 			m_up = Vector3(m_matrix.x2, m_matrix.y2, m_matrix.z2).Normalize();
 			m_right = Vector3(-m_matrix.x3, -m_matrix.y3, -m_matrix.z3).Normalize();
 			m_dirty = true;
+
+			for (auto* child : m_children)
+				child->m_dirty = true;
 		}
 
 
 	public:
 		Transform() 
-			: m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_parent(nullptr), m_object(nullptr), m_matrix() {}
+			: m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_object(nullptr), m_matrix() {}
 		Transform(const Transform& t) 
-			: m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object), m_matrix(t.m_matrix) { UpdateTransform();	}
+			: m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_object(t.m_object), m_matrix(t.m_matrix) { UpdateTransform();	}
 		Transform(Transform&& t) noexcept 
-			: m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_parent(t.m_parent), m_object(t.m_object), m_matrix(t.m_matrix) { UpdateTransform();	}
+			: m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_object(t.m_object), m_matrix(t.m_matrix) { UpdateTransform();	}
 		Transform(SceneObject* obj) 
-			: m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_parent(nullptr), m_object(obj), m_matrix() {}
-		Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, Transform* parent = nullptr, SceneObject* obj = nullptr);
+			: m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_object(obj), m_matrix() {}
+		Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, SceneObject* obj = nullptr);
 		~Transform() {}
 
 		Transform& operator=(const Transform& t);
@@ -93,9 +99,11 @@ namespace BasicRenderer
 		void Rotate(float radRoll, float radYaw, float radPitch);
 		void RotateDeg(float roll, float yaw, float pitch);
 
-		Transform* GetParent() const { return m_parent; }
-		void SetParent(Transform* par);
+		void AddChild(Transform& child);
 		Transform Combine(const Transform& other) const;
+
+		Matrix4 GetWorldMatrix() const;
+		Vector3 GetWorldPosition() const;
 
 		inline const Matrix4& GetMatrix()						const { return m_matrix; }
 		inline const Matrix4& GetInverseMatrix()				const { return m_inverse; }

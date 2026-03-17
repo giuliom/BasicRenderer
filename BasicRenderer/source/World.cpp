@@ -11,12 +11,17 @@ namespace BasicRenderer
 
 	}
 
-	void World::Add(SceneObject* obj)
+	void World::Add(std::unique_ptr<SceneObject> obj, Transform* parent)
 	{
-		if (obj != nullptr)
+		if (parent != nullptr)
 		{
-			m_objectList[obj->GetId()].reset(obj);
+			parent->AddChild(obj->GetTransform());
 		}
+		else
+		{
+			m_root.AddChild(obj->GetTransform());
+		}
+		m_objectList[obj->GetId()].reset(obj.release());
 	}
 
 	bool World::Remove(const uint id)
@@ -76,6 +81,7 @@ namespace BasicRenderer
 		}
 	}
 
+	[[deprecated("Raycast by brute forcing all primitives")]]
 	const Primitive* World::OldRaycast(const Ray& r, float tMin, float tMax, HitResult& outHit) const
 	{
 		const Primitive* anyHit = nullptr;

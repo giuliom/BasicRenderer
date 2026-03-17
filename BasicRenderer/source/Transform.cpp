@@ -49,12 +49,11 @@ namespace BasicRenderer
 		return yaw * pitch * roll;
 	}
 
-	Transform::Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, Transform* _parent, SceneObject* obj)
+	Transform::Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, SceneObject* obj)
 	{
 		m_position = pos;
 		m_scale = scl;
 		m_rotation = rot;
-		m_parent = _parent;
 		m_object = obj;
 
 		UpdateTransform();
@@ -62,7 +61,7 @@ namespace BasicRenderer
 
 	Transform& Transform::operator=(const Transform& t)
 	{
-		m_parent = t.m_parent;
+		m_children = t.m_children;
 		m_matrix = t.m_matrix;
 		m_position = t.m_position;
 		m_scale = t.m_scale;
@@ -74,7 +73,7 @@ namespace BasicRenderer
 
 	Transform& Transform::operator=(Transform&& t)
 	{
-		m_parent = t.m_parent;
+		m_children = t.m_children;
 		m_matrix = t.m_matrix;
 		m_position = t.m_position;
 		m_scale = t.m_scale;
@@ -160,15 +159,28 @@ namespace BasicRenderer
 		Rotate(Vector3(roll, yaw, pitch) * TO_RADIANS);
 	}
 
-	void Transform::SetParent(Transform* parent)
+	void Transform::AddChild(Transform& child)
 	{
-		m_parent = parent;
-		m_dirty = true;
+		m_children.insert(&child);
+		child.m_parent = this;
 	}
 
 	Transform Transform::Combine(const Transform& other) const
 	{
-		return Transform(m_position + other.m_position, m_scale + other.m_scale, m_rotation + other.m_rotation, other.m_parent, other.m_object);
+		return Transform(m_position + other.m_position, m_scale + other.m_scale, m_rotation + other.m_rotation, other.m_object);
+	}
+
+	Matrix4 Transform::GetWorldMatrix() const
+	{
+		if (m_parent)
+			return m_parent->GetWorldMatrix() * m_matrix;
+		return m_matrix;
+	}
+
+	Vector3 Transform::GetWorldPosition() const
+	{
+		Matrix4 wm = GetWorldMatrix();
+		return Vector3(wm.x4, wm.y4, wm.z4);
 	}
 }
 

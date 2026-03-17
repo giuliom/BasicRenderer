@@ -28,7 +28,7 @@ namespace BasicRenderer
 	{
 	protected:
 
-		//TODO implement it properly
+		Transform m_root;
 		ObjectList m_objectList;
 
 		Camera m_mainCamera;
@@ -54,7 +54,7 @@ namespace BasicRenderer
 		inline const Color& GetAmbientLightColor()					const	{ return m_environmentSettings.m_ambientLightColor; }
 		inline void SetAmbientLightColor(const Color& color)				{ m_environmentSettings.m_ambientLightColor = color; }
 
-		void Add(SceneObject* obj);
+		void Add(std::unique_ptr<SceneObject> obj, Transform* parent = nullptr);
 		bool Remove(const uint id);
 		SceneObject* Find(const uint id);
 		const SceneObject* Find(const uint id) const;

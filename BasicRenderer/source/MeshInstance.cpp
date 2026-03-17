@@ -14,10 +14,11 @@ namespace BasicRenderer
 	{
 		if (transform.isDirty())
 		{
+			const Matrix4& worldMatrix = transform.GetWorldMatrix();
 			for (size_t i = 0; i < m_faces.size(); ++i)
 			{
 				Face f = m_originalMesh->GetFace(i);
-				ToMatrixSpace(f, transform.m_matrix);
+				ToMatrixSpace(f, worldMatrix);
 				m_faces[i] = f;
 			}
 
