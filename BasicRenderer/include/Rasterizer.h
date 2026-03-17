@@ -32,9 +32,9 @@ namespace BasicRenderer
 
 		inline Vector3 Barycentre(const float x, const float y, const Face& f) const
 		{
-			const Vector4 ab(f.v1.pos - f.v0.pos);
-			const Vector4 ac(f.v2.pos - f.v0.pos);
-			const Vector2 pa(f.v0.pos.x - x, f.v0.pos.y - y);
+			const Vector4 ab(f.v[1].pos - f.v[0].pos);
+			const Vector4 ac(f.v[2].pos - f.v[0].pos);
+			const Vector2 pa(f.v[0].pos.x - x, f.v[0].pos.y - y);
 			const Vector3 uv1(Vector3::CrossProduct(Vector3(ac.x, ab.x, pa.x), Vector3(ac.y, ab.y, pa.y)));
 
 			if (abs(uv1.z) < 1e-2f)

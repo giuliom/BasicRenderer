@@ -71,7 +71,7 @@ namespace BasicRenderer
 
 						if (bary.x < 0.0f || bary.y < 0.0f || bary.z < 0.0f) continue;
 
-						float z = f.v0.pos.z * bary.x + f.v1.pos.z * bary.y + f.v2.pos.z * bary.z;
+						float z = f.v[0].pos.z * bary.x + f.v[1].pos.z * bary.y + f.v[2].pos.z * bary.z;
 
 						//Because of the Pinhole model
 						uint index = width * (height - y - 1) + x;
@@ -90,39 +90,39 @@ namespace BasicRenderer
 
 	inline void Rasterizer::PerspectiveDivide(Face& f) const
 	{
-		float v0w = 1.0f / f.v0.pos.w;
-		float v1w = 1.0f / f.v1.pos.w;
-		float v2w = 1.0f / f.v2.pos.w;
-		Vector4 v0 = Vector4(f.v0.pos.x * v0w,
-			f.v0.pos.y * v0w,
-			f.v0.pos.z * v0w,
-			f.v0.pos.w);
-		Vector4 v1 = Vector4(f.v1.pos.x * v1w,
-			f.v1.pos.y * v1w,
-			f.v1.pos.z * v1w,
-			f.v1.pos.w);
-		Vector4 v2 = Vector4(f.v2.pos.x * v2w,
-			f.v2.pos.y * v2w,
-			f.v2.pos.z * v2w,
-			f.v2.pos.w);
+		float v0w = 1.0f / f.v[0].pos.w;
+		float v1w = 1.0f / f.v[1].pos.w;
+		float v2w = 1.0f / f.v[2].pos.w;
+		Vector4 v0 = Vector4(f.v[0].pos.x * v0w,
+			f.v[0].pos.y * v0w,
+			f.v[0].pos.z * v0w,
+			f.v[0].pos.w);
+		Vector4 v1 = Vector4(f.v[1].pos.x * v1w,
+			f.v[1].pos.y * v1w,
+			f.v[1].pos.z * v1w,
+			f.v[1].pos.w);
+		Vector4 v2 = Vector4(f.v[2].pos.x * v2w,
+			f.v[2].pos.y * v2w,
+			f.v[2].pos.z * v2w,
+			f.v[2].pos.w);
 
 		f = Face(v0, v1, v2, f);
 	}
 
 	inline void Rasterizer::NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const
 	{
-		Vector4 v0 = Vector4(floorf(0.5f * fwidth * (f.v0.pos.x + 1.0f)),
-			floorf(0.5f * fheight * (f.v0.pos.y + 1.0f)),
-			f.v0.pos.z,
-			f.v0.pos.w);
-		Vector4 v1 = Vector4(floorf(0.5f * fwidth * (f.v1.pos.x + 1.0f)),
-			floorf(0.5f * fheight * (f.v1.pos.y + 1.0f)),
-			f.v1.pos.z,
-			f.v1.pos.w);
-		Vector4 v2 = Vector4(floorf(0.5f * fwidth * (f.v2.pos.x + 1.0f)),
-			floorf(0.5f * fheight * (f.v2.pos.y + 1.0f)),
-			f.v2.pos.z,
-			f.v2.pos.w);
+		Vector4 v0 = Vector4(floorf(0.5f * fwidth * (f.v[0].pos.x + 1.0f)),
+			floorf(0.5f * fheight * (f.v[0].pos.y + 1.0f)),
+			f.v[0].pos.z,
+			f.v[0].pos.w);
+		Vector4 v1 = Vector4(floorf(0.5f * fwidth * (f.v[1].pos.x + 1.0f)),
+			floorf(0.5f * fheight * (f.v[1].pos.y + 1.0f)),
+			f.v[1].pos.z,
+			f.v[1].pos.w);
+		Vector4 v2 = Vector4(floorf(0.5f * fwidth * (f.v[2].pos.x + 1.0f)),
+			floorf(0.5f * fheight * (f.v[2].pos.y + 1.0f)),
+			f.v[2].pos.z,
+			f.v[2].pos.w);
 
 		f = Face(v0, v1, v2, f);
 	}
@@ -131,16 +131,16 @@ namespace BasicRenderer
 	{
 		int nfaces = 0;
 
-		if (f.v0.pos.w <= 0.0 && f.v1.pos.w <= 0.0 && f.v2.pos.w <= 0.0) {
+		if (f.v[0].pos.w <= 0.0 && f.v[1].pos.w <= 0.0 && f.v[2].pos.w <= 0.0) {
 			return 0;
 		}
 
-		if (f.v0.pos.w > 0.0 &&
-			f.v1.pos.w > 0.0 &&
-			f.v2.pos.w > 0.0 &&
-			abs(f.v0.pos.z) < f.v0.pos.w &&
-			abs(f.v1.pos.z) < f.v1.pos.w &&
-			abs(f.v2.pos.z) < f.v2.pos.w)
+		if (f.v[0].pos.w > 0.0 &&
+			f.v[1].pos.w > 0.0 &&
+			f.v[2].pos.w > 0.0 &&
+			abs(f.v[0].pos.z) < f.v[0].pos.w &&
+			abs(f.v[1].pos.z) < f.v[1].pos.w &&
+			abs(f.v[2].pos.z) < f.v[2].pos.w)
 		{
 			clippedFaces[0] = f;
 			return 1;
@@ -149,9 +149,9 @@ namespace BasicRenderer
 		{
 			Vertex vertices[6];
 			int size = 0;
-			size = ClipEdge(f.v0, f.v1, vertices, size);
-			size = ClipEdge(f.v1, f.v2, vertices, size);
-			size = ClipEdge(f.v2, f.v0, vertices, size);
+			size = ClipEdge(f.v[0], f.v[1], vertices, size);
+			size = ClipEdge(f.v[1], f.v[2], vertices, size);
+			size = ClipEdge(f.v[2], f.v[0], vertices, size);
 
 			// max size() is 6
 			if (size < 3)
@@ -216,18 +216,18 @@ namespace BasicRenderer
 
 	inline bool Rasterizer::CullFace(const Face& f) const
 	{
-		float d = (f.v1.pos.x - f.v0.pos.x) *
-			(f.v2.pos.y - f.v0.pos.y) -
-			(f.v1.pos.y - f.v0.pos.y) *
-			(f.v2.pos.x - f.v0.pos.x);
+		float d = (f.v[1].pos.x - f.v[0].pos.x) *
+			(f.v[2].pos.y - f.v[0].pos.y) -
+			(f.v[1].pos.y - f.v[0].pos.y) *
+			(f.v[2].pos.x - f.v[0].pos.x);
 		return d < 0.0f;
 	}
 
 	inline Vector4 Rasterizer::BoundingBox(const Face& f, const float fwidth, const float fheight) const
 	{
-		const Vector2 v0 = Vector2(f.v0.pos.x, f.v0.pos.y);
-		const Vector2 v1 = Vector2(f.v1.pos.x, f.v1.pos.y);
-		const Vector2 v2 = Vector2(f.v2.pos.x, f.v2.pos.y);
+		const Vector2 v0 = Vector2(f.v[0].pos.x, f.v[0].pos.y);
+		const Vector2 v1 = Vector2(f.v[1].pos.x, f.v[1].pos.y);
+		const Vector2 v2 = Vector2(f.v[2].pos.x, f.v[2].pos.y);
 
 		const Vector2 mini = Vector2::Min(Vector2::Min(v0, v1), v2);
 		const Vector2 maxi = Vector2::Max(Vector2::Max(v0, v1), v2);

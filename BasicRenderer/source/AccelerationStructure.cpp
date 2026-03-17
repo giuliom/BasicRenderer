@@ -48,19 +48,18 @@ namespace BasicRenderer
 		}
 
 		// Building the nodes bottom-up
-		std::vector<const BVHnode*> nodes;
+		std::vector<std::unique_ptr<const BVHnode>> nodes;
 		nodes.reserve(primitives.size());
 
 		for (const auto& prim : primitives)
 		{
-				BVHnode* n = new BVHnode(prim.get(), prim->GetAxisAlignedBoundingBox(), nullptr, nullptr);
-				nodes.emplace_back(n);
+			nodes.emplace_back(std::make_unique<BVHnode>(prim.get(), prim->GetAxisAlignedBoundingBox(), nullptr, nullptr));
 		}
 
 		// Axis comparator
 		int axis = 0;
 
-		auto axis_comparator = [&axis](const BVHnode* a, const BVHnode* b)
+		auto axis_comparator = [&axis](const std::unique_ptr<const BVHnode>& a, const std::unique_ptr<const BVHnode>& b)
 		{
 			switch (axis)
 			{
@@ -77,29 +76,27 @@ namespace BasicRenderer
 		std::sort(nodes.begin(), nodes.end(), axis_comparator);
 
 		m_treeLevels = 1;
-		std::vector<const BVHnode*> upperLevel;
+		std::vector<std::unique_ptr<const BVHnode>> upperLevel;
 		upperLevel.reserve(nodes.size());
 
 		while (nodes.size() > 1)
 		{
 			for (uint i = 1; i < nodes.size(); i += 2)
 			{
-				const BVHnode* left = nodes[i - 1];
-				const BVHnode* right = nodes[i];
+				const BVHnode* left = nodes[i - 1].release();
+				const BVHnode* right = nodes[i].release();
 				const AxisAlignedBoundingBox box = left->GetAxisAlignedBoundingBox() + right->GetAxisAlignedBoundingBox();
 
-				BVHnode* n = new BVHnode(nullptr, box, left, right);
-				upperLevel.push_back(n);
+				upperLevel.emplace_back(std::make_unique<BVHnode>(nullptr, box, left, right));
 			}
 
 			if (nodes.size() % 2 == 1)
 			{
-				const BVHnode* left = nodes.back();
-				BVHnode* n = new BVHnode(nullptr, left->GetAxisAlignedBoundingBox(), left, nullptr);
-				upperLevel.push_back(n);
+				const BVHnode* left = nodes.back().release();
+				upperLevel.emplace_back(std::make_unique<BVHnode>(nullptr, left->GetAxisAlignedBoundingBox(), left, nullptr));
 			}
 
-			nodes = upperLevel;
+			nodes = std::move(upperLevel);
 			upperLevel.clear();
 			++m_treeLevels;
 
@@ -107,7 +104,7 @@ namespace BasicRenderer
 			std::sort(nodes.begin(), nodes.end(), axis_comparator);
 		}
 
-		m_root.reset(nodes.front());
+		m_root = std::move(nodes.front());
 	}
 
 	void BoundingVolumeHierarchy::DebugPrint()

@@ -37,7 +37,7 @@ namespace BasicRenderer
 
 
 	/** TODO expand to support textures and materials */
-	Mesh* ObjLoader::Load(const std::string& path_name_extension)
+	std::unique_ptr<Mesh> ObjLoader::Load(const std::string& path_name_extension)
 	{
 		assert(!path_name_extension.empty());
 
@@ -166,6 +166,6 @@ namespace BasicRenderer
 
 		file.close();
 
-		return new Mesh((int)vertices.size(), vertices.data(), (int)faces.size(), faces.data()); ;
+		return std::make_unique<Mesh>((int)vertices.size(), vertices.data(), (int)faces.size(), faces.data());
 	}
 }

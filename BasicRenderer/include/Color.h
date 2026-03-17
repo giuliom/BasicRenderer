@@ -15,10 +15,10 @@ namespace BasicRenderer
 	public:
 		Color() : r(0.0f), g(0.0f), b(0.0f) {}
 		Color(float r_, float g_, float b_) : r(r_), g(g_), b(b_) {}
-		Color(const Color& v) : r(v.r), g(v.g), b(v.b) {}
-		Color(Color&& v) : r(v.r), g(v.g), b(v.b) {}
+		Color(const Color&) = default;
+		Color(Color&&) = default;
 		Color(const Vector3& v) : r(v.x), g(v.y), b(v.z) {}
-		~Color() {}
+		~Color() = default;
 
 		inline Color Normalize() const
 		{
@@ -30,8 +30,8 @@ namespace BasicRenderer
 		inline float Length() const { return std::sqrt((r * r) + (g * g) + (b * b)); }
 		inline float SquaredLength() const { return (r * r) + (g * g) + (b * b); }
 
-		Color& operator=(const Color& v);
-		Color& operator=(Color&& v);
+		Color& operator=(const Color&) = default;
+		Color& operator=(Color&&) = default;
 		bool	operator==(const Color& v) const;
 		bool	operator!=(const Color& v) const;
 

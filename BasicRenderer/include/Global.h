@@ -3,16 +3,17 @@
 // TODO move to pch
 #include <chrono>
 #include <random>
+#include <numbers>
 
-typedef unsigned int uint;
-typedef std::chrono::high_resolution_clock TimeClock;
-typedef TimeClock::time_point TimePoint;
-typedef std::chrono::nanoseconds TimeDuration;
+using uint = std::uint32_t;
+using TimeClock = std::chrono::high_resolution_clock;
+using TimePoint = TimeClock::time_point;
+using TimeDuration = std::chrono::nanoseconds;
 
 namespace BasicRenderer 
 {
 	constexpr float EPSILON = 0.0000001f;
-	constexpr float PI = 3.1415926f;
+	constexpr float PI = std::numbers::pi_v<float>;
 	constexpr float TWO_PI = 2.f * PI;
 
 	template<typename OutputType, typename DurationMeasure, typename DurationType>

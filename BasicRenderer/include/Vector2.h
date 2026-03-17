@@ -13,9 +13,9 @@ namespace BasicRenderer
 	public:
 		Vector2() : x(0.0f), y(0.0f) {}
 		Vector2(float x_, float y_) : x(x_), y(y_) {}
-		Vector2(const Vector2& v) : x(v.x), y(v.y) {}
-		Vector2(Vector2&& v) : x(v.x), y(v.y) {}
-		~Vector2() {}
+		Vector2(const Vector2&) = default;
+		Vector2(Vector2&&) = default;
+		~Vector2() = default;
 
 		inline Vector2 Normalize() const
 		{
@@ -29,8 +29,8 @@ namespace BasicRenderer
 			return std::sqrt((x * x) + (y * y));
 		}
 
-		Vector2& operator=(const Vector2& v);
-		Vector2& operator=(Vector2&& v);
+		Vector2& operator=(const Vector2&) = default;
+		Vector2& operator=(Vector2&&) = default;
 		bool	operator==(const Vector2& v) const;
 		bool	operator!=(const Vector2& v) const;
 

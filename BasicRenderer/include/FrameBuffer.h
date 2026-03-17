@@ -16,17 +16,17 @@ namespace BasicRenderer
 		uint height = 480;
 		uint size = 640 * 480;
 
-		Color* colorBuffer = nullptr;
-		float* depthBuffer = nullptr;
+		std::vector<Color> colorBuffer;
+		std::vector<float> depthBuffer;
 
 	public:
 		FrameBuffer() = delete;
 		FrameBuffer(const FrameBuffer&) = delete;
 		FrameBuffer(uint width_ = 640, uint height_ = 480) : width(width_), height(height_)
 		{
-			assert(width_ > 0 && height > 0);
-			colorBuffer = new Color[width_ * height_];
-			depthBuffer = new float[width_ * height_];
+			assert(width_ > 0 && height_ > 0);
+			colorBuffer.resize(width_ * height_);
+			depthBuffer.resize(width_ * height_);
 			size = width_ * height_;
 		}
 		virtual ~FrameBuffer();
@@ -39,7 +39,7 @@ namespace BasicRenderer
 		float GetDepth(uint w, uint h) const;
 		const Color& GetColor(uint w, uint h) const;
 
-		Color* GetColorBufferCopy() const;
+		std::vector<Color> GetColorBufferCopy() const;
 		const Color* GetColorBuffer() const;
 
 

@@ -15,23 +15,23 @@ namespace BasicRenderer
 	public:
 		Vector3() {}
 		Vector3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
-		Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z) {}
-		Vector3(Vector3&& v) : x(v.x), y(v.y), z(v.z) {}
+		Vector3(const Vector3&) = default;
+		Vector3(Vector3&&) = default;
 		Vector3(const Vector4& v) : x(v.x), y(v.y), z(v.z) {}
-		~Vector3() {}
+		~Vector3() = default;
 
 		inline Vector3 Normalize() const
 		{
 			float l = Length();
-			l = 1.f / l;
+			l = 1.f / (l > 0.f ? l : 1.f);
 			return (*this) * l;
 		}
 
 		inline float Length() const { return std::sqrt((x * x) + (y * y) + (z * z)); }
 		inline float SquaredLength() const { return (x * x) + (y * y) + (z * z); }
 
-		Vector3& operator=(const Vector3& v);
-		Vector3& operator=(Vector3&& v);
+		Vector3& operator=(const Vector3&) = default;
+		Vector3& operator=(Vector3&&) = default;
 		bool	operator==(const Vector3& v) const;
 		bool	operator!=(const Vector3& v) const;
 

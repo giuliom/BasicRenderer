@@ -18,6 +18,7 @@ namespace BasicRenderer
 		Primitive* CloneForRendering() const override;
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
+		// TODO optimize with mesh BVH support
 		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
 		{
 			outHit.t = tMax;

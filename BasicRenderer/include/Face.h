@@ -10,36 +10,34 @@ namespace BasicRenderer
 
 	struct Face
 	{
-		Vertex v0;
-		Vertex v1;
-		Vertex v2;
+		std::array<Vertex, 3> v;
 		Vector3 normal;
 
 		Face() {}
-		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2) : v0(pV0), v1(pV1), v2(pV2), normal(CalculateNormal(v0.pos, v1.pos, v2.pos)) {}
+		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2) : v{pV0, pV1, pV2}, normal(CalculateNormal(v[0].pos, v[1].pos, v[2].pos)) {}
 		Face(const Position& p0, const Position& p1, const Position& p2, const Face& face);
-		Face(const Face& f) : v0(f.v0), v1(f.v1), v2(f.v2), normal(f.normal) {}
-		Face(Face&& f) noexcept : v0(f.v0), v1(f.v1), v2(f.v2), normal(f.normal) {}
+		Face(const Face& f) : v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
+		Face(Face&& f) noexcept : v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
 
 		Face& operator=(const Face& f);
 		Face& operator=(Face&& f);
 	};
 
-	inline Vector3 CalculateNormal(const Face& f) { return CalculateNormal(f.v0.pos, f.v1.pos, f.v2.pos); }
+	inline Vector3 CalculateNormal(const Face& f) { return CalculateNormal(f.v[0].pos, f.v[1].pos, f.v[2].pos); }
 
 	inline void ToMatrixSpace(Face& f, const Matrix4& m)
 	{
-		f.v0 = { m * f.v0.pos, m * f.v0.nrml, f.v0.uv };
-		f.v1 = { m * f.v1.pos, m * f.v1.nrml, f.v1.uv };
-		f.v2 = { m * f.v2.pos, m * f.v2.nrml, f.v2.uv };
+		f.v[0] = { m * f.v[0].pos, m * f.v[0].nrml, f.v[0].uv };
+		f.v[1] = { m * f.v[1].pos, m * f.v[1].nrml, f.v[1].uv };
+		f.v[2] = { m * f.v[2].pos, m * f.v[2].nrml, f.v[2].uv };
 		f.normal = CalculateNormal(f);
 	}
 
 	//Moller-Trumbore intersection algorithm
 	inline bool Intersection(const Face& face, const Ray& r, float tMin, float tMax, float& tHit)
 	{
-		const Vector3 edge1(face.v1.pos - face.v0.pos);
-		const Vector3 edge2(face.v2.pos - face.v0.pos);
+		const Vector3 edge1(face.v[1].pos - face.v[0].pos);
+		const Vector3 edge2(face.v[2].pos - face.v[0].pos);
 		const Vector3 h(Vector3::CrossProduct(r.GetDirection(), edge2));
 		const float a = Vector3::Dot(edge1, h);
 
@@ -49,7 +47,7 @@ namespace BasicRenderer
 		}
 
 		const float f = 1.0f / a;
-		const Vector3 s(r.GetOrigin() - face.v0.pos);
+		const Vector3 s(r.GetOrigin() - face.v[0].pos);
 		const float u = f * Vector3::Dot(s, h);
 
 		if (u < 0.0f || u > 1.0f)

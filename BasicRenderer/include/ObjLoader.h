@@ -8,7 +8,7 @@ namespace BasicRenderer
 	class ObjLoader
 	{
 	public:
-		static Mesh* Load(const std::string& filename);
+		static std::unique_ptr<Mesh> Load(const std::string& filename);
 	};
 
 	struct FaceIndices

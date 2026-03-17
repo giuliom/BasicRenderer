@@ -35,14 +35,14 @@ namespace BasicRenderer
 	{
 		if (m_faces.size() > 0)
 		{
-			Vector3 min = m_faces[0].v0.pos;
-			Vector3 max = m_faces[0].v1.pos;
+			Vector3 min = m_faces[0].v[0].pos;
+			Vector3 max = m_faces[0].v[1].pos;
 
 			for (const auto& f : m_faces)
 			{
 				for (uint i = 0; i < 3; ++i)
 				{
-					const Vector3& vertexPos = ((&f.v0) + i)->pos;
+					const Vector3& vertexPos = ((&f.v[0]) + i)->pos;
 
 					if (vertexPos.x < min.x)
 					{
