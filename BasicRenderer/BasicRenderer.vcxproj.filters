@@ -127,6 +127,9 @@
     <ClCompile Include="source\Color.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\SceneLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AccelerationStructure.h">
@@ -232,6 +235,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\World.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SceneLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

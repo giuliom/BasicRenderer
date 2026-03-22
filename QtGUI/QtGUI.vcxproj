@@ -77,11 +77,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)build\bin\</LocalDebuggerWorkingDirectory>
-    <IncludePath>$(SolutionDir)BasicRenderer\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)BasicRenderer\include;$(SolutionDir)build\_deps\json-src\include;$(SolutionDir)build\_deps\argvnaut-src\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)build\bin\</LocalDebuggerWorkingDirectory>
-    <IncludePath>$(SolutionDir)BasicRenderer\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)BasicRenderer\include;$(SolutionDir)build\_deps\json-src\include;$(SolutionDir)build\_deps\argvnaut-src\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -104,7 +104,7 @@
       <WarningLevel>Level3</WarningLevel>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -160,7 +160,7 @@
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <ProgramDataBaseFileName>$(IntDir)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>

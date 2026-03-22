@@ -126,26 +126,26 @@
     <ExcludePath>$(ExcludePath)</ExcludePath>
     <OutDir>$(SolutionDir)build\bin\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)..\build\_deps\argvnaut-src\include;$(ProjectDir)..\build\_deps\json-src\include</IncludePath>
     <SourcePath>$(ProjectDir)source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LibDebug|x64'">
     <ExcludePath>$(ExcludePath)</ExcludePath>
     <OutDir>$(SolutionDir)build\bin\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)..\build\_deps\argvnaut-src\include;$(ProjectDir)..\build\_deps\json-src\include</IncludePath>
     <SourcePath>$(ProjectDir)source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)build\bin\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)..\build\_deps\argvnaut-src\include;$(ProjectDir)..\build\_deps\json-src\include</IncludePath>
     <SourcePath>$(ProjectDir)source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)build\bin\</OutDir>
     <IntDir>$(SolutionDir)intermediate\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>$(ProjectDir)include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)include;$(ProjectDir)..\build\_deps\argvnaut-src\include;$(ProjectDir)..\build\_deps\json-src\include</IncludePath>
     <SourcePath>$(ProjectDir)source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -181,6 +181,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LibDebug|Win32'">
@@ -188,6 +189,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -197,7 +199,7 @@
       <SDLCheck>true</SDLCheck>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LibDebug|x64'">
@@ -208,7 +210,7 @@
       <PreprocessorDefinitions>LIB_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerOutput>NoListing</AssemblerOutput>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -218,6 +220,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -232,6 +235,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -249,7 +253,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <AdditionalOptions>/DNDEBUG %(AdditionalOptions)</AdditionalOptions>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -269,12 +273,25 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <AdditionalOptions>/DNDEBUG %(AdditionalOptions)</AdditionalOptions>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup>
+    <PreBuildEvent>
+      <Command>set NEEDS_FETCH=0
+if not exist "$(SolutionDir)build\_deps\json-src\include\nlohmann\json.hpp" set NEEDS_FETCH=1
+if not exist "$(SolutionDir)build\_deps\argvnaut-src\include" set NEEDS_FETCH=1
+if "%NEEDS_FETCH%"=="1" (
+  if not exist "$(SolutionDir)build" mkdir "$(SolutionDir)build"
+  if not exist "$(SolutionDir)build\_deps" mkdir "$(SolutionDir)build\_deps"
+  cmake "$(ProjectDir)." -B "$(SolutionDir)build"
+)</Command>
+      <Message>Checking CMake dependencies (nlohmann/json, argvnaut)...</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
@@ -310,6 +327,7 @@
     <ClCompile Include="source\Raytracer.cpp" />
     <ClCompile Include="source\RenderState.cpp" />
     <ClCompile Include="source\RenderSystem.cpp" />
+    <ClCompile Include="source\SceneLoader.cpp" />
     <ClCompile Include="source\SceneObject.cpp" />
     <ClCompile Include="source\Transform.cpp" />
     <ClCompile Include="source\Vector2.cpp" />
@@ -347,6 +365,7 @@
     <ClInclude Include="include\RenderState.h" />
     <ClInclude Include="include\RenderSystem.h" />
     <ClInclude Include="include\resource.h" />
+    <ClInclude Include="include\SceneLoader.h" />
     <ClInclude Include="include\SceneObject.h" />
     <ClInclude Include="include\Transform.h" />
     <ClInclude Include="include\Vector2.h" />
