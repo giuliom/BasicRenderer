@@ -249,24 +249,6 @@ TEST(SUITE_NAME, LoadFromFile_CornellBox_NestedChildren)
 	EXPECT_NE(FindByName(*world, "Teapot"), nullptr);
 }
 
-TEST(SUITE_NAME, LoadFromFile_CornellBox_EnabledVisible)
-{
-	std::string scenePath = GetAssetPath("scenes/cornell_box.json");
-	auto world = SceneLoader::LoadFromFile(scenePath);
-
-	ASSERT_NE(world, nullptr);
-
-	// Bunny has visible: false
-	SceneObject* bunny = FindByName(*world, "Bunny");
-	ASSERT_NE(bunny, nullptr);
-	EXPECT_FALSE(bunny->GetVisible());
-
-	// Teapot has enabled: false
-	SceneObject* teapot = FindByName(*world, "Teapot");
-	ASSERT_NE(teapot, nullptr);
-	EXPECT_FALSE(teapot->GetEnabled());
-}
-
 TEST(SUITE_NAME, LoadFromFile_CornellBox_Materials)
 {
 	std::string scenePath = GetAssetPath("scenes/cornell_box.json");

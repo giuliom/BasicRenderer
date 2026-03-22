@@ -160,7 +160,7 @@
                 "name": "Bunny",
                 "mesh": "bunny",
                 "material": "gold",
-                "visible": true,
+                "visible": false,
                 "transform": {
                     "position": [1.0, -2.4, -0.2],
                     "rotation": [0.0, 0.0, 0.0],
