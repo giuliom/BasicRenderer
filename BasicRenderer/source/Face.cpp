@@ -33,7 +33,7 @@ namespace BasicRenderer
 		v[1] = f.v[1];
 		v[2] = f.v[2];
 		normal = f.normal;
-		m_boundingBox = UpdateAxisAlignedBoundingBox();
+		m_boundingBox = f.GetAxisAlignedBoundingBox();
 		return *this;
 	}
 
@@ -43,7 +43,7 @@ namespace BasicRenderer
 		v[1] = f.v[1];
 		v[2] = f.v[2];
 		normal = f.normal;
-		m_boundingBox = UpdateAxisAlignedBoundingBox();
+		m_boundingBox = f.GetAxisAlignedBoundingBox();
 		return *this;
 	}
 }

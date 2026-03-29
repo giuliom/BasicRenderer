@@ -88,7 +88,6 @@ namespace BasicRenderer
 				auto instance = obj->GetMeshInstance();
 				instance->ProcessForRendering(obj->GetTransform());
 				outProcessed.push_back(instance);
-				obj->GetTransform().SetDirty(false);
 			}
 
 			for (auto* child : node->GetChildren())

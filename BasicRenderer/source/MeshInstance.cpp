@@ -52,10 +52,12 @@ namespace BasicRenderer
 		m_boundingBox = UpdateAxisAlignedBoundingBox();
 	}
 
-	const PrimitiveList& MeshInstance::ProcessForRendering(const Transform& transform)
+	const PrimitiveList& MeshInstance::ProcessForRendering(Transform& transform)
 	{
 		if (transform.isDirty())
 		{
+			const Matrix4& worldMatrix = transform.GetWorldMatrix();
+
 			for (size_t i = 0; i < m_primitives.size(); i++)
 			{
 				auto& p = m_primitives[i];
@@ -65,7 +67,7 @@ namespace BasicRenderer
 					{
 						auto& face = static_cast<Face&>(*p);
 						const auto& originalFace = m_originalMesh->GetFaces()[i];	
-						face = BasicRenderer::ProcessForRendering(originalFace, transform);
+						face = BasicRenderer::ProcessForRendering(originalFace, worldMatrix);
 						break;
 					}
 					case PrimitiveType::SPHERE:
@@ -79,15 +81,15 @@ namespace BasicRenderer
 					{
 						auto& plane = static_cast<Plane&>(*p);
 						const auto& originalPlane = std::get<Plane>(m_originalPrimitive.value());
-						plane = BasicRenderer::ProcessForRendering(originalPlane, transform);
+						plane = BasicRenderer::ProcessForRendering(originalPlane, worldMatrix);
 						break;
 					}
 				}
 			}
 
 			m_boundingBox = UpdateAxisAlignedBoundingBox();
+			transform.SetDirty(false);
 		}
-
 		return m_primitives;
 	}
 

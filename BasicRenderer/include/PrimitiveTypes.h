@@ -107,9 +107,8 @@ namespace BasicRenderer
 		}
 	};
 
-	inline Plane ProcessForRendering(const Plane& original, const Transform& transform)
+	inline Plane ProcessForRendering(const Plane& original, const Matrix4& wm)
 	{
-		const Matrix4& wm = transform.GetWorldMatrix();
 		const auto centre = wm * original.m_centre;
 		const Vector4 n = wm * Vector4(original.m_normal.x, original.m_normal.y, original.m_normal.z, 0.0f);
 		const auto normal = Vector3(n.x, n.y, n.z).Normalize();

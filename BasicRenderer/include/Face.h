@@ -96,9 +96,9 @@ namespace BasicRenderer
 		return false;
 	}
 
-	inline Face ProcessForRendering(Face face, const Transform& transform)
+	inline Face ProcessForRendering(Face face, const Matrix4& worldMatrix)
 	{
-		ToMatrixSpace(face, transform.GetWorldMatrix());
+		ToMatrixSpace(face, worldMatrix);
 		return face;
 	}
 }

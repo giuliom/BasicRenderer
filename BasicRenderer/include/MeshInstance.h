@@ -39,7 +39,7 @@ namespace BasicRenderer
 		MeshInstance(const MeshInstance& other);
 		MeshInstance& operator=(const MeshInstance&) = delete;
 
-		const PrimitiveList& ProcessForRendering(const Transform& transform);
+		const PrimitiveList& ProcessForRendering(Transform& transform);
 
 		auto GetType() const { return m_type; }
 		size_t NumPrimitives() const { return m_primitives.size(); }
