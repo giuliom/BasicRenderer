@@ -32,7 +32,7 @@ namespace BasicRenderer
 		std::atomic<uint64_t> m_pixelsRendered = 0u;
 		uint64_t m_totalPixels = 0u;
 
-		void RenderJob(const RenderState& state, const uint startRowIndex, const uint endRowIndex);
-		Color RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& shading);
+		size_t RenderJob(const RenderState& state, const uint startRowIndex, const uint endRowIndex);
+		Color RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& shading, size_t& outTracedRays);
 	};
 }

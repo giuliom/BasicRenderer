@@ -18,7 +18,7 @@ namespace BasicRenderer
 	{
 		InstanceList instances = m_scene->ProcessForRendering();
 
-		return new RenderState(m_scene->GetMainCamera(), m_scene->GetEnvironmentSettings(), instances);
+		return new RenderState(m_scene->GetMainCamera(), m_scene->GetEnvironmentSettings(), std::move(instances));
 	}
 
 	void Model::ProcessInput(InputManager& inputMgr, World& scene)

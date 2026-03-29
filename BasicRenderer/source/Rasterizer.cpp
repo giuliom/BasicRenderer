@@ -33,7 +33,7 @@ namespace BasicRenderer
 		const float fwidth = static_cast<float>(width);
 		const float fheight = static_cast<float>(height);
 
-		const auto mat = instance.GetMaterial();
+		const auto& mat = instance.GetMaterial();
 		Color c = Material::MissingMaterialColor;
 		const Matrix4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix();
 

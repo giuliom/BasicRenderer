@@ -2,7 +2,6 @@
 #include <iostream>
 #include <chrono>
 #include <string>
-#include <iomanip>
 #include "Global.h"
 #include "PathUtils.h"
 #include "BasicRenderer.h"
@@ -109,21 +108,11 @@ int main(int argc, char *argv[])
 	Raytracer& raytracer = renderer.GetRaytracer();
 	raytracer.m_pixelSamples = pixelSamples;
 	raytracer.m_maxBounces = maxBounces;
-
-	const auto beginTime = std::chrono::high_resolution_clock::now();
 	
 	const FrameBuffer* frame = renderer.Render(*renderState, width, height, renderingMode, shadingMode);
-	
-	const auto endTime = std::chrono::high_resolution_clock::now();
-
-	double ms = ConvertChronoDuration<double, std::chrono::milliseconds>(endTime - beginTime);
 
 	//Saving Image
 	ImageExporter::ExportToBMP(outputPath, fileName, *frame);
-
-	std::cout << std::fixed << std::setprecision(0);
-	std::cout << std::endl << "Rendering Time: " << ms << " ms " << "\n\n";
-	std::cout << std::scientific;
 }
 
 #endif

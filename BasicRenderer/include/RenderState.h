@@ -13,7 +13,7 @@ namespace BasicRenderer
 
 		RenderState()
 			: m_camera(), m_environmentSettings(), m_instances(), m_creationTime(), m_bvh() {}
-		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, const InstanceList& instances);
+		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, InstanceList instances);
 		~RenderState() {}
 
 		const AccelerationStructure& GetAccelerationStructure()	const { return m_bvh; }

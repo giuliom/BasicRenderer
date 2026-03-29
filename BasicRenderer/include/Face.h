@@ -17,8 +17,8 @@ namespace BasicRenderer
 		Face() : Primitive(nullptr) {}
 		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2, Material* material = nullptr) : Primitive(material), v{pV0, pV1, pV2}, normal(CalculateNormal(v[0].pos, v[1].pos, v[2].pos)) {}
 		Face(const Position& p0, const Position& p1, const Position& p2, const Face& face);
-		Face(const Face& f) : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
-		Face(Face&& f) noexcept : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Face(const Face& f) : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
+		Face(Face&& f) noexcept : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
 
 		Face& operator=(const Face& f);
 		Face& operator=(Face&& f);

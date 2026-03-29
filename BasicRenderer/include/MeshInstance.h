@@ -50,7 +50,6 @@ namespace BasicRenderer
 		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const
 		{
 			outHit.t = tMax;
-			float test = 0.f;
 			bool hit = false;
 			const auto numPrimitives = m_primitives.size();
 
