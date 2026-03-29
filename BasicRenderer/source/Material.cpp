@@ -22,7 +22,7 @@ namespace BasicRenderer
 		return baseColor * (std::fmaxf(0.0f, Vector3::Dot(normal, environment.m_sun.GetDirection() * -1.f)) + emissive + environment.m_ambientLightIntensity);
 	}
 
-	Vector3 UniformSampleInHemisphere(const Vector3& normal)
+	Vector3 CosineWeightedSampleInHemisphere(const Vector3& normal)
 	{
 		const Vector3 nt = std::fabs(normal.x) > std::fabs(normal.y) 
 			? Vector3(normal.z, 0.f, -normal.x) / std::sqrt(normal.x * normal.x + normal.z * normal.z)
@@ -32,15 +32,16 @@ namespace BasicRenderer
 
 		const float r1 = UniformDist();
 		const float r2 = UniformDist();
-		const float sinTheta = std::sqrt(1.f - r1 * r1);
+		const float cosTheta = std::sqrt(r1);
+		const float sinTheta = std::sqrt(1.f - r1);
 		const float phi = TWO_PI * r2;
 		const float x = sinTheta * cosf(phi);
 		const float z = sinTheta * sinf(phi);
 
 		return {
-			x * nb.x + r1 * normal.x + z * nt.x,
-			x * nb.y + r1 * normal.y + z * nt.y,
-			x * nb.z + r1 * normal.z + z * nt.z
+			x * nb.x + cosTheta * normal.x + z * nt.x,
+			x * nb.y + cosTheta * normal.y + z * nt.y,
+			x * nb.z + cosTheta * normal.z + z * nt.z
 		};
 	}
 }

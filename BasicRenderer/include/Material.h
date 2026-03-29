@@ -60,5 +60,5 @@ namespace BasicRenderer
 		}
 	};
 
-	Vector3 UniformSampleInHemisphere(const Vector3& normal);
+	Vector3 CosineWeightedSampleInHemisphere(const Vector3& normal);
 }

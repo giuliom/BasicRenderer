@@ -119,9 +119,9 @@ namespace BasicRenderer
 				}
 
 				c *= fInversePixelSamples;
-				c.r = std::min(c.r, 1.f);
-				c.g = std::min(c.g, 1.f);
-				c.b = std::min(c.b, 1.f);
+				c.r = std::clamp(c.r, 0.f, 1.f);
+				c.g = std::clamp(c.g, 0.f, 1.f);
+				c.b = std::clamp(c.b, 0.f, 1.f);
 
 				fBuffer.WriteToColor(y * width + x, c);
 			}
@@ -164,7 +164,7 @@ namespace BasicRenderer
 					case Material::Type::METALLIC:
 					{
 						Vector3 reflected = Vector3::Reflect(iterationRay.GetDirection(), hitNormal);
-						iterationRay = Ray(hitPosition, reflected + UniformSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
+						iterationRay = Ray(hitPosition, reflected + CosineWeightedSampleInHemisphere(hitNormal) * (1.f - mat.metallic));
 						success = (Vector3::Dot(iterationRay.GetDirection(), hitNormal) > 0);
 					}
 					break;
@@ -183,7 +183,7 @@ namespace BasicRenderer
 						{
 							outNormal = hitNormal * -1.f;
 							ni_nt = mat.refractiveIndex;
-							cos = dotResult * mat.refractiveIndex;
+							cos = dotResult;
 						}
 						else
 						{
@@ -216,7 +216,7 @@ namespace BasicRenderer
 
 					default:
 					{
-						iterationRay = Ray(hitPosition, UniformSampleInHemisphere(hitNormal));
+						iterationRay = Ray(hitPosition, CosineWeightedSampleInHemisphere(hitNormal));
 						success = true;
 					}
 					break;
