@@ -3,7 +3,9 @@
 #include <concepts>
 #include <memory>
 #include <algorithm>
+#include <optional>
 #include <string>
+#include <variant>
 #include <vector>
 #include "Global.h"
 #include "Vector3.h"
