@@ -7,7 +7,7 @@
 #include "Transform.h"
 #include "Vertex.h"
 #include "Ray.h"
-#include "SceneObject.h"
+#include "Primitive.h"
 
 namespace BasicRenderer
 {
@@ -18,19 +18,18 @@ namespace BasicRenderer
 	class Sphere : public Primitive
 	{
 	public:
-		const Vector3 m_originalPos;
 		Vector3 m_pos;
-		const float m_originalRadius;
 		float m_radius;
 
-		Sphere(const std::string& name = "") 
-			: Primitive({}, nullptr, name), m_originalPos(), m_pos(), m_originalRadius(1.f), m_radius(1.f) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
-		Sphere(const Vector3& pos, float radius, std::shared_ptr<Material> mat = nullptr, const std::string& name = "") 
-			: Primitive({}, mat, name), m_originalPos(pos), m_pos(pos), m_originalRadius(radius), m_radius(radius) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(Material* material = nullptr) 
+			: Primitive(material), m_pos(), m_radius(1.f) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(const Vector3& pos, const float radius = 1.f, Material* material = nullptr) 
+			: Primitive(material), m_pos(pos), m_radius(radius) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Sphere(const Sphere& other)
+			: Primitive(other), m_pos(other.m_pos), m_radius(other.m_radius) {}
 		~Sphere() {}
 
-		void ProcessForRendering(const Transform& transform) override;
-		Primitive* CloneForRendering() const override;
+		PrimitiveType GetType() const override { return PrimitiveType::SPHERE; }
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
@@ -61,23 +60,31 @@ namespace BasicRenderer
 			}
 			return false;
 		}
-
 	};
 
-
+	inline Sphere ProcessForRendering(const Sphere& original, const Transform& transform)
+	{
+		const auto pos = original.m_pos + transform.GetWorldPosition();
+		Matrix4 wm = transform.GetWorldMatrix();
+		const float worldScaleX = Vector3(wm.x1, wm.y1, wm.z1).Length();
+		const auto radius = original.m_radius * worldScaleX;
+		return {pos, radius, original.GetMaterial()};
+	}
 
 	class Plane : public Primitive
 	{
 	public:
 		Vector3 m_centre, m_normal;
 
+		PrimitiveType GetType() const override { return PrimitiveType::PLANE; }
+
 		Plane() = delete;
-		Plane(const Vector3& centre, const Vector3& normal, std::shared_ptr<Material> mat = nullptr, const std::string& name = "") 
-			: Primitive({}, mat, name), m_centre(centre), m_normal(normal.Normalize()) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Plane(const Vector3& centre, const Vector3& normal, Material* material = nullptr) 
+			: Primitive(material), m_centre(centre), m_normal(normal.Normalize()) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Plane(const Plane& other)
+			: Primitive(other), m_centre(other.m_centre), m_normal(other.m_normal) {}
 		~Plane() {}
 
-		void ProcessForRendering(const Transform& transform) override;
-		Primitive* CloneForRendering() const override;
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
@@ -98,6 +105,14 @@ namespace BasicRenderer
 
 			return false;
 		}
-
 	};
+
+	inline Plane ProcessForRendering(const Plane& original, const Transform& transform)
+	{
+		const Matrix4& wm = transform.GetWorldMatrix();
+		const auto centre = wm * original.m_centre;
+		const Vector4 n = wm * Vector4(original.m_normal.x, original.m_normal.y, original.m_normal.z, 0.0f);
+		const auto normal = Vector3(n.x, n.y, n.z).Normalize();
+		return {centre, normal, original.GetMaterial()};
+	}
 }

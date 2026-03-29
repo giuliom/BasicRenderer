@@ -1,5 +1,6 @@
 #pragma once
 
+#include <concepts>
 #include <memory>
 #include <algorithm>
 #include <string>
@@ -9,21 +10,26 @@
 #include "Ray.h"
 #include "Matrix4.h"
 #include "Transform.h"
-#include "Face.h"
 
 namespace BasicRenderer
 {
 	class Material;
 	class Primitive;
-	struct Face;
+	class Face;
+	class Sphere;
+	class Plane;
+
+	using PrimitiveData = std::variant<Face, Sphere, Plane>;
+	using PrimitiveList = std::vector<std::unique_ptr<Primitive>>;
 
 	struct HitResult
 	{
-		const Primitive* primitive;
+		Primitive* primitive;
+		Material* material;
 		float t;
 		Vector3 normal;
 
-		HitResult() : primitive(nullptr), t(0.f), normal() {}
+		HitResult() : primitive(nullptr), material(nullptr), t(0.f), normal() {}
 	};
 
 	class AxisAlignedBoundingBox
@@ -31,7 +37,6 @@ namespace BasicRenderer
 		friend class Plane;
 
 	protected:
-
 		Vector3 m_minimum;
 		Vector3 m_maximum;
 		float m_size;
@@ -103,35 +108,37 @@ namespace BasicRenderer
 		}
 	};
 
+	enum class PrimitiveType : uint
+	{
+		SPHERE,
+		PLANE,
+		FACE
+	};
+
 	class Primitive
 	{
 	protected:
-
-		std::string m_name;
-		std::shared_ptr<Material> m_material; //TODO support material instances
-		std::vector<Face> m_faces;
+		Material* m_material;
 		AxisAlignedBoundingBox m_boundingBox;
 
+	public:
+		virtual PrimitiveType GetType() const = 0;
 		virtual AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const = 0;
 
-	public:
-		Primitive(const std::vector<Face>& faces, std::shared_ptr<Material> mat = nullptr, const std::string& name = "") 
-			: m_name(name), m_material(mat), m_faces(faces), m_boundingBox() {}
+		Primitive() : m_material(nullptr), m_boundingBox() {}
+		Primitive(Material* material) : m_material(material), m_boundingBox() {}
 		Primitive(const Primitive& other) 
-			: m_name(other.m_name), m_material(other.m_material), m_faces(other.m_faces), m_boundingBox(other.m_boundingBox) {}
+			: m_material(other.m_material), m_boundingBox(other.m_boundingBox) {}
 		virtual ~Primitive() {}
 
-		Primitive& operator=(const Primitive& other) = delete;
+		void SetMaterial(Material* material) { m_material = material; }
+		inline Material* GetMaterial() const { return m_material; }
 
-		virtual Primitive* CloneForRendering() const = 0;
-		virtual void ProcessForRendering(const Transform& transform) = 0;
 		virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const = 0;
-
-		inline const std::string& GetName()									const	{ return m_name; }
-		inline const std::vector<Face>& GetFaces()							const	{ return m_faces; }
-		inline const Face& GetFace(uint index)								const	{ return m_faces[index]; }
-		inline size_t NumFaces()											const	{ return m_faces.size(); }
 		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox()	const	{ return m_boundingBox; }
-		inline const Material* GetMaterial()								const	{ return m_material.get(); }
 	};
+
+	template<typename T>
+		requires std::derived_from<T, Primitive>
+	T ProcessForRendering(const T& prim, const Transform& transform);
 }

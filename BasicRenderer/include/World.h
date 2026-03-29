@@ -7,6 +7,7 @@
 #include "DirectionalLight.h"
 #include "Camera.h"
 #include "Primitive.h"
+#include "AccelerationStructure.h"
 #include "SceneObject.h"
 
 namespace BasicRenderer
@@ -60,7 +61,7 @@ namespace BasicRenderer
 		const SceneObject* Find(const uint id) const;
 
 		void Update(const TimeDuration& deltaTime);
-		void ProcessForRendering(std::vector<Primitive*>& outProcessedPrimitives);
+		InstanceList ProcessForRendering();
 
 		const Primitive* OldRaycast(const Ray& r, float tMin, float tMax, HitResult& outHit) const;
 	};

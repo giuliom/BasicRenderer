@@ -26,13 +26,6 @@ namespace BasicRenderer
 		m_faces = m.m_faces;
 	}
 
-
-	Mesh::~Mesh()
-	{
-
-	}
-
-
 	Mesh& Mesh::operator=(Mesh&& m)
 	{
 		m_faces = m.m_faces;

@@ -4,24 +4,29 @@
 #include "Global.h"
 #include "Vertex.h"
 #include "Ray.h"
+#include "Primitive.h"
 
 namespace BasicRenderer
 {
-	struct HitResult;
-
-	struct Face
+	class Face : public Primitive
 	{
+	public:
 		std::array<Vertex, 3> v;
 		Vector3 normal;
 
-		Face() {}
-		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2) : v{pV0, pV1, pV2}, normal(CalculateNormal(v[0].pos, v[1].pos, v[2].pos)) {}
+		Face() : Primitive(nullptr) {}
+		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2, Material* material = nullptr) : Primitive(material), v{pV0, pV1, pV2}, normal(CalculateNormal(v[0].pos, v[1].pos, v[2].pos)) {}
 		Face(const Position& p0, const Position& p1, const Position& p2, const Face& face);
-		Face(const Face& f) : v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
-		Face(Face&& f) noexcept : v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
+		Face(const Face& f) : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
+		Face(Face&& f) noexcept : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
 
 		Face& operator=(const Face& f);
 		Face& operator=(Face&& f);
+
+		const Vector3& GetNormal() const { return normal; }
+		PrimitiveType GetType() const override { return PrimitiveType::FACE; }
+		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
+		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override;
 	};
 
 	inline Vector3 CalculateNormal(const Face& f) { return CalculateNormal(f.v[0].pos, f.v[1].pos, f.v[2].pos); }
@@ -76,5 +81,22 @@ namespace BasicRenderer
 		{
 			return false;
 		}
+	}
+
+	inline bool Face::GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const
+	{
+		if (Intersection(*this, r, tMin, tMax, outHit.t))
+		{
+			outHit.normal = normal;
+			return true;
+		}
+		return false;
+	}
+
+	inline Face ProcessForRendering(Face face, const Transform& transform)
+	{
+		ToMatrixSpace(face, transform.GetWorldMatrix());
+		face.UpdateAxisAlignedBoundingBox();
+		return face;
 	}
 }

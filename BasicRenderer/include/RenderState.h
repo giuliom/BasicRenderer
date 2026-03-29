@@ -9,11 +9,11 @@ namespace BasicRenderer
 	{
 		Camera m_camera;
 		EnvironmentSettings m_environmentSettings;
-		PrimitiveList m_primitives;
+		InstanceList m_instances;
 
 		RenderState()
-			: m_camera(), m_environmentSettings(), m_primitives(), m_creationTime(), m_bvh() {}
-		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, std::vector<Primitive*>& primitives);
+			: m_camera(), m_environmentSettings(), m_instances(), m_creationTime(), m_bvh() {}
+		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, const InstanceList& instances);
 		~RenderState() {}
 
 		const AccelerationStructure& GetAccelerationStructure()	const { return m_bvh; }

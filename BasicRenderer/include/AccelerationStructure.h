@@ -2,14 +2,14 @@
 
 #include <vector>
 #include "Global.h"
-#include "Primitive.h"
+#include "MeshInstance.h"
 
 namespace BasicRenderer
 {
 	class BoundingVolumeHierarchy;
 
-	typedef BoundingVolumeHierarchy AccelerationStructure;
-	typedef std::vector<std::unique_ptr<Primitive>> PrimitiveList;
+	using AccelerationStructure = BoundingVolumeHierarchy;
+	using InstanceList = std::vector<std::shared_ptr<MeshInstance>>;
 
 	class BVHnode
 	{
@@ -46,7 +46,7 @@ namespace BasicRenderer
 
 		const Primitive* GetHit(const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, HitResult& outHit) const;
 
-		void Build(const PrimitiveList& primitives);
+		void Build(const InstanceList& instances);
 
 
 		void DebugPrint();

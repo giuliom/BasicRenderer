@@ -16,11 +16,9 @@ namespace BasicRenderer
 
 	RenderState* Model::ProcessForRendering()
 	{
-		std::vector<Primitive*> copiedPrimitives;
+		InstanceList instances = m_scene->ProcessForRendering();
 
-		m_scene->ProcessForRendering(copiedPrimitives);
-
-		return new RenderState(m_scene->GetMainCamera(), m_scene->GetEnvironmentSettings(), copiedPrimitives);
+		return new RenderState(m_scene->GetMainCamera(), m_scene->GetEnvironmentSettings(), instances);
 	}
 
 	void Model::ProcessInput(InputManager& inputMgr, World& scene)

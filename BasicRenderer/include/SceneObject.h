@@ -3,11 +3,15 @@
 #include <vector>
 #include <memory>
 #include "Transform.h"
-#include "Primitive.h"
 #include "Mesh.h"
+#include "MeshInstance.h"
 
 namespace BasicRenderer
 {
+	class Primitive;
+	class Material;
+	class MeshInstance;
+
 	class SceneObject
 	{
 	protected:
@@ -17,30 +21,34 @@ namespace BasicRenderer
 		std::string m_name;
 		mutable Transform m_worldTransform;
 		Transform m_transform;
-		std::unique_ptr<Primitive> m_primitive;
+		std::shared_ptr<MeshInstance> m_meshInstance;
 		bool m_enabled;
 		bool m_visible;
 
+		SceneObject(const SceneObject& obj);
+
 	public:
 		SceneObject();
-		SceneObject(Primitive* primitive, const std::string& name = "");
+		SceneObject(const MeshInstance& instance, std::shared_ptr<Material> mat, const std::string& name = "");
 		SceneObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> mat, const std::string& name = "");
-		SceneObject(const SceneObject& obj);
 		SceneObject(SceneObject&& obj) noexcept;
 		virtual ~SceneObject();
 
-		virtual void Update(const TimeDuration& deltaTime);
+		SceneObject& operator=(const SceneObject& obj) = delete;
+		SceneObject& operator=(SceneObject&& obj) = delete;
 
-		inline uint GetId() const							{ return m_id; }
-		inline const std::string& GetName() const			{ return m_name; }
-		inline Transform& GetTransform()					{ return m_transform; }
-		inline const Transform& GetWorldTransform() const	{ return m_worldTransform; }
-		inline const Primitive* GetPrimitive() const		{ return m_primitive.get(); }
-		inline Primitive* GetPrimitive()					{ return m_primitive.get(); }
-		inline bool GetEnabled() const						{ return m_enabled; }
-		inline bool GetVisible() const						{ return m_visible; }
-		inline void SetEnabled(bool enabled)				{ m_enabled = enabled; }
-		inline void SetVisible(bool visible)				{ m_visible = visible; }
+		virtual void Update(const TimeDuration& deltaTime);
+		SceneObject Clone() const;
+
+		inline uint GetId() const											{ return m_id; }
+		inline const std::string& GetName() const							{ return m_name; }
+		inline Transform& GetTransform()									{ return m_transform; }
+		inline const Transform& GetWorldTransform() const					{ return m_worldTransform; }
+		inline const std::shared_ptr<MeshInstance>& GetMeshInstance() const { return m_meshInstance; }
+		inline bool GetEnabled() const										{ return m_enabled; }
+		inline bool GetVisible() const										{ return m_visible; }
+		inline void SetEnabled(bool enabled)								{ m_enabled = enabled; }
+		inline void SetVisible(bool visible)								{ m_visible = visible; }
 
 	protected:
 

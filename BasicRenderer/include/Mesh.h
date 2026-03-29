@@ -6,7 +6,7 @@
 
 namespace BasicRenderer
 {
-	class Mesh
+	class Mesh final
 	{
 		friend class MeshInstance;
 	protected:
@@ -17,7 +17,6 @@ namespace BasicRenderer
 		Mesh(uint nVertices, const Vertex vertices[], uint nFaces, const Face faces[]);
 		Mesh(const Mesh& m);
 		Mesh(Mesh&& m);
-		virtual ~Mesh();
 
 		Mesh& operator=(const Mesh& m) = delete;
 		Mesh& operator=(Mesh&& m);

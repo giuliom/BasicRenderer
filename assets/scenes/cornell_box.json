@@ -66,6 +66,7 @@
             },
             {
                 "name": "Floor",
+                "primitive": "mesh",
                 "mesh": "quad",
                 "material": "white",
                 "transform": {
@@ -76,6 +77,7 @@
                 "children": [
                    {
                         "name": "Ceiling",
+                        "primitive": "mesh",
                         "mesh": "quad",
                         "material": "white",
                         "transform": {
@@ -86,6 +88,7 @@
                     },
                     {
                         "name": "Back",
+                        "primitive": "mesh",
                         "mesh": "quad",
                         "material": "white",
                         "transform": {
@@ -96,6 +99,7 @@
                     },
                     {
                         "name": "Front",
+                        "primitive": "mesh",
                         "mesh": "quad",
                         "material": "white",
                         "transform": {
@@ -106,6 +110,7 @@
                     },
                     {
                         "name": "Left",
+                        "primitive": "mesh",
                         "mesh": "quad",
                         "material": "red",
                         "transform": {
@@ -116,6 +121,7 @@
                     },
                     {
                         "name": "Right",
+                        "primitive": "mesh",
                         "mesh": "quad",
                         "material": "green",
                         "transform": {
@@ -126,6 +132,7 @@
                     },
                     {
                         "name": "Light",
+                        "primitive": "mesh",
                         "mesh": "quad",
                         "material": "emissive",
                         "transform": {
@@ -138,6 +145,7 @@
             },
             {
                 "name": "Cube",
+                "primitive": "mesh",
                 "mesh": "cube",
                 "material": "white",
                 "transform": {
@@ -148,6 +156,7 @@
             },
             {
                 "name": "Cube2",
+                "primitive": "mesh",
                 "mesh": "cube",
                 "material": "white",
                 "transform": {
@@ -158,6 +167,7 @@
             },
             {
                 "name": "Bunny",
+                "primitive": "mesh",
                 "mesh": "bunny",
                 "material": "gold",
                 "visible": false,
@@ -169,6 +179,7 @@
                 "children": [
                     {
                         "name": "Teapot",
+                        "primitive": "mesh",
                         "mesh": "teapot",
                         "material": "copper",
                         "enabled": false,

@@ -2,6 +2,7 @@
 #include "Ray.h"
 #include "PrimitiveTypes.h"
 #include "Face.h"
+#include "MeshInstance.h"
 #include "SceneObject.h"
 
 namespace BasicRenderer
@@ -47,38 +48,56 @@ namespace BasicRenderer
 
 	void World::Update(const TimeDuration& deltaTime)
 	{
-		for (auto& [id, obj] : m_objectList)
+		std::vector<Transform*> stack;
+		stack.push_back(&m_root);
+
+		while (!stack.empty())
 		{
-			if (obj->GetEnabled())
+			Transform* node = stack.back();
+			stack.pop_back();
+
+			SceneObject* obj = node->GetObject();
+			if (obj != nullptr && obj->GetEnabled())
 			{
 				obj->Update(deltaTime);
+			}
+
+			for (auto* child : node->GetChildren())
+			{
+				stack.push_back(child);
 			}
 		}
 	}
 
-	void World::ProcessForRendering(std::vector<Primitive*>& outProcessedPrimitives)
+	InstanceList World::ProcessForRendering()
 	{
-		outProcessedPrimitives.reserve(m_objectList.size());
+		InstanceList outProcessed;
+		outProcessed.reserve(m_objectList.size());
 
-		for (auto& [id, obj] : m_objectList)
+		std::vector<Transform*> stack;
+		stack.push_back(&m_root);
+
+		while (!stack.empty())
 		{
-			SceneObject& so = *obj;
+			Transform* node = stack.back();
+			stack.pop_back();
 
-			if (so.GetEnabled() && so.GetVisible())
+			SceneObject* obj = node->GetObject();
+			if (obj != nullptr && obj->GetEnabled() && obj->GetVisible() && obj->GetMeshInstance() != nullptr)
 			{
-				Primitive* prim = so.GetPrimitive();
-
-				if (prim != nullptr)
-				{
-					prim->ProcessForRendering(so.GetTransform());
-
-					Primitive* clone = prim->CloneForRendering();
-					outProcessedPrimitives.push_back(clone);
-				}
+				auto instance = obj->GetMeshInstance();
+				instance->ProcessForRendering(obj->GetTransform());
+				outProcessed.push_back(instance);
+				obj->GetTransform().SetDirty(false);
 			}
 
-			so.GetTransform().SetDirty(false);
+			for (auto* child : node->GetChildren())
+			{
+				stack.push_back(child);
+			}
 		}
+
+		return outProcessed;
 	}
 
 	[[deprecated("Raycast by brute forcing all primitives")]]
@@ -91,8 +110,8 @@ namespace BasicRenderer
 
 		for (const auto& [id, obj] : m_objectList)
 		{
-			const Primitive* prim = obj->GetPrimitive();
-			if (prim && prim->GetHit(r, tMin, tMax, outHit))
+			const auto instance = obj->GetMeshInstance();
+			if (instance && instance->GetHit(r, tMin, tMax, outHit))
 			{
 				if (outHit.t < closestHit)
 				{

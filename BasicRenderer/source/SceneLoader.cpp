@@ -8,9 +8,9 @@
 #include "World.h"
 #include "Material.h"
 #include "Mesh.h"
-#include "MeshInstance.h"
 #include "ObjLoader.h"
 #include "SceneObject.h"
+#include "MeshInstance.h"
 #include "PrimitiveTypes.h"
 #include "PathUtils.h"
 
@@ -33,7 +33,7 @@ namespace BasicRenderer
 		return Material::Type::DIFFUSE;
 	}
 
-	static std::unique_ptr<Primitive> parsePrimitive(const json& objJson, const std::string& name, const MeshMap& meshes, const MaterialMap& materials)
+	static std::pair<std::optional<MeshInstance>, std::shared_ptr<Material>> parsePrimitive(const json& objJson, const std::string& name, const MaterialMap& materials)
 	{
 		std::string primitiveType = objJson.value("primitive", "");
 
@@ -59,7 +59,8 @@ namespace BasicRenderer
 			if (objJson.contains("radius"))
 				radius = objJson["radius"].get<float>();
 
-			return std::make_unique<Sphere>(pos, radius, mat, name);
+			Sphere sphere(pos, radius, mat.get());
+			return { MeshInstance{sphere, mat}, mat };
 		}
 		else if (primitiveType == "plane")
 		{
@@ -71,25 +72,11 @@ namespace BasicRenderer
 			if (objJson.contains("normal"))
 				normal = ParseVector3(objJson["normal"]);
 
-			return std::make_unique<Plane>(centre, normal, mat, name);
+			Plane plane(centre, normal, mat.get());
+			return { MeshInstance{plane, mat}, mat };
 		}
-		else
-		{
-			// Mesh-based object
-			if (objJson.contains("mesh"))
-			{
-				const std::string& meshName = objJson["mesh"].get<std::string>();
-				auto it = meshes.find(meshName);
-				if (it != meshes.end())
-				{
-					auto meshPtr = it->second;
-					return std::make_unique<MeshInstance>(meshPtr, mat, name);
-				}
-				else
-					std::cerr << "parsePrimitive: Unknown mesh '" << meshName << "' for object '" << name << "'" << std::endl;
-			}
-		}
-		return nullptr;
+
+		return { std::nullopt, nullptr };
 	}
 
 
@@ -97,8 +84,51 @@ namespace BasicRenderer
 	std::unique_ptr<SceneObject> SceneLoader::parseSceneObject(const json& objJson, const MeshMap& meshes, const MaterialMap& materials)
 	{
 		const std::string name = objJson.value("name", "unnamed");
-		std::unique_ptr<Primitive> primitive = parsePrimitive(objJson, name, meshes, materials);
-		auto sceneObj = std::make_unique<SceneObject>(primitive.release(), name);
+		const std::string primitiveType = objJson.value("primitive", "");
+
+		std::unique_ptr<SceneObject> sceneObj;
+
+		if (primitiveType == "mesh")
+		{
+			// Resolve material
+			std::shared_ptr<Material> mat;
+			if (objJson.contains("material"))
+			{
+				const std::string& matName = objJson["material"].get<std::string>();
+				auto it = materials.find(matName);
+				if (it != materials.end())
+					mat = it->second;
+				else
+					std::cerr << "SceneLoader: Unknown material '" << matName << "' for object '" << name << "'" << std::endl;
+			}
+
+			// Resolve mesh
+			if (objJson.contains("mesh"))
+			{
+				const std::string& meshName = objJson["mesh"].get<std::string>();
+				auto it = meshes.find(meshName);
+				if (it != meshes.end())
+					sceneObj = std::make_unique<SceneObject>(it->second, mat, name);
+				else
+					std::cerr << "SceneLoader: Unknown mesh '" << meshName << "' for object '" << name << "'" << std::endl;
+			}
+
+			if (!sceneObj)
+				sceneObj = std::make_unique<SceneObject>();
+		}
+		else
+		{
+			auto [instance, mat] = parsePrimitive(objJson, name, materials);
+
+			if (instance){
+				sceneObj = std::make_unique<SceneObject>(*instance, mat, name);
+			}
+			else
+			{
+				std::cerr << "SceneLoader: Unknown primitive type '" << primitiveType << "' for object '" << name << "'. Defaulting to empty SceneObject." << std::endl;
+				sceneObj = std::make_unique<SceneObject>();
+			}
+		}
 
 		if (objJson.contains("transform"))
 		{

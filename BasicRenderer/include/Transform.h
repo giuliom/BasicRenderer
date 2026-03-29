@@ -99,6 +99,10 @@ namespace BasicRenderer
 		void Rotate(float radRoll, float radYaw, float radPitch);
 		void RotateDeg(float roll, float yaw, float pitch);
 
+		SceneObject* GetObject() { return m_object; }
+		const SceneObject* GetObject() const { return m_object; }
+		std::unordered_set<Transform*> GetChildren() const { return m_children; }
+		const Transform* GetParent() const { return m_parent; }
 		void AddChild(Transform& child);
 		Transform Combine(const Transform& other) const;
 

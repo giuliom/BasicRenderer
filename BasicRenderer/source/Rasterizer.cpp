@@ -11,33 +11,39 @@ namespace BasicRenderer
 		const uint width = fBuffer.GetWidth();
 		const uint height = fBuffer.GetHeight();
 
-		for (const auto& prim : state.m_primitives)
+		for (const auto& instance : state.m_instances)
 		{
-			if (prim != nullptr)
+			if (instance != nullptr)
 			{
-				DrawObject(width, height, fBuffer, state, *prim, Shading);
+				DrawObject(width, height, fBuffer, state, *instance, Shading);
 			}
 		}
 	}
 
-	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const RenderState& state, const Primitive& primitive, const ShadingFunc& Shading)
+	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const RenderState& state, const MeshInstance& instance, const ShadingFunc& Shading)
 	{
+		// Only triangles meshes are supported for now
+		if (instance.GetType() != PrimitiveType::FACE)
+		{
+			return;
+		}
+
 		const Camera& camera = state.m_camera;
 
 		const float fwidth = static_cast<float>(width);
 		const float fheight = static_cast<float>(height);
 
-		const Material* mat = primitive.GetMaterial();
+		const auto mat = instance.GetMaterial();
 		Color c = Material::MissingMaterialColor;
 		const Matrix4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix();
 
-		for (auto i = 0u; i < primitive.NumFaces(); i++)
+		for (auto i = 0u; i < instance.NumPrimitives(); i++)
 		{
-			Face f = primitive.GetFace(i);
+			Face f = static_cast<const Face&>(instance.GetPrimitive(i));
 
 			if (mat)
 			{
-				c = Shading(*mat, state, Vector3::Zero(), f.normal);
+				c = Shading(*mat, state, Vector3::Zero(), f.GetNormal());
 				c.r = c.r < 1.f ? c.r : 1.f;
 				c.g = c.g < 1.f ? c.g : 1.f;
 				c.b = c.b < 1.f ? c.b : 1.f;
