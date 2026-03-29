@@ -7,15 +7,16 @@ namespace BasicRenderer
 {
 	uint SceneObject::m_idCounter = 0;
 
-	SceneObject::SceneObject()
+	SceneObject::SceneObject(const std::string& name)
 		: m_id(m_idCounter++)
-		, m_name("SceneObject_" + std::to_string(m_id))
+		, m_name(name.size() > 0 ? name : "SceneObject_" + std::to_string(m_id))
 		, m_worldTransform()
 		, m_transform()
 		, m_meshInstance(nullptr)
 		, m_enabled(true)
 		, m_visible(true)
 	{
+		m_transform.m_object = this;
 	}
 
 	SceneObject::SceneObject(const MeshInstance& instance, std::shared_ptr<Material> mat, const std::string& name)
@@ -27,6 +28,7 @@ namespace BasicRenderer
 		, m_enabled(true)
 		, m_visible(true)
 	{
+		m_transform.m_object = this;
 	}
 
 	SceneObject::SceneObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> mat, const std::string& name)
@@ -38,6 +40,7 @@ namespace BasicRenderer
 		, m_enabled(true)
 		, m_visible(true)
 	{
+		m_transform.m_object = this;
 	}
 
 	SceneObject::SceneObject(const SceneObject& obj)
@@ -49,6 +52,7 @@ namespace BasicRenderer
 		, m_enabled(obj.m_enabled)
 		, m_visible(obj.m_visible)
 	{
+		m_transform.m_object = this;
 	}
 
 	SceneObject::SceneObject(SceneObject&& obj) noexcept
@@ -60,6 +64,7 @@ namespace BasicRenderer
 		, m_enabled(obj.m_enabled)
 		, m_visible(obj.m_visible)
 	{
+		m_transform.m_object = this;
 	}
 
 	SceneObject::~SceneObject()

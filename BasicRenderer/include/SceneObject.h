@@ -28,7 +28,7 @@ namespace BasicRenderer
 		SceneObject(const SceneObject& obj);
 
 	public:
-		SceneObject();
+		SceneObject(const std::string& name = "");
 		SceneObject(const MeshInstance& instance, std::shared_ptr<Material> mat, const std::string& name = "");
 		SceneObject(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> mat, const std::string& name = "");
 		SceneObject(SceneObject&& obj) noexcept;

@@ -30,11 +30,11 @@ std::unique_ptr<World> TestScene()
 	const Vector3 primitive_scale_vector = { primitive_scale, primitive_scale, primitive_scale };
 	const Vector3 box_position = { 0.f, 0.f, 0.f };
 
-	auto sp = std::make_unique<Sphere>(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, gold);
-	auto sphere = std::make_unique<SceneObject>(sp.release(), "Spere");
+	Sphere sp(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, gold.get());
+	auto sphere = std::make_unique<SceneObject>(MeshInstance{sp, gold}, gold, "Spere");
 
-	auto light_sp = std::make_unique<Sphere>(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, emissive);
-	auto lightObj = std::make_unique<SceneObject>(light_sp.release(), "Light");
+	Sphere light_sp(box_position + Vector3(primitive_scale * -0.25f, primitive_scale * -0.25f, primitive_scale * 0.2f), primitive_scale * 0.15f, emissive.get());
+	auto lightObj = std::make_unique<SceneObject>(MeshInstance{light_sp, emissive}, emissive, "Light");
 	lightObj->GetTransform().SetPosition(box_position + Vector3(0.f, half_primitive_scale - 0.05f, 0.f));
 	lightObj->GetTransform().RotateDeg(90.f, 0.f, 0.f);
 	lightObj->GetTransform().SetScale(primitive_scale_vector * 0.3f);

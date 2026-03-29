@@ -27,6 +27,8 @@ namespace BasicRenderer
 		PrimitiveType GetType() const override { return PrimitiveType::FACE; }
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
 		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override;
+
+		friend void ToMatrixSpace(Face& f, const Matrix4& m);
 	};
 
 	inline Vector3 CalculateNormal(const Face& f) { return CalculateNormal(f.v[0].pos, f.v[1].pos, f.v[2].pos); }
@@ -37,6 +39,7 @@ namespace BasicRenderer
 		f.v[1] = { m * f.v[1].pos, m * f.v[1].nrml, f.v[1].uv };
 		f.v[2] = { m * f.v[2].pos, m * f.v[2].nrml, f.v[2].uv };
 		f.normal = CalculateNormal(f);
+		f.m_boundingBox = f.UpdateAxisAlignedBoundingBox();
 	}
 
 	//Moller-Trumbore intersection algorithm
@@ -96,7 +99,6 @@ namespace BasicRenderer
 	inline Face ProcessForRendering(Face face, const Transform& transform)
 	{
 		ToMatrixSpace(face, transform.GetWorldMatrix());
-		face.UpdateAxisAlignedBoundingBox();
 		return face;
 	}
 }

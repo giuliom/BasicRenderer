@@ -126,7 +126,7 @@ namespace BasicRenderer
 			else
 			{
 				std::cerr << "SceneLoader: Unknown primitive type '" << primitiveType << "' for object '" << name << "'. Defaulting to empty SceneObject." << std::endl;
-				sceneObj = std::make_unique<SceneObject>();
+				sceneObj = std::make_unique<SceneObject>(name);
 			}
 		}
 
