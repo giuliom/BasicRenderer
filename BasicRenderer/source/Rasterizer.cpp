@@ -37,9 +37,10 @@ namespace BasicRenderer
 		Color c = Material::MissingMaterialColor;
 		const Matrix4 mvp = camera.GetProjectionMatrix() * camera.GetViewMatrix();
 
-		for (auto i = 0u; i < instance.NumPrimitives(); i++)
+		const auto& faces = instance.GetFaces();
+		for (size_t i = 0u; i < faces.size(); i++)
 		{
-			Face f = static_cast<const Face&>(instance.GetPrimitive(i));
+			Face f = faces[i];
 
 			if (mat)
 			{

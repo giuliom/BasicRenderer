@@ -53,9 +53,13 @@ namespace BasicRenderer
 
 		for (const auto& instance : instances)
 		{
-			for (const auto& prim : instance->GetPrimitives())
+			for (size_t i = 0; i < instance->NumPrimitives(); i++)
 			{
-				nodes.emplace_back(std::make_unique<BVHnode>(prim.get(), prim->GetAxisAlignedBoundingBox(), nullptr, nullptr));
+				const auto* prim = instance->GetPrimitive(i);
+				if (prim)
+				{
+					nodes.emplace_back(std::make_unique<BVHnode>(prim, prim->GetAxisAlignedBoundingBox(), nullptr, nullptr));
+				}
 			}
 		}
 

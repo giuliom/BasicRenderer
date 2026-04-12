@@ -9,26 +9,31 @@ namespace BasicRenderer
 		, m_originalPrimitive(other.m_originalPrimitive)
 		, m_originalMesh(other.m_originalMesh)
 		, m_material(other.m_material)
-		, m_primitives()
 		, m_boundingBox(other.m_boundingBox)
 	{
 		if (m_originalMesh)
 		{
-			m_primitives.reserve(m_originalMesh->NumFaces());
+			m_faces.reserve(m_originalMesh->NumFaces());
 			for (const auto& f : m_originalMesh->GetFaces())
 			{
-				auto face = std::make_unique<Face>(f);
-				face->SetMaterial(m_material.get());
-				m_primitives.push_back(std::move(face));
+				m_faces.push_back(f);
+				m_faces.back().SetMaterial(m_material.get());
 			}
 		}
 		else if (m_originalPrimitive.has_value())
 		{
 			std::visit([this](const auto& prim) {
 				using T = std::decay_t<decltype(prim)>;
-				auto copy = std::make_unique<T>(prim);
-				copy->SetMaterial(m_material.get());
-				m_primitives.push_back(std::move(copy));
+				if constexpr (std::same_as<T, Face>) {
+					m_faces.push_back(prim);
+					m_faces.back().SetMaterial(m_material.get());
+				} else if constexpr (std::same_as<T, Sphere>) {
+					m_sphere = prim;
+					m_sphere->SetMaterial(m_material.get());
+				} else if constexpr (std::same_as<T, Plane>) {
+					m_plane = prim;
+					m_plane->SetMaterial(m_material.get());
+				}
 			}, m_originalPrimitive.value());
 		}
 	}
@@ -38,71 +43,68 @@ namespace BasicRenderer
 		, m_originalPrimitive(std::nullopt)
 		, m_originalMesh(mesh)
 		, m_material(mat)
-		, m_primitives()
 		, m_boundingBox()
 	{
 		assert(mesh != nullptr);
-		m_primitives.reserve(mesh->NumFaces());
+		m_faces.reserve(mesh->NumFaces());
 		for (const auto& f : mesh->GetFaces())
 		{
-			auto face = std::make_unique<Face>(f);
-			face->SetMaterial(mat.get());
-			m_primitives.push_back(std::move(face));
+			m_faces.push_back(f);
+			m_faces.back().SetMaterial(mat.get());
 		}
 		m_boundingBox = UpdateAxisAlignedBoundingBox();
 	}
 
-	const PrimitiveList& MeshInstance::ProcessForRendering(Transform& transform)
+	void MeshInstance::ProcessForRendering(Transform& transform)
 	{
 		if (transform.isDirty())
 		{
 			const Matrix4& worldMatrix = transform.GetWorldMatrix();
 
-			for (size_t i = 0; i < m_primitives.size(); i++)
+			switch (m_type)
 			{
-				auto& p = m_primitives[i];
-				switch (m_type)
+				case PrimitiveType::FACE:
 				{
-					case PrimitiveType::FACE:
+					for (size_t i = 0; i < m_faces.size(); i++)
 					{
-						auto& face = static_cast<Face&>(*p);
-						const auto& originalFace = m_originalMesh->GetFaces()[i];	
-						face = BasicRenderer::ProcessForRendering(originalFace, worldMatrix);
-						break;
+						const auto& originalFace = m_originalMesh->GetFaces()[i];
+						m_faces[i] = BasicRenderer::ProcessForRendering(originalFace, worldMatrix);
 					}
-					case PrimitiveType::SPHERE:
-					{
-						auto& sphere = static_cast<Sphere&>(*p);
-						const auto& originalSphere = std::get<Sphere>(m_originalPrimitive.value());
-						sphere = BasicRenderer::ProcessForRendering(originalSphere, transform);
-						break;
-					}
-					case PrimitiveType::PLANE:
-					{
-						auto& plane = static_cast<Plane&>(*p);
-						const auto& originalPlane = std::get<Plane>(m_originalPrimitive.value());
-						plane = BasicRenderer::ProcessForRendering(originalPlane, worldMatrix);
-						break;
-					}
+					break;
+				}
+				case PrimitiveType::SPHERE:
+				{
+					const auto& originalSphere = std::get<Sphere>(m_originalPrimitive.value());
+					m_sphere = BasicRenderer::ProcessForRendering(originalSphere, transform);
+					break;
+				}
+				case PrimitiveType::PLANE:
+				{
+					const auto& originalPlane = std::get<Plane>(m_originalPrimitive.value());
+					m_plane = BasicRenderer::ProcessForRendering(originalPlane, worldMatrix);
+					break;
 				}
 			}
 
 			m_boundingBox = UpdateAxisAlignedBoundingBox();
 			transform.SetDirty(false);
 		}
-		return m_primitives;
 	}
 
 	AxisAlignedBoundingBox MeshInstance::UpdateAxisAlignedBoundingBox() const
 	{
-		if (m_primitives.size() > 0)
+		switch (m_type)
 		{
-			Vector3 min = m_primitives[0]->GetAxisAlignedBoundingBox().GetMinimum();
-			Vector3 max = m_primitives[0]->GetAxisAlignedBoundingBox().GetMaximum();
+		case PrimitiveType::FACE:
+		{
+			if (m_faces.empty()) return m_boundingBox;
 
-			for (const auto& prim : m_primitives)
+			Vector3 min = m_faces[0].GetAxisAlignedBoundingBox().GetMinimum();
+			Vector3 max = m_faces[0].GetAxisAlignedBoundingBox().GetMaximum();
+
+			for (const auto& f : m_faces)
 			{
-				const AxisAlignedBoundingBox& bbox = prim->GetAxisAlignedBoundingBox();
+				const AxisAlignedBoundingBox& bbox = f.GetAxisAlignedBoundingBox();
 				const Vector3& bboxMin = bbox.GetMinimum();
 				const Vector3& bboxMax = bbox.GetMaximum();
 
@@ -116,6 +118,13 @@ namespace BasicRenderer
 			}
 
 			return AxisAlignedBoundingBox(min, max);
+		}
+		case PrimitiveType::SPHERE:
+			if (m_sphere) return m_sphere->GetAxisAlignedBoundingBox();
+			break;
+		case PrimitiveType::PLANE:
+			if (m_plane) return m_plane->GetAxisAlignedBoundingBox();
+			break;
 		}
 
 		return m_boundingBox;

@@ -12,7 +12,12 @@ namespace BasicRenderer
 		std::optional<PrimitiveData> m_originalPrimitive;
 		std::shared_ptr<Mesh> m_originalMesh;
 		std::shared_ptr<Material> m_material;
-		PrimitiveList m_primitives;
+
+		// Contiguous type-specific storage (replaces vector<unique_ptr<Primitive>>)
+		std::vector<Face> m_faces;
+		std::optional<Sphere> m_sphere;
+		std::optional<Plane> m_plane;
+
 		AxisAlignedBoundingBox m_boundingBox;
 
 		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const;
@@ -26,12 +31,18 @@ namespace BasicRenderer
 		, m_originalPrimitive(PrimitiveData(primitive))
 		, m_originalMesh(nullptr)
 		, m_material(mat)
-		, m_primitives()
 		, m_boundingBox()
 		{
-			auto clone = std::make_unique<T>(primitive);
-			clone->SetMaterial(mat.get());
-			m_primitives.push_back(std::move(clone));
+			if constexpr (std::same_as<T, Face>) {
+				m_faces.push_back(primitive);
+				m_faces.back().SetMaterial(mat.get());
+			} else if constexpr (std::same_as<T, Sphere>) {
+				m_sphere = primitive;
+				m_sphere->SetMaterial(mat.get());
+			} else if constexpr (std::same_as<T, Plane>) {
+				m_plane = primitive;
+				m_plane->SetMaterial(mat.get());
+			}
 			m_boundingBox = UpdateAxisAlignedBoundingBox();
 		}
 
@@ -39,26 +50,51 @@ namespace BasicRenderer
 		MeshInstance(const MeshInstance& other);
 		MeshInstance& operator=(const MeshInstance&) = delete;
 
-		const PrimitiveList& ProcessForRendering(Transform& transform);
+		void ProcessForRendering(Transform& transform);
 
 		auto GetType() const noexcept { return m_type; }
-		size_t NumPrimitives() const noexcept { return m_primitives.size(); }
-		const Primitive& GetPrimitive(size_t index) const noexcept { return *m_primitives[index]; }
-		const PrimitiveList& GetPrimitives() const noexcept { return m_primitives; }
+
+		size_t NumPrimitives() const noexcept
+		{
+			switch (m_type) {
+			case PrimitiveType::FACE: return m_faces.size();
+			case PrimitiveType::SPHERE: return m_sphere.has_value() ? 1 : 0;
+			case PrimitiveType::PLANE: return m_plane.has_value() ? 1 : 0;
+			}
+			return 0;
+		}
+
+		const Primitive* GetPrimitive(size_t index) const noexcept
+		{
+			switch (m_type) {
+			case PrimitiveType::FACE: return &m_faces[index];
+			case PrimitiveType::SPHERE: return m_sphere.has_value() ? &m_sphere.value() : nullptr;
+			case PrimitiveType::PLANE: return m_plane.has_value() ? &m_plane.value() : nullptr;
+			}
+			return nullptr;
+		}
+		
+		const std::vector<Face>& GetFaces() const noexcept { return m_faces; }
 		const std::shared_ptr<Material>& GetMaterial() const noexcept { return m_material; }
 
 		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const noexcept
 		{
 			outHit.t = tMax;
 			bool hit = false;
-			const auto numPrimitives = m_primitives.size();
 
-			for (uint i = 0; i < numPrimitives; i++)
-			{
-				if (m_primitives[i]->GetHit(r, tMin, outHit.t, outHit))
+			switch (m_type) {
+			case PrimitiveType::FACE:
+				for (const auto& f : m_faces)
 				{
-					hit = true;
+					if (f.GetHit(r, tMin, outHit.t, outHit)) hit = true;
 				}
+				break;
+			case PrimitiveType::SPHERE:
+				if (m_sphere && m_sphere->GetHit(r, tMin, outHit.t, outHit)) hit = true;
+				break;
+			case PrimitiveType::PLANE:
+				if (m_plane && m_plane->GetHit(r, tMin, outHit.t, outHit)) hit = true;
+				break;
 			}
 
 			return hit;
