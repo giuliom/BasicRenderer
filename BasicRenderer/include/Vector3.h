@@ -40,14 +40,14 @@ namespace BasicRenderer
 		inline Vector3 operator-(const Vector3& v) const noexcept { return Vector3(x - v.x, y - v.y, z - v.z); }
 		inline Vector3 operator-(const float f) const noexcept { return Vector3(x - f, y - f, z - f); }
 		inline Vector3 operator*(const float f) const noexcept { return Vector3(x * f, y * f, z * f); }
-		inline Vector3 operator/(const float f) const noexcept { return Vector3(x / f, y / f, z / f); }
+		inline Vector3 operator/(const float f) const noexcept { const float inv = 1.0f / f; return Vector3(x * inv, y * inv, z * inv); }
 
 		inline Vector3& operator+=(const Vector3& v) noexcept { x += v.x; y += v.y; z += v.z; return *this; }
 		inline Vector3& operator+=(const float f) noexcept { x += f; y += f; z += f; return *this; }
 		inline Vector3& operator-=(const Vector3& v) noexcept { x -= v.x; y -= v.y; z -= v.z; return *this; }
 		inline Vector3& operator-=(const float f) noexcept { x -= f; y -= f; z -= f; return *this; }
 		inline Vector3& operator*=(const float f) noexcept { x *= f; y *= f; z *= f; return *this; }
-		inline Vector3& operator/=(const float f) noexcept { x /= f; y /= f; z /= f; return *this; }
+		inline Vector3& operator/=(const float f) noexcept { const float inv = 1.0f / f; x *= inv; y *= inv; z *= inv; return *this; }
 
 		inline static float Dot(const Vector3& a, const Vector3& b) noexcept
 		{

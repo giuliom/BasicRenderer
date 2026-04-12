@@ -44,12 +44,12 @@ namespace BasicRenderer
 			w1(w1_), w2(w2_), w3(w3_), w4(w4_) {}
 
 
-		Matrix4(const Matrix4& m) noexcept;
-		Matrix4(Matrix4&& m) noexcept;
-		~Matrix4() noexcept {}
+		Matrix4(const Matrix4&) noexcept = default;
+		Matrix4(Matrix4&&) noexcept = default;
+		~Matrix4() noexcept = default;
 
-		Matrix4& operator=(const Matrix4& m) noexcept;
-		Matrix4& operator=(Matrix4&& m) noexcept;
+		Matrix4& operator=(const Matrix4&) noexcept = default;
+		Matrix4& operator=(Matrix4&&) noexcept = default;
 		bool	operator==(const Matrix4& m) const noexcept;
 		bool	operator!=(const Matrix4& m) const noexcept;
 

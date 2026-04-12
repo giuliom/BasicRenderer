@@ -103,13 +103,13 @@ int main(int argc, char *argv[])
 
 	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
 	model->Update(model->UpdateTime());
-	std::unique_ptr<RenderState> renderState(model->ProcessForRendering());
+	RenderState renderState = model->ProcessForRendering();
 
 	Raytracer& raytracer = renderer.GetRaytracer();
 	raytracer.m_pixelSamples = pixelSamples;
 	raytracer.m_maxBounces = maxBounces;
 	
-	const FrameBuffer* frame = renderer.Render(*renderState, width, height, renderingMode, shadingMode);
+	const FrameBuffer* frame = renderer.Render(renderState, width, height, renderingMode, shadingMode);
 
 	//Saving Image
 	ImageExporter::ExportToBMP(outputPath, fileName, *frame);

@@ -171,14 +171,14 @@ void QRenderingWidget::FixedUpdateLoopThread()
 		
 		m_model->Update(expectedTimeBetweenUpdates);
 
-		RenderState* newState = m_model->ProcessForRendering();
+		RenderState newState = m_model->ProcessForRendering();
 		
 		{
 			std::scoped_lock<std::mutex> modelLock(m_modelSwapMtx);
 
 			// Copy of the updated state
 			auto& availableState = GetAvailableState();
-			availableState.reset(newState);
+			availableState = std::make_unique<RenderState>(std::move(newState));
 		}
 	}
 }

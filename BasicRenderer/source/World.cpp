@@ -71,6 +71,7 @@ namespace BasicRenderer
 
 	InstanceList World::ProcessForRendering()
 	{
+		// TODO: optimize list creation
 		InstanceList outProcessed;
 		outProcessed.reserve(m_objectList.size());
 

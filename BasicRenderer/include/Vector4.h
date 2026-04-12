@@ -38,14 +38,14 @@ namespace BasicRenderer
 		inline Vector4 operator-(const Vector4& v) const noexcept { return Vector4(x - v.x, y - v.y, z - v.z, w - v.w); }
 		inline Vector4 operator-(const float f) const noexcept { return Vector4(x - f, y - f, z - f, w - f); }
 		inline Vector4 operator*(const float f) const noexcept { return Vector4(x * f, y * f, z * f, w * f); }
-		inline Vector4 operator/(const float f) const noexcept { return Vector4(x / f, y / f, z / f, w / f); }
+		inline Vector4 operator/(const float f) const noexcept { const float inv = 1.0f / f; return Vector4(x * inv, y * inv, z * inv, w * inv); }
 
 		inline Vector4& operator+=(const Vector4& v) noexcept { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
 		inline Vector4& operator+=(const float f) noexcept { x += f; y += f; z += f; w += f; return *this; }
 		inline Vector4& operator-=(const Vector4& v) noexcept { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
 		inline Vector4& operator-=(const float f) noexcept { x -= f; y -= f; z -= f; w -= f; return *this; }
 		inline Vector4& operator*=(const float f) noexcept { x *= f; y *= f; z *= f; w *= f; return *this; }
-		inline Vector4& operator/=(const float f) noexcept { x /= f; y /= f; z /= f; w /= f; return *this; }
+		inline Vector4& operator/=(const float f) noexcept { const float inv = 1.0f / f; x *= inv; y *= inv; z *= inv; w *= inv; return *this; }
 
 		inline static float Dot(const Vector4& a, const Vector4& b) noexcept
 		{

@@ -16,6 +16,11 @@ namespace BasicRenderer
 		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, InstanceList instances);
 		~RenderState() {}
 
+		RenderState(const RenderState&) = delete;
+		RenderState& operator=(const RenderState&) = delete;
+		RenderState(RenderState&&) = default;
+		RenderState& operator=(RenderState&&) = delete;
+
 		const AccelerationStructure& GetAccelerationStructure()	const noexcept { return m_bvh; }
 		void BuildAccelerationStructure() const;
 		const TimePoint& CreationTime() const noexcept { return m_creationTime; }

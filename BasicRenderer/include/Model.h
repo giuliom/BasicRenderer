@@ -27,7 +27,7 @@ namespace BasicRenderer
 		Model& operator=(const Model& other) = delete;
 
 		void Update(const TimeDuration& deltaTime);
-		RenderState* ProcessForRendering();
+		RenderState ProcessForRendering();
 
 		inline const World& GetScene()		const noexcept	{ return *m_scene; }
 		InputManager& GetInputManager() noexcept			{ return m_inputMgr; }

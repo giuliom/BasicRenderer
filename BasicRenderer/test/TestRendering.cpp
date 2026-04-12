@@ -53,13 +53,13 @@ TEST(SUITE_NAME, Raytracer)
 	const uint width = 320;
 	const uint height = 240;
 	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
-	std::unique_ptr<RenderState> renderState(model->ProcessForRendering());
+	RenderState renderState = model->ProcessForRendering();
 
 	Raytracer& raytracer = renderer.GetRaytracer();
 	raytracer.m_pixelSamples = 4;
 	raytracer.m_maxBounces = 2;
 	
-	const FrameBuffer* frame = renderer.Render(*renderState, width, height, Renderer::RenderingMode::RAYTRACER, Renderer::ShadingMode::LIT);
+	const FrameBuffer* frame = renderer.Render(renderState, width, height, Renderer::RenderingMode::RAYTRACER, Renderer::ShadingMode::LIT);
 	
 	EXPECT_TRUE(frame != nullptr);
 }
@@ -72,9 +72,9 @@ TEST(SUITE_NAME, Rasterizer)
 	const uint width = 320;
 	const uint height = 240;
 	model->SetMainCameraAspectRatio(static_cast<float>(width), static_cast<float>(height));
-	std::unique_ptr<RenderState> renderState(model->ProcessForRendering());
+	RenderState renderState = model->ProcessForRendering();
 	
-	const FrameBuffer* frame = renderer.Render(*renderState, width, height, Renderer::RenderingMode::RASTERIZER, Renderer::ShadingMode::LIT);
+	const FrameBuffer* frame = renderer.Render(renderState, width, height, Renderer::RenderingMode::RASTERIZER, Renderer::ShadingMode::LIT);
 	
 	EXPECT_TRUE(frame != nullptr);
 }

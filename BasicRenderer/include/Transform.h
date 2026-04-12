@@ -32,6 +32,7 @@ namespace BasicRenderer
 
 		Matrix4 m_matrix;
 		Matrix4 m_inverse;
+		mutable Matrix4 m_world;
 
 		Vector3 m_forward;
 		Vector3 m_right;
@@ -59,13 +60,13 @@ namespace BasicRenderer
 
 	public:
 		Transform() 
-			: m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_object(nullptr), m_matrix() {}
+			: m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_object(nullptr), m_matrix(), m_inverse(), m_world() {}
 		Transform(const Transform& t) 
-			: m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_object(t.m_object), m_matrix(t.m_matrix) { UpdateTransform();	}
+			: m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_object(t.m_object), m_matrix(t.m_matrix), m_inverse(t.m_inverse), m_world(t.m_world) { UpdateTransform();	}
 		Transform(Transform&& t) noexcept 
-			: m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_object(t.m_object), m_matrix(t.m_matrix) { UpdateTransform();	}
+			: m_position(t.m_position), m_scale(t.m_scale), m_rotation(t.m_rotation), m_object(t.m_object), m_matrix(t.m_matrix), m_inverse(t.m_inverse), m_world(t.m_world) { UpdateTransform();	}
 		Transform(SceneObject* obj) 
-			: m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_object(obj), m_matrix() {}
+			: m_position(Vector3::Zero()), m_scale(Vector3::One()), m_rotation(Vector3::Zero()), m_object(obj), m_matrix(), m_inverse(), m_world() {}
 		Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, SceneObject* obj = nullptr);
 		~Transform() {}
 
@@ -106,7 +107,7 @@ namespace BasicRenderer
 		void AddChild(Transform& child);
 		Transform Combine(const Transform& other) const;
 
-		Matrix4 GetWorldMatrix() const noexcept;
+		const Matrix4& GetWorldMatrix() const noexcept;
 		Vector3 GetWorldPosition() const noexcept;
 
 		inline const Matrix4& GetMatrix()						const noexcept { return m_matrix; }

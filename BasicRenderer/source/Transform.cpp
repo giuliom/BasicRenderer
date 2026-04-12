@@ -170,16 +170,22 @@ namespace BasicRenderer
 		return Transform(m_position + other.m_position, m_scale + other.m_scale, m_rotation + other.m_rotation, other.m_object);
 	}
 
-	Matrix4 Transform::GetWorldMatrix() const noexcept
+	const Matrix4& Transform::GetWorldMatrix() const noexcept
 	{
 		if (m_parent)
-			return m_parent->GetWorldMatrix() * m_matrix;
-		return m_matrix;
+		{
+			m_world = m_parent->GetWorldMatrix() * m_matrix;
+		}
+		else
+		{
+			m_world = m_matrix;
+		}
+		return m_world;
 	}
 
 	Vector3 Transform::GetWorldPosition() const noexcept
 	{
-		Matrix4 wm = GetWorldMatrix();
+		const Matrix4& wm = GetWorldMatrix();
 		return Vector3(wm.x4, wm.y4, wm.z4);
 	}
 }

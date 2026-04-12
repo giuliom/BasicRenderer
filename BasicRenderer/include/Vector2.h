@@ -39,14 +39,14 @@ namespace BasicRenderer
 		inline Vector2 operator-(const Vector2& v) const noexcept { return Vector2(x - v.x, y - v.y); }
 		inline Vector2 operator-(const float f) const noexcept { return Vector2(x - f, y - f); }
 		inline Vector2 operator*(const float f) const noexcept { return Vector2(x * f, y * f); }
-		inline Vector2 operator/(const float f) const noexcept { return Vector2(x / f, y / f); }
+		inline Vector2 operator/(const float f) const noexcept { const float inv = 1.0f / f; return Vector2(x * inv, y * inv); }
 
 		inline Vector2& operator+=(const Vector2& v) noexcept { x += v.x; y += v.y; return *this; }
 		inline Vector2& operator+=(const float f) noexcept { x += f; y += f; return *this; }
 		inline Vector2& operator-=(const Vector2& v) noexcept { x -= v.x; y -= v.y; return *this; }
 		inline Vector2& operator-=(const float f) noexcept { x -= f; y -= f; return *this; }
 		inline Vector2& operator*=(const float f) noexcept { x *= f; y *= f; return *this; }
-		inline Vector2& operator/=(const float f) noexcept { x /= f; y /= f; return *this; }
+		inline Vector2& operator/=(const float f) noexcept { const float inv = 1.0f / f; x *= inv; y *= inv; return *this; }
 
 		inline static float Dot(const Vector2& a, const Vector2& b) noexcept
 		{

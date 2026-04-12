@@ -23,12 +23,12 @@ namespace BasicRenderer
 
 	Mesh::Mesh(Mesh&& m) noexcept
 	{
-		m_faces = m.m_faces;
+		m_faces = std::move(m.m_faces);
 	}
 
 	Mesh& Mesh::operator=(Mesh&& m) noexcept
 	{
-		m_faces = m.m_faces;
+		m_faces = std::move(m.m_faces);
 		return *this;
 	}
 }

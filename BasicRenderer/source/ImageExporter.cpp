@@ -81,6 +81,7 @@ namespace BasicRenderer
 		}
 		size_t headerSize = bmpData.size();
 		memcpy(&bmpData[pixelInfo_offset], &headerSize, 4);
+		bmpData.reserve(headerSize + width * height * 3 + height * 4);
 
 		const Color* cBuf = fBuf.GetColorBuffer();
 

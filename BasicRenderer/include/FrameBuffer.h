@@ -75,11 +75,8 @@ namespace BasicRenderer
 		inline void Fill(const Color& col) noexcept
 		{
 			constexpr float d = std::numeric_limits<float>::max();
-			for (uint i = 0; i < size; ++i)
-			{
-				colorBuffer[i] = col;
-				depthBuffer[i] = d;
-			}
+			std::fill(colorBuffer.begin(), colorBuffer.end(), col);
+			std::fill(depthBuffer.begin(), depthBuffer.end(), d);
 		}
 	};
 }
