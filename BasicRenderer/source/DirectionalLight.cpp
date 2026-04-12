@@ -2,7 +2,7 @@
 
 namespace BasicRenderer
 {
-	void DirectionalLight::SetDirection(const Vector3& dir)
+	void DirectionalLight::SetDirection(const Vector3& dir) noexcept
 	{
 		direction = dir.Normalize();
 	}

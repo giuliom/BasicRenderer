@@ -94,7 +94,7 @@ namespace BasicRenderer
 		}
 	}
 
-	inline void Rasterizer::PerspectiveDivide(Face& f) const
+	inline void Rasterizer::PerspectiveDivide(Face& f) const noexcept
 	{
 		float v0w = 1.0f / f.v[0].pos.w;
 		float v1w = 1.0f / f.v[1].pos.w;
@@ -115,7 +115,7 @@ namespace BasicRenderer
 		f = Face(v0, v1, v2, f);
 	}
 
-	inline void Rasterizer::NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const
+	inline void Rasterizer::NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const noexcept
 	{
 		Vector4 v0 = Vector4(floorf(0.5f * fwidth * (f.v[0].pos.x + 1.0f)),
 			floorf(0.5f * fheight * (f.v[0].pos.y + 1.0f)),
@@ -133,7 +133,7 @@ namespace BasicRenderer
 		f = Face(v0, v1, v2, f);
 	}
 
-	inline uint Rasterizer::Clip(const Face& f, Face(&clippedFaces)[4]) const
+	inline uint Rasterizer::Clip(const Face& f, Face(&clippedFaces)[4]) const noexcept
 	{
 		int nfaces = 0;
 
@@ -178,7 +178,7 @@ namespace BasicRenderer
 		return nfaces;
 	}
 
-	inline uint Rasterizer::ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const
+	inline uint Rasterizer::ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const noexcept
 	{
 		assert(index < 5);
 
@@ -220,7 +220,7 @@ namespace BasicRenderer
 		return ++size;
 	}
 
-	inline bool Rasterizer::CullFace(const Face& f) const
+	inline bool Rasterizer::CullFace(const Face& f) const noexcept
 	{
 		float d = (f.v[1].pos.x - f.v[0].pos.x) *
 			(f.v[2].pos.y - f.v[0].pos.y) -
@@ -229,7 +229,7 @@ namespace BasicRenderer
 		return d < 0.0f;
 	}
 
-	inline Vector4 Rasterizer::BoundingBox(const Face& f, const float fwidth, const float fheight) const
+	inline Vector4 Rasterizer::BoundingBox(const Face& f, const float fwidth, const float fheight) const noexcept
 	{
 		const Vector2 v0 = Vector2(f.v[0].pos.x, f.v[0].pos.y);
 		const Vector2 v1 = Vector2(f.v[1].pos.x, f.v[1].pos.y);

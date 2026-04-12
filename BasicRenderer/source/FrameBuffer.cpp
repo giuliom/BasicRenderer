@@ -8,38 +8,38 @@ namespace BasicRenderer
 	{
 	}
 
-	bool FrameBuffer::WriteToColor(uint w, uint h, const Color& col)
+	bool FrameBuffer::WriteToColor(uint w, uint h, const Color& col) noexcept
 	{
 		assert(w >= 0 && w < width&& h >= 0 && h < height);
 		colorBuffer[width * h + w] = col;
 		return true;
 	}
 
-	bool FrameBuffer::WriteToDepth(uint w, uint h, float col)
+	bool FrameBuffer::WriteToDepth(uint w, uint h, float col) noexcept
 	{
 		assert(w >= 0 && w < width&& h >= 0 && h < height);
 		depthBuffer[width * h + w] = col;
 		return true;
 	}
 
-	float FrameBuffer::GetDepth(uint w, uint h) const
+	float FrameBuffer::GetDepth(uint w, uint h) const noexcept
 	{
 		assert(w >= 0 && w < width&& h >= 0 && h < height);
 		return depthBuffer[width * h + w];
 	}
 
-	const Color& FrameBuffer::GetColor(uint w, uint h) const
+	const Color& FrameBuffer::GetColor(uint w, uint h) const noexcept
 	{
 		assert(w >= 0 && w < width&& h >= 0 && h < height);
 		return colorBuffer[width * h + w];
 	}
 
-	const Color* FrameBuffer::GetColorBuffer() const
+	const Color* FrameBuffer::GetColorBuffer() const noexcept
 	{
 		return colorBuffer.data();
 	}
 
-	void FrameBuffer::CorrectGamma()
+	void FrameBuffer::CorrectGamma() noexcept
 	{
 		for (uint i = 0u; i < size; ++i)
 		{

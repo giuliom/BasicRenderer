@@ -21,12 +21,12 @@ namespace BasicRenderer
 		m_faces = m.m_faces;
 	}
 
-	Mesh::Mesh(Mesh&& m)
+	Mesh::Mesh(Mesh&& m) noexcept
 	{
 		m_faces = m.m_faces;
 	}
 
-	Mesh& Mesh::operator=(Mesh&& m)
+	Mesh& Mesh::operator=(Mesh&& m) noexcept
 	{
 		m_faces = m.m_faces;
 		return *this;

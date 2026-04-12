@@ -16,9 +16,9 @@ namespace BasicRenderer
 		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, InstanceList instances);
 		~RenderState() {}
 
-		const AccelerationStructure& GetAccelerationStructure()	const { return m_bvh; }
+		const AccelerationStructure& GetAccelerationStructure()	const noexcept { return m_bvh; }
 		void BuildAccelerationStructure() const;
-		const TimePoint& CreationTime() const { return m_creationTime; }
+		const TimePoint& CreationTime() const noexcept { return m_creationTime; }
 
 	private:
 		TimePoint m_creationTime;

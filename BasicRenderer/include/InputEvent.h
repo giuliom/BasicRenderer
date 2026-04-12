@@ -17,12 +17,12 @@ namespace BasicRenderer
 		const bool m_validPosition;
 
 	public:
-		InputEvent(const Vector2& pos, bool validPos) : m_position(pos), m_validPosition(validPos) {}
+		InputEvent(const Vector2& pos, bool validPos) noexcept : m_position(pos), m_validPosition(validPos) {}
 		virtual ~InputEvent() {}
 
-		inline virtual InputCategory GetCategory() const = 0;
-		inline bool HasValidPosition() { return m_validPosition; }
-		inline const Vector2& GetPosition() const { return m_position; }
+		inline virtual InputCategory GetCategory() const noexcept = 0;
+		inline bool HasValidPosition() noexcept { return m_validPosition; }
+		inline const Vector2& GetPosition() const noexcept { return m_position; }
 	};
 
 	enum class ButtonState
@@ -50,20 +50,20 @@ namespace BasicRenderer
 		const ButtonState m_buttonState;
 
 	public:
-		ButtonInputEvent(ButtonType button, ButtonState state) : InputEvent({ 0.f, 0.f }, false), m_buttonType(button), m_buttonState(state) {}
-		ButtonInputEvent(ButtonType button, ButtonState state, const Vector2& pos) : InputEvent(pos, true), m_buttonType(button), m_buttonState(state) {}
+		ButtonInputEvent(ButtonType button, ButtonState state) noexcept : InputEvent({ 0.f, 0.f }, false), m_buttonType(button), m_buttonState(state) {}
+		ButtonInputEvent(ButtonType button, ButtonState state, const Vector2& pos) noexcept : InputEvent(pos, true), m_buttonType(button), m_buttonState(state) {}
 
-		inline InputCategory GetCategory() const override { return InputCategory::BUTTON_EVENT; }
-		inline ButtonType GetButtonType() const { return m_buttonType; }
-		inline ButtonState GetButtonState() const { return m_buttonState; }
+		inline InputCategory GetCategory() const noexcept override { return InputCategory::BUTTON_EVENT; }
+		inline ButtonType GetButtonType() const noexcept { return m_buttonType; }
+		inline ButtonState GetButtonState() const noexcept { return m_buttonState; }
 	};
 
 	class CursorInputEvent : public InputEvent
 	{
 	public:
-		CursorInputEvent(const Vector2 pos) : InputEvent(pos, true) {}
+		CursorInputEvent(const Vector2 pos) noexcept : InputEvent(pos, true) {}
 
-		inline InputCategory GetCategory() const override { return InputCategory::CURSOR_EVENT; }
+		inline InputCategory GetCategory() const noexcept override { return InputCategory::CURSOR_EVENT; }
 	};
 
 }

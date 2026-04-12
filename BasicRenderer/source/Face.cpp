@@ -9,7 +9,7 @@ namespace BasicRenderer
 	{
 	}
 
-	AxisAlignedBoundingBox Face::UpdateAxisAlignedBoundingBox() const
+	AxisAlignedBoundingBox Face::UpdateAxisAlignedBoundingBox() const noexcept
 	{
 		Vector3 min = v[0].pos;
 		Vector3 max = v[0].pos;
@@ -27,7 +27,7 @@ namespace BasicRenderer
 		return AxisAlignedBoundingBox(min, max);
 	}
 
-	Face& Face::operator=(const Face& f)
+	Face& Face::operator=(const Face& f) noexcept
 	{
 		v[0] = f.v[0];
 		v[1] = f.v[1];
@@ -37,7 +37,7 @@ namespace BasicRenderer
 		return *this;
 	}
 
-	Face& Face::operator=(Face&& f)
+	Face& Face::operator=(Face&& f) noexcept
 	{
 		v[0] = f.v[0];
 		v[1] = f.v[1];

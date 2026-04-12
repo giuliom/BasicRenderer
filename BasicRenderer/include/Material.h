@@ -29,10 +29,10 @@ namespace BasicRenderer
 		float roughness = 0.0f;
 		float refractiveIndex = 1.5f;
 
-		Material(const Color& base, Type type = Type::DIFFUSE) : type(type), baseColor(base) {}
+		Material(const Color& base, Type type = Type::DIFFUSE) noexcept : type(type), baseColor(base) {}
 
 		// Ray directions are always normalized
-		static inline bool Refract(const Ray& r, const Vector3& normal, float ni_nt, Vector3& refracted)
+		static inline bool Refract(const Ray& r, const Vector3& normal, float ni_nt, Vector3& refracted) noexcept
 		{
 			float dt = Vector3::Dot(r.GetDirection(), normal);
 			float discriminant = 1.f - ni_nt * ni_nt * (1.f - dt * dt);
@@ -49,7 +49,7 @@ namespace BasicRenderer
 		Color NormalShading(const RenderState& state, const Vector3& pos, const Vector3& normal) const;
 		Color LitShading(const RenderState& state, const Vector3& pos, const Vector3& normal) const;
 
-		static inline float Schlick(float cos, float refractiveIndex)
+		static inline float Schlick(float cos, float refractiveIndex) noexcept
 		{
 			float r0 = (1.f - refractiveIndex) / (1.f + refractiveIndex);
 			r0 *= r0;

@@ -45,8 +45,8 @@ namespace BasicRenderer
 		Renderer();
 		virtual ~Renderer() {}
 
-		Rasterizer& GetRasterizer() { return m_rasterizer; }
-		Raytracer& GetRaytracer() { return m_raytracer; }
+		Rasterizer& GetRasterizer() noexcept { return m_rasterizer; }
+		Raytracer& GetRaytracer() noexcept { return m_raytracer; }
 
 		const FrameBuffer* Render(const RenderState& scene, uint width, uint height, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, const float deltaTime = 0.f);
 

@@ -28,7 +28,7 @@ namespace BasicRenderer
 		float w4 = 0.0f;
 
 	public:
-		Matrix4() :
+		Matrix4() noexcept :
 			x1(1.0f), x2(0.0f), x3(0.0f), x4(0.0f),
 			y1(0.0f), y2(1.0f), y3(0.0f), y4(0.0f),
 			z1(0.0f), z2(0.0f), z3(1.0f), z4(0.0f),
@@ -37,23 +37,23 @@ namespace BasicRenderer
 		Matrix4(float x1_, float x2_, float x3_, float x4_,
 			float y1_, float y2_, float y3_, float y4_,
 			float z1_, float z2_, float z3_, float z4_,
-			float w1_, float w2_, float w3_, float w4_) :
+			float w1_, float w2_, float w3_, float w4_) noexcept :
 			x1(x1_), x2(x2_), x3(x3_), x4(x4_),
 			y1(y1_), y2(y2_), y3(y3_), y4(y4_),
 			z1(z1_), z2(z2_), z3(z3_), z4(z4_),
 			w1(w1_), w2(w2_), w3(w3_), w4(w4_) {}
 
 
-		Matrix4(const Matrix4& m);
-		Matrix4(Matrix4&& m);
-		~Matrix4() {}
+		Matrix4(const Matrix4& m) noexcept;
+		Matrix4(Matrix4&& m) noexcept;
+		~Matrix4() noexcept {}
 
-		Matrix4& operator=(const Matrix4& m);
-		Matrix4& operator=(Matrix4&& m);
-		bool	operator==(const Matrix4& m) const;
-		bool	operator!=(const Matrix4& m) const;
+		Matrix4& operator=(const Matrix4& m) noexcept;
+		Matrix4& operator=(Matrix4&& m) noexcept;
+		bool	operator==(const Matrix4& m) const noexcept;
+		bool	operator!=(const Matrix4& m) const noexcept;
 
-		inline Vector4 operator*(const Vector4& v) const
+		inline Vector4 operator*(const Vector4& v) const noexcept
 		{
 			return Vector4(
 				x1 * v.x + x2 * v.y + x3 * v.z + x4 * v.w,
@@ -63,7 +63,7 @@ namespace BasicRenderer
 			);
 		}
 
-		inline Matrix4 operator*(const float f) const
+		inline Matrix4 operator*(const float f) const noexcept
 		{
 			return Matrix4(x1 * f, x2 * f, x3 * f, x4 * f,
 				y1 * f, y2 * f, y3 * f, y4 * f,
@@ -72,7 +72,7 @@ namespace BasicRenderer
 			);
 		}
 
-		inline Vector3 operator*(const Vector3& v) const
+		inline Vector3 operator*(const Vector3& v) const noexcept
 		{
 			Vector3 n(
 				x1 * v.x + x2 * v.y + x3 * v.z + x4,
@@ -88,7 +88,7 @@ namespace BasicRenderer
 			return n;
 		}
 
-		inline float Det() const
+		inline float Det() const noexcept
 		{
 			return x1 * y2 * z3 * w4 + x1 * y3 * z4 * w2 + x1 * y4 * z2 * w3
 				+ x2 * y1 * z4 * w3 + x2 * y3 * z1 * w4 + x2 * y4 * z3 * w1
@@ -100,9 +100,9 @@ namespace BasicRenderer
 				- x4 * y1 * z2 * w3 - x4 * y2 * z3 * w1 - x4 * y3 * z1 * w2;
 		}
 
-		Matrix4 Inverse() const;
+		Matrix4 Inverse() const noexcept;
 
-		inline static Matrix4 Identity()
+		inline static Matrix4 Identity() noexcept
 		{
 			return Matrix4(
 				1.0f, 0.0f, 0.0f, 0.0f,
@@ -111,7 +111,7 @@ namespace BasicRenderer
 				0.0f, 0.0f, 0.0f, 1.0f);
 		}
 
-		inline static Matrix4 Zero()
+		inline static Matrix4 Zero() noexcept
 		{
 			return Matrix4(
 				0.0f, 0.0f, 0.0f, 0.0f,
@@ -122,5 +122,5 @@ namespace BasicRenderer
 		}
 	};
 
-	Matrix4 operator*(const Matrix4& m1, const Matrix4& m2);
+	Matrix4 operator*(const Matrix4& m1, const Matrix4& m2) noexcept;
 }

@@ -14,24 +14,24 @@ namespace BasicRenderer
 		std::array<Vertex, 3> v;
 		Vector3 normal;
 
-		Face() : Primitive(nullptr) {}
-		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2, Material* material = nullptr) : Primitive(material), v{pV0, pV1, pV2}, normal(CalculateNormal(v[0].pos, v[1].pos, v[2].pos)) {}
+		Face() noexcept : Primitive(nullptr) {}
+		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2, Material* material = nullptr) noexcept : Primitive(material), v{pV0, pV1, pV2}, normal(CalculateNormal(v[0].pos, v[1].pos, v[2].pos)) {}
 		Face(const Position& p0, const Position& p1, const Position& p2, const Face& face);
-		Face(const Face& f) : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
+		Face(const Face& f) noexcept : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
 		Face(Face&& f) noexcept : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
 
-		Face& operator=(const Face& f);
-		Face& operator=(Face&& f);
+		Face& operator=(const Face& f) noexcept;
+		Face& operator=(Face&& f) noexcept;
 
-		const Vector3& GetNormal() const { return normal; }
-		PrimitiveType GetType() const override { return PrimitiveType::FACE; }
-		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
-		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override;
+		const Vector3& GetNormal() const noexcept { return normal; }
+		PrimitiveType GetType() const noexcept override { return PrimitiveType::FACE; }
+		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const noexcept override;
+		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const noexcept override;
 
 		friend void ToMatrixSpace(Face& f, const Matrix4& m);
 	};
 
-	inline Vector3 CalculateNormal(const Face& f) { return CalculateNormal(f.v[0].pos, f.v[1].pos, f.v[2].pos); }
+	inline Vector3 CalculateNormal(const Face& f) noexcept { return CalculateNormal(f.v[0].pos, f.v[1].pos, f.v[2].pos); }
 
 	inline void ToMatrixSpace(Face& f, const Matrix4& m)
 	{
@@ -43,7 +43,7 @@ namespace BasicRenderer
 	}
 
 	//Moller-Trumbore intersection algorithm
-	inline bool Intersection(const Face& face, const Ray& r, float tMin, float tMax, float& tHit)
+	inline bool Intersection(const Face& face, const Ray& r, float tMin, float tMax, float& tHit) noexcept
 	{
 		const Vector3 edge1(face.v[1].pos - face.v[0].pos);
 		const Vector3 edge2(face.v[2].pos - face.v[0].pos);
@@ -86,7 +86,7 @@ namespace BasicRenderer
 		}
 	}
 
-	inline bool Face::GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const
+	inline bool Face::GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const noexcept
 	{
 		if (Intersection(*this, r, tMin, tMax, outHit.t))
 		{

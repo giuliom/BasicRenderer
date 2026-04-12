@@ -2,7 +2,7 @@
 
 namespace BasicRenderer
 {
-	Matrix4::Matrix4(const Matrix4& m)
+	Matrix4::Matrix4(const Matrix4& m) noexcept
 	{
 		x1 = m.x1;
 		x2 = m.x2;
@@ -22,7 +22,7 @@ namespace BasicRenderer
 		w4 = m.w4;
 	}
 
-	Matrix4::Matrix4(Matrix4&& m)
+	Matrix4::Matrix4(Matrix4&& m) noexcept
 	{
 		x1 = m.x1;
 		x2 = m.x2;
@@ -42,28 +42,7 @@ namespace BasicRenderer
 		w4 = m.w4;
 	}
 
-	Matrix4& Matrix4::operator=(const Matrix4& m)
-	{
-		x1 = m.x1;
-		x2 = m.x2;
-		x3 = m.x3;
-		x4 = m.x4;
-		y1 = m.y1;
-		y2 = m.y2;
-		y3 = m.y3;
-		y4 = m.y4;
-		z1 = m.z1;
-		z2 = m.z2;
-		z3 = m.z3;
-		z4 = m.z4;
-		w1 = m.w1;
-		w2 = m.w2;
-		w3 = m.w3;
-		w4 = m.w4;
-		return *this;
-	}
-
-	Matrix4& Matrix4::operator=(Matrix4&& m)
+	Matrix4& Matrix4::operator=(const Matrix4& m) noexcept
 	{
 		x1 = m.x1;
 		x2 = m.x2;
@@ -84,7 +63,28 @@ namespace BasicRenderer
 		return *this;
 	}
 
-    bool Matrix4::operator==(const Matrix4 &m) const
+	Matrix4& Matrix4::operator=(Matrix4&& m) noexcept
+	{
+		x1 = m.x1;
+		x2 = m.x2;
+		x3 = m.x3;
+		x4 = m.x4;
+		y1 = m.y1;
+		y2 = m.y2;
+		y3 = m.y3;
+		y4 = m.y4;
+		z1 = m.z1;
+		z2 = m.z2;
+		z3 = m.z3;
+		z4 = m.z4;
+		w1 = m.w1;
+		w2 = m.w2;
+		w3 = m.w3;
+		w4 = m.w4;
+		return *this;
+	}
+
+    bool Matrix4::operator==(const Matrix4 &m) const noexcept
     {
         return x1 == m.x1 &&
 		x2 == m.x2 &&
@@ -104,7 +104,7 @@ namespace BasicRenderer
 		w4 == m.w4;
     }
 
-    bool Matrix4::operator!=(const Matrix4 &m) const
+    bool Matrix4::operator!=(const Matrix4 &m) const noexcept
     {
         return x1 != m.x1 ||
 		x2 != m.x2 ||
@@ -124,7 +124,7 @@ namespace BasicRenderer
 		w4 != m.w4;
     }
 
-    Matrix4 Matrix4::Inverse() const
+    Matrix4 Matrix4::Inverse() const noexcept
 	{
 		float det = Det();
 		assert(det != 0);
@@ -157,7 +157,7 @@ namespace BasicRenderer
 	}
 
 
-	Matrix4 operator*(const Matrix4& m1, const Matrix4& m2)
+	Matrix4 operator*(const Matrix4& m1, const Matrix4& m2) noexcept
 	{
 		return Matrix4(m1.x1 * m2.x1 + m1.x2 * m2.y1 + m1.x3 * m2.z1 + m1.x4 * m2.w1,
 			m1.x1 * m2.x2 + m1.x2 * m2.y2 + m1.x3 * m2.z2 + m1.x4 * m2.w2,

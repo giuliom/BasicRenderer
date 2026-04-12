@@ -41,13 +41,13 @@ namespace BasicRenderer
 
 		const PrimitiveList& ProcessForRendering(Transform& transform);
 
-		auto GetType() const { return m_type; }
-		size_t NumPrimitives() const { return m_primitives.size(); }
-		const Primitive& GetPrimitive(size_t index) const { return *m_primitives[index]; }
-		const PrimitiveList& GetPrimitives() const { return m_primitives; }
-		const std::shared_ptr<Material>& GetMaterial() const { return m_material; }
+		auto GetType() const noexcept { return m_type; }
+		size_t NumPrimitives() const noexcept { return m_primitives.size(); }
+		const Primitive& GetPrimitive(size_t index) const noexcept { return *m_primitives[index]; }
+		const PrimitiveList& GetPrimitives() const noexcept { return m_primitives; }
+		const std::shared_ptr<Material>& GetMaterial() const noexcept { return m_material; }
 
-		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const
+		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const noexcept
 		{
 			outHit.t = tMax;
 			bool hit = false;

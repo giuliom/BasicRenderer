@@ -13,12 +13,12 @@ namespace BasicRenderer
 
 	public:
 
-		InputManager() : m_events(), m_lastCursorPosition(0.f, 0.f) {}
+		InputManager() noexcept : m_events(), m_lastCursorPosition(0.f, 0.f) {}
 
-		inline bool Empty() const { return m_events.size() == 0; }
+		inline bool Empty() const noexcept { return m_events.size() == 0; }
 
-		inline const Vector2& GetLastCursorPosition() const { return m_lastCursorPosition; }
-		inline void SetLastCursorPosition(const Vector2& position) { m_lastCursorPosition = position; }
+		inline const Vector2& GetLastCursorPosition() const noexcept { return m_lastCursorPosition; }
+		inline void SetLastCursorPosition(const Vector2& position) noexcept { m_lastCursorPosition = position; }
 
 		void AddEvent(std::unique_ptr<InputEvent>& event);
 		std::unique_ptr<InputEvent> PopFrontEvent();

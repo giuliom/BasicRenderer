@@ -10,9 +10,9 @@ namespace BasicRenderer
 		class Vector3 position;
 		float intensity = 1.0f;
 
-		PointLight() {}
-		PointLight(float intensity_, const Vector3& pos) : position(pos), intensity(intensity_) {}
-		PointLight(const PointLight& dl) : position(dl.position), intensity(dl.intensity) {}
+		PointLight() noexcept {}
+		PointLight(float intensity_, const Vector3& pos) noexcept : position(pos), intensity(intensity_) {}
+		PointLight(const PointLight& dl) noexcept : position(dl.position), intensity(dl.intensity) {}
 		virtual ~PointLight() {}
 	};
 }

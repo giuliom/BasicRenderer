@@ -37,17 +37,17 @@ namespace BasicRenderer
 		void SetAspectRatio(float w, float h);
 		void SetFov(float f);
 
-		inline Transform& GetTransform() { return m_transform; }
-		inline float GetFov() const { return m_degHorizontalFov; }
-		inline float GetAspectRatio() const { return m_aspectRatio; }
-		inline float GetViewportWidth() const { return m_viewportWidth; }
-		inline float GetViewportHeight() const { return m_viewportHeight; }
-		inline const Matrix4& GetViewMatrix() const { return m_transform.GetInverseMatrix(); }
-		inline const Matrix4& GetProjectionMatrix() const { return m_projection; }
-		inline float GetMovementSpeed() const { return m_movementSpeed; }
-		inline float GetRotationSpeed() const { return m_rotationSpeed; }
+		inline Transform& GetTransform() noexcept { return m_transform; }
+		inline float GetFov() const noexcept { return m_degHorizontalFov; }
+		inline float GetAspectRatio() const noexcept { return m_aspectRatio; }
+		inline float GetViewportWidth() const noexcept { return m_viewportWidth; }
+		inline float GetViewportHeight() const noexcept { return m_viewportHeight; }
+		inline const Matrix4& GetViewMatrix() const noexcept { return m_transform.GetInverseMatrix(); }
+		inline const Matrix4& GetProjectionMatrix() const noexcept { return m_projection; }
+		inline float GetMovementSpeed() const noexcept { return m_movementSpeed; }
+		inline float GetRotationSpeed() const noexcept { return m_rotationSpeed; }
 
-		Ray GetCameraRay(const float u, const float v) const
+		Ray GetCameraRay(const float u, const float v) const noexcept
 		{
 			// u,v come from Top-left coordinates
 			Vector3 direction = m_viewportUpperLeft + Vector3(u * m_viewportWidth, -v * m_viewportHeight, 0);

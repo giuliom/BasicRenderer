@@ -31,7 +31,7 @@ namespace BasicRenderer
 		float t;
 		Vector3 normal;
 
-		HitResult() : primitive(nullptr), material(nullptr), t(0.f), normal() {}
+		HitResult() noexcept : primitive(nullptr), material(nullptr), t(0.f), normal() {}
 	};
 
 	class AxisAlignedBoundingBox
@@ -45,16 +45,16 @@ namespace BasicRenderer
 
 	public:
 
-		AxisAlignedBoundingBox() : m_minimum({ 0.f, 0.f, 0.f }), m_maximum({ 0.f, 0.f, 0.f }), m_size(0.f) {}
-		AxisAlignedBoundingBox(const Vector3& minimum, const Vector3& maximum) : m_minimum(minimum), m_maximum(maximum), m_size((maximum - minimum).Length()) {}
-		AxisAlignedBoundingBox(const AxisAlignedBoundingBox& other) : m_minimum(other.m_minimum), m_maximum(other.m_maximum), m_size(other.m_size) {}
-		AxisAlignedBoundingBox& operator=(const AxisAlignedBoundingBox& other) { m_minimum = other.m_minimum; m_maximum = other.m_maximum; m_size = other.m_size; return *this; }
+		AxisAlignedBoundingBox() noexcept : m_minimum({ 0.f, 0.f, 0.f }), m_maximum({ 0.f, 0.f, 0.f }), m_size(0.f) {}
+		AxisAlignedBoundingBox(const Vector3& minimum, const Vector3& maximum) noexcept : m_minimum(minimum), m_maximum(maximum), m_size((maximum - minimum).Length()) {}
+		AxisAlignedBoundingBox(const AxisAlignedBoundingBox& other) noexcept : m_minimum(other.m_minimum), m_maximum(other.m_maximum), m_size(other.m_size) {}
+		AxisAlignedBoundingBox& operator=(const AxisAlignedBoundingBox& other) noexcept { m_minimum = other.m_minimum; m_maximum = other.m_maximum; m_size = other.m_size; return *this; }
 
-		inline const Vector3& GetMinimum() const { return m_minimum; }
-		inline const Vector3& GetMaximum() const { return m_maximum; }
-		inline float GetSize() const { return m_size; }
+		inline const Vector3& GetMinimum() const noexcept { return m_minimum; }
+		inline const Vector3& GetMaximum() const noexcept { return m_maximum; }
+		inline float GetSize() const noexcept { return m_size; }
 
-		inline bool GetHit(const Ray& r, const float tMin, const float tMax) const
+		inline bool GetHit(const Ray& r, const float tMin, const float tMax) const noexcept
 		{
 			if (m_size <= 0.f)
 			{
@@ -96,7 +96,7 @@ namespace BasicRenderer
 		}
 
 		// Return the bounding box of the two boxes combined
-		inline AxisAlignedBoundingBox operator+(const AxisAlignedBoundingBox& other) const
+		inline AxisAlignedBoundingBox operator+(const AxisAlignedBoundingBox& other) const noexcept
 		{
 			Vector3 min(std::min(m_minimum.x, other.m_minimum.x),
 						std::min(m_minimum.y, other.m_minimum.y),
@@ -127,17 +127,17 @@ namespace BasicRenderer
 		virtual PrimitiveType GetType() const = 0;
 		virtual AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const = 0;
 
-		Primitive() : m_material(nullptr), m_boundingBox() {}
-		Primitive(Material* material) : m_material(material), m_boundingBox() {}
-		Primitive(const Primitive& other) 
+		Primitive() noexcept : m_material(nullptr), m_boundingBox() {}
+		Primitive(Material* material) noexcept : m_material(material), m_boundingBox() {}
+		Primitive(const Primitive& other) noexcept
 			: m_material(other.m_material), m_boundingBox(other.m_boundingBox) {}
 		virtual ~Primitive() {}
 
-		void SetMaterial(Material* material) { m_material = material; }
-		inline Material* GetMaterial() const { return m_material; }
+		void SetMaterial(Material* material) noexcept { m_material = material; }
+		inline Material* GetMaterial() const noexcept { return m_material; }
 
 		virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const = 0;
-		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox()	const	{ return m_boundingBox; }
+		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox()	const noexcept	{ return m_boundingBox; }
 	};
 
 	template<typename T>

@@ -12,8 +12,8 @@ namespace BasicRenderer
 		Vector3 invDirection;
 
 	public:
-		Ray() {}
-		Ray(const Vector3& ori, const Vector3& dir) : origin(ori), direction(dir.Normalize()), invDirection({
+		Ray() noexcept {}
+		Ray(const Vector3& ori, const Vector3& dir) noexcept : origin(ori), direction(dir.Normalize()), invDirection({
 			1.0f / direction.x,
 			1.0f / direction.y,
 			1.0f / direction.z
@@ -21,11 +21,11 @@ namespace BasicRenderer
 		{
 		}
 
-		Ray(const Ray& other) : origin(other.origin), direction(other.direction), invDirection(other.invDirection)
+		Ray(const Ray& other) noexcept : origin(other.origin), direction(other.direction), invDirection(other.invDirection)
 		{
 		}
 
-		Ray& operator=(const Ray& other)
+		Ray& operator=(const Ray& other) noexcept
 		{
 			origin = other.origin;
 			direction = other.direction;
@@ -33,9 +33,9 @@ namespace BasicRenderer
 			return *this;	
 		}
 
-		inline const Vector3& GetOrigin() const { return origin; }
-		inline const Vector3& GetDirection() const { return direction; }
-		inline const Vector3& GetInvDirection() const { return invDirection; }
-		inline const Vector3 GetPoint(float t) const { return origin + direction * t; }
+		inline const Vector3& GetOrigin() const noexcept { return origin; }
+		inline const Vector3& GetDirection() const noexcept { return direction; }
+		inline const Vector3& GetInvDirection() const noexcept { return invDirection; }
+		inline const Vector3 GetPoint(float t) const noexcept { return origin + direction * t; }
 	};
 }

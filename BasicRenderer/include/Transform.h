@@ -39,11 +39,11 @@ namespace BasicRenderer
 
 	protected:
 
-		Matrix4 GetTranslationMatrix(const Vector3& position);
-		Matrix4 GetScaleMatrix(const Vector3& scale);
-		Matrix4 GetRotationMatrix(const Vector3& rotation);
+		Matrix4 GetTranslationMatrix(const Vector3& position) noexcept;
+		Matrix4 GetScaleMatrix(const Vector3& scale) noexcept;
+		Matrix4 GetRotationMatrix(const Vector3& rotation) noexcept;
 
-		inline void UpdateTransform()
+		inline void UpdateTransform() noexcept
 		{
 			m_matrix = GetTranslationMatrix(m_position) * GetRotationMatrix(m_rotation) * GetScaleMatrix(m_scale);
 			m_inverse = m_matrix.Inverse();
@@ -69,49 +69,49 @@ namespace BasicRenderer
 		Transform(const Vector3& pos, const Vector3& scl, const Vector3& rot, SceneObject* obj = nullptr);
 		~Transform() {}
 
-		Transform& operator=(const Transform& t);
-		Transform& operator=(Transform&& t);
+		Transform& operator=(const Transform& t) noexcept;
+		Transform& operator=(Transform&& t) noexcept;
 
-		inline const Vector3& GetPosition() const { return m_position; }
-		inline const Vector3& GetScale()	const { return m_scale; }
-		inline const Vector3& GetRotation() const { return m_rotation; }
+		inline const Vector3& GetPosition() const noexcept { return m_position; }
+		inline const Vector3& GetScale()	const noexcept { return m_scale; }
+		inline const Vector3& GetRotation() const noexcept { return m_rotation; }
 
-		inline bool isDirty() const { return m_dirty; }
-		inline void SetDirty(bool dirty) { m_dirty = dirty; }
+		inline bool isDirty() const noexcept { return m_dirty; }
+		inline void SetDirty(bool dirty) noexcept { m_dirty = dirty; }
 
-		inline const Vector3& Forward() const { return m_forward; }
-		inline const Vector3& Right()	const { return m_right; }
-		inline const Vector3& Up()		const { return m_up; }
+		inline const Vector3& Forward() const noexcept { return m_forward; }
+		inline const Vector3& Right()	const noexcept { return m_right; }
+		inline const Vector3& Up()		const noexcept { return m_up; }
 
-		void SetPosition(const Vector3& position);
-		void SetScale(const Vector3& scale);
-		void SetRotation(const Vector3& rotation);
-		void SetPosition(float x, float y, float z);
-		void SetScale(float x, float y, float z);
-		void SetRotation(float roll, float yaw, float pitch);
+		void SetPosition(const Vector3& position) noexcept;
+		void SetScale(const Vector3& scale) noexcept;
+		void SetRotation(const Vector3& rotation) noexcept;
+		void SetPosition(float x, float y, float z) noexcept;
+		void SetScale(float x, float y, float z) noexcept;
+		void SetRotation(float roll, float yaw, float pitch) noexcept;
 
-		void Translate(const Vector3& position);
-		void Translate(float x, float y, float z);
-		void Scale(const Vector3& scale);
-		void Scale(float x, float y, float z);
-		void Rotate(const Vector3& radRotation);
-		void RotateDeg(const Vector3& rotation);
-		void Rotate(float radRoll, float radYaw, float radPitch);
-		void RotateDeg(float roll, float yaw, float pitch);
+		void Translate(const Vector3& position) noexcept;
+		void Translate(float x, float y, float z) noexcept;
+		void Scale(const Vector3& scale) noexcept;
+		void Scale(float x, float y, float z) noexcept;
+		void Rotate(const Vector3& radRotation) noexcept;
+		void RotateDeg(const Vector3& rotation) noexcept;
+		void Rotate(float radRoll, float radYaw, float radPitch) noexcept;
+		void RotateDeg(float roll, float yaw, float pitch) noexcept;
 
-		SceneObject* GetObject() { return m_object; }
-		const SceneObject* GetObject() const { return m_object; }
-		const std::unordered_set<Transform*>& GetChildren() const { return m_children; }
-		const Transform* GetParent() const { return m_parent; }
+		SceneObject* GetObject() noexcept { return m_object; }
+		const SceneObject* GetObject() const noexcept { return m_object; }
+		const std::unordered_set<Transform*>& GetChildren() const noexcept { return m_children; }
+		const Transform* GetParent() const noexcept { return m_parent; }
 		void AddChild(Transform& child);
 		Transform Combine(const Transform& other) const;
 
-		Matrix4 GetWorldMatrix() const;
-		Vector3 GetWorldPosition() const;
+		Matrix4 GetWorldMatrix() const noexcept;
+		Vector3 GetWorldPosition() const noexcept;
 
-		inline const Matrix4& GetMatrix()						const { return m_matrix; }
-		inline const Matrix4& GetInverseMatrix()				const { return m_inverse; }
-		inline Vector4 GetTransformedVector(const Vector4& v)	const { return m_matrix * v; }
+		inline const Matrix4& GetMatrix()						const noexcept { return m_matrix; }
+		inline const Matrix4& GetInverseMatrix()				const noexcept { return m_inverse; }
+		inline Vector4 GetTransformedVector(const Vector4& v)	const noexcept { return m_matrix * v; }
 
 	};
 }

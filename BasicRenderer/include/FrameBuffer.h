@@ -34,45 +34,45 @@ namespace BasicRenderer
 		FrameBuffer& operator==(const FrameBuffer& buf) = delete;
 		FrameBuffer& operator=(const FrameBuffer& buf) = delete;
 
-		bool WriteToColor(uint w, uint h, const Color& col);
-		bool WriteToDepth(uint w, uint h, float col);
-		float GetDepth(uint w, uint h) const;
-		const Color& GetColor(uint w, uint h) const;
+		bool WriteToColor(uint w, uint h, const Color& col) noexcept;
+		bool WriteToDepth(uint w, uint h, float col) noexcept;
+		float GetDepth(uint w, uint h) const noexcept;
+		const Color& GetColor(uint w, uint h) const noexcept;
 
 		std::vector<Color> GetColorBufferCopy() const;
-		const Color* GetColorBuffer() const;
+		const Color* GetColorBuffer() const noexcept;
 
 
-		inline uint GetWidth() const { return width; }
-		inline uint GetHeight() const { return height; }
-		inline uint NumPixels() const { return size;}
+		inline uint GetWidth() const noexcept { return width; }
+		inline uint GetHeight() const noexcept { return height; }
+		inline uint NumPixels() const noexcept { return size;}
 
-		void CorrectGamma();
+		void CorrectGamma() noexcept;
 
-		inline bool WriteToColor(uint index, const Color& col)
+		inline bool WriteToColor(uint index, const Color& col) noexcept
 		{
 			assert(index >= 0 && index < size);
 			colorBuffer[index] = col;
 			return true;
 		}
-		inline bool WriteToDepth(uint index, float col)
+		inline bool WriteToDepth(uint index, float col) noexcept
 		{
 			assert(index >= 0 && index < size);
 			depthBuffer[index] = col;
 			return true;
 		}
-		inline float GetDepth(uint index) const
+		inline float GetDepth(uint index) const noexcept
 		{
 			assert(index >= 0 && index < size);
 			return depthBuffer[index];
 		}
-		inline const Color& GetColor(uint index) const
+		inline const Color& GetColor(uint index) const noexcept
 		{
 			assert(index >= 0 && index < size);
 			return colorBuffer[index];
 		}
 
-		inline void Fill(const Color& col)
+		inline void Fill(const Color& col) noexcept
 		{
 			constexpr float d = std::numeric_limits<float>::max();
 			for (uint i = 0; i < size; ++i)

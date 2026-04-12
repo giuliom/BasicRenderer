@@ -22,7 +22,7 @@ namespace BasicRenderer
 		float m_ambientLightIntensity = 1.0f;
 		Color m_ambientLightColor{ 1.f, 1.f, 1.f };
 
-		EnvironmentSettings() {}
+		EnvironmentSettings() noexcept {}
 	};
 
 	class World
@@ -41,19 +41,19 @@ namespace BasicRenderer
 		World(const World& other) = delete;
 		~World();
 
-		inline const ObjectList& GetObjects() const		{ return m_objectList; }
+		inline const ObjectList& GetObjects() const noexcept		{ return m_objectList; }
 
-		inline const Camera& GetMainCamera() const		{ return m_mainCamera; }
-		inline Camera& GetMainCamera()					{ return m_mainCamera; }
+		inline const Camera& GetMainCamera() const noexcept		{ return m_mainCamera; }
+		inline Camera& GetMainCamera() noexcept					{ return m_mainCamera; }
 
-		inline const DirectionalLight& GetSun() const	{ return m_environmentSettings.m_sun; }
-		inline DirectionalLight& GetSun()				{ return m_environmentSettings.m_sun; }
+		inline const DirectionalLight& GetSun() const noexcept	{ return m_environmentSettings.m_sun; }
+		inline DirectionalLight& GetSun() noexcept				{ return m_environmentSettings.m_sun; }
 
-		inline const EnvironmentSettings& GetEnvironmentSettings()	const	{ return m_environmentSettings; }
-		inline float GetAmbientLightIntensity()						const	{ return m_environmentSettings.m_ambientLightIntensity; }
-		inline void SetAmbientLightIntensity(const float intensity)			{ m_environmentSettings.m_ambientLightIntensity = intensity; }
-		inline const Color& GetAmbientLightColor()					const	{ return m_environmentSettings.m_ambientLightColor; }
-		inline void SetAmbientLightColor(const Color& color)				{ m_environmentSettings.m_ambientLightColor = color; }
+		inline const EnvironmentSettings& GetEnvironmentSettings()	const noexcept	{ return m_environmentSettings; }
+		inline float GetAmbientLightIntensity()						const noexcept	{ return m_environmentSettings.m_ambientLightIntensity; }
+		inline void SetAmbientLightIntensity(const float intensity) noexcept		{ m_environmentSettings.m_ambientLightIntensity = intensity; }
+		inline const Color& GetAmbientLightColor()					const noexcept	{ return m_environmentSettings.m_ambientLightColor; }
+		inline void SetAmbientLightColor(const Color& color) noexcept			{ m_environmentSettings.m_ambientLightColor = color; }
 
 		void Add(std::unique_ptr<SceneObject> obj, Transform* parent = nullptr);
 		bool Remove(const uint id);

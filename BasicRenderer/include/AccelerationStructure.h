@@ -20,14 +20,14 @@ namespace BasicRenderer
 
 	public:
 
-		BVHnode(const Primitive* primitive, const AxisAlignedBoundingBox& box, const BVHnode* left, const BVHnode* right) : m_primitive(primitive), m_box(box), m_left(left), m_right(right) {}
+		BVHnode(const Primitive* primitive, const AxisAlignedBoundingBox& box, const BVHnode* left, const BVHnode* right) noexcept : m_primitive(primitive), m_box(box), m_left(left), m_right(right) {}
 
-		inline const Primitive* GetPrimitive() const { return m_primitive; }
-		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox() const { return m_box; }
-		inline const BVHnode* GetLeft() const { return m_left.get(); }
-		inline const BVHnode* GetRight() const { return m_right.get(); }
+		inline const Primitive* GetPrimitive() const noexcept { return m_primitive; }
+		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox() const noexcept { return m_box; }
+		inline const BVHnode* GetLeft() const noexcept { return m_left.get(); }
+		inline const BVHnode* GetRight() const noexcept { return m_right.get(); }
 
-		inline bool GetHit(const Ray& r, float tMin, float tMax) const { return m_box.GetHit(r, tMin, tMax); }
+		inline bool GetHit(const Ray& r, float tMin, float tMax) const noexcept { return m_box.GetHit(r, tMin, tMax); }
 	};
 
 
@@ -40,9 +40,9 @@ namespace BasicRenderer
 
 	public:
 
-		BoundingVolumeHierarchy() : m_root(nullptr), m_treeLevels(0u) {}
+		BoundingVolumeHierarchy() noexcept : m_root(nullptr), m_treeLevels(0u) {}
 
-		uint LevelsCount() const { return m_treeLevels; }
+		uint LevelsCount() const noexcept { return m_treeLevels; }
 
 		const Primitive* GetHit(const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, HitResult& outHit) const;
 

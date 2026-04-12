@@ -29,10 +29,10 @@ namespace BasicRenderer
 		void Update(const TimeDuration& deltaTime);
 		RenderState* ProcessForRendering();
 
-		inline const World& GetScene()		const	{ return *m_scene; }
-		InputManager& GetInputManager()				{ return m_inputMgr; }
-		inline uint UpdateFreq()			const	{ return m_updateFreq; }
-		inline TimeDuration UpdateTime()	const	{ return m_updateTime; }
+		inline const World& GetScene()		const noexcept	{ return *m_scene; }
+		InputManager& GetInputManager() noexcept			{ return m_inputMgr; }
+		inline uint UpdateFreq()			const noexcept	{ return m_updateFreq; }
+		inline TimeDuration UpdateTime()	const noexcept	{ return m_updateTime; }
 
 		void SetMainCameraAspectRatio(float w, float h) { m_scene->GetMainCamera().SetAspectRatio(w, h); }
 

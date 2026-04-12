@@ -2,12 +2,12 @@
 
 namespace BasicRenderer
 {
-	bool Vector2::operator==(const Vector2& v) const
+	bool Vector2::operator==(const Vector2& v) const noexcept
 	{
 		return (x == v.x && y == v.y);
 	}
 
-	bool Vector2::operator!=(const Vector2& v) const
+	bool Vector2::operator!=(const Vector2& v) const noexcept
 	{
 		return !(x == v.x && y == v.y);
 	}

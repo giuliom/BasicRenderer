@@ -23,14 +23,14 @@ namespace BasicRenderer
 
 		void DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const RenderState& state, const MeshInstance& instance, const ShadingFunc& Shading);
 
-		inline void PerspectiveDivide(Face& f) const;
-		inline void NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const;
-		inline uint Clip(const Face& f, Face(&clippedFaces)[4]) const;
-		inline uint ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const;
-		inline bool CullFace(const Face& f) const;
-		inline Vector4 BoundingBox(const Face& f, const float fwidth, const float fheight) const;
+		inline void PerspectiveDivide(Face& f) const noexcept;
+		inline void NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const noexcept;
+		inline uint Clip(const Face& f, Face(&clippedFaces)[4]) const noexcept;
+		inline uint ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const noexcept;
+		inline bool CullFace(const Face& f) const noexcept;
+		inline Vector4 BoundingBox(const Face& f, const float fwidth, const float fheight) const noexcept;
 
-		inline Vector3 Barycentre(const float x, const float y, const Face& f) const
+		inline Vector3 Barycentre(const float x, const float y, const Face& f) const noexcept
 		{
 			const Vector4 ab(f.v[1].pos - f.v[0].pos);
 			const Vector4 ac(f.v[2].pos - f.v[0].pos);
@@ -44,7 +44,7 @@ namespace BasicRenderer
 			return { (uv1.z - (uv1.x + uv1.y)) * (1.0f / uv1.z), uv1.y * (1.0f / uv1.z), uv1.x * (1.0f / uv1.z) };
 		}
 
-		inline void Clamp(Vector2& v, const Vector2& min, const Vector2& max) const
+		inline void Clamp(Vector2& v, const Vector2& min, const Vector2& max) const noexcept
 		{
 			if (v.x < min.x)
 			{

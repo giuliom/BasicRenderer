@@ -25,14 +25,14 @@ namespace BasicRenderer
 			: Primitive(material), m_pos(), m_radius(1.f) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
 		Sphere(const Vector3& pos, const float radius = 1.f, Material* material = nullptr) 
 			: Primitive(material), m_pos(pos), m_radius(radius) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
-		Sphere(const Sphere& other)
+		Sphere(const Sphere& other) noexcept
 			: Primitive(other), m_pos(other.m_pos), m_radius(other.m_radius) {}
 		~Sphere() {}
 
-		PrimitiveType GetType() const override { return PrimitiveType::SPHERE; }
-		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
+		PrimitiveType GetType() const noexcept override { return PrimitiveType::SPHERE; }
+		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const noexcept override;
 
-		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
+		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const noexcept override
 		{
 			const Vector3 oc = r.GetOrigin() - m_pos;
 			const float a = Vector3::Dot(r.GetDirection(), r.GetDirection());
@@ -76,18 +76,18 @@ namespace BasicRenderer
 	public:
 		Vector3 m_centre, m_normal;
 
-		PrimitiveType GetType() const override { return PrimitiveType::PLANE; }
+		PrimitiveType GetType() const noexcept override { return PrimitiveType::PLANE; }
 
 		Plane() = delete;
 		Plane(const Vector3& centre, const Vector3& normal, Material* material = nullptr) 
 			: Primitive(material), m_centre(centre), m_normal(normal.Normalize()) { m_boundingBox = UpdateAxisAlignedBoundingBox(); }
-		Plane(const Plane& other)
+		Plane(const Plane& other) noexcept
 			: Primitive(other), m_centre(other.m_centre), m_normal(other.m_normal) {}
 		~Plane() {}
 
-		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const override;
+		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const noexcept override;
 
-		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const override
+		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const noexcept override
 		{
 			const float div = Vector3::Dot(m_normal, r.GetDirection());
 
