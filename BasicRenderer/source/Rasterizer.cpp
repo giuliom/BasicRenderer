@@ -3,6 +3,11 @@
 #include "World.h"
 #include "Material.h"
 #include "SceneObject.h"
+#include <atomic>
+#include <chrono>
+#include <future>
+#include <iostream>
+#include <thread>
 
 namespace BasicRenderer
 {
@@ -11,16 +16,61 @@ namespace BasicRenderer
 		const uint width = fBuffer.GetWidth();
 		const uint height = fBuffer.GetHeight();
 
+		const auto beginTime = std::chrono::high_resolution_clock::now();
+
+		// Phase 1: transform, clip and bin all faces into screen-space triangles
+		m_triangles.clear();
+
 		for (const auto& instance : state.m_instances)
 		{
 			if (instance != nullptr)
 			{
-				DrawObject(width, height, fBuffer, state, *instance, Shading);
+				SetupInstance(width, height, state, *instance, Shading);
 			}
 		}
+
+		if (m_triangles.empty())
+		{
+			return;
+		}
+
+		// Phase 2: rasterize in parallel. Each job owns disjoint chunks of rows,
+		// pulled dynamically from a shared counter, so framebuffer writes never race.
+		constexpr uint rowsPerChunk = 16u;
+		const uint chunkCount = (height + rowsPerChunk - 1u) / rowsPerChunk;
+		const uint threadCount = std::min(std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u, chunkCount);
+
+		std::atomic<uint> nextChunk = 0u;
+
+		const auto job = [&]()
+		{
+			for (uint chunk = nextChunk.fetch_add(1u, std::memory_order_relaxed); chunk < chunkCount; chunk = nextChunk.fetch_add(1u, std::memory_order_relaxed))
+			{
+				const uint rowStart = chunk * rowsPerChunk;
+				const uint rowEnd = std::min(rowStart + rowsPerChunk, height);
+				RasterizeRows(fBuffer, width, height, rowStart, rowEnd);
+			}
+		};
+
+		std::vector<std::future<void>> futures;
+		futures.reserve(threadCount);
+		for (uint i = 1u; i < threadCount; i++)
+		{
+			futures.push_back(std::async(std::launch::async, job));
+		}
+		job();
+
+		for (auto& f : futures)
+		{
+			f.get();
+		}
+
+		const auto endTime = std::chrono::high_resolution_clock::now();
+		const double ms = ConvertChronoDuration<double, std::chrono::milliseconds>(endTime - beginTime);
+		std::cout << "Rasterized " << m_triangles.size() << " triangles with " << threadCount << " threads in " << ms << " ms\n";
 	}
 
-	void Rasterizer::DrawObject(const uint width, const uint height, FrameBuffer& fBuffer, const RenderState& state, const MeshInstance& instance, const ShadingFunc& Shading)
+	void Rasterizer::SetupInstance(const uint width, const uint height, const RenderState& state, const MeshInstance& instance, const ShadingFunc& Shading)
 	{
 		// Only triangles meshes are supported for now
 		if (instance.GetType() != PrimitiveType::FACE)
@@ -64,33 +114,91 @@ namespace BasicRenderer
 
 				if (CullFace(f)) continue;
 
-				Vector4 bbox = BoundingBox(f, fwidth, fheight);
-				uint bbz = static_cast<uint>(bbox.z);
-				uint bbw = static_cast<uint>(bbox.w);
-				uint bbx = static_cast<uint>(bbox.x);
-				uint bby = static_cast<uint>(bbox.y);
+				const float x0 = f.v[0].pos.x, y0 = f.v[0].pos.y, z0 = f.v[0].pos.z;
+				const float x1 = f.v[1].pos.x, y1 = f.v[1].pos.y, z1 = f.v[1].pos.z;
+				const float x2 = f.v[2].pos.x, y2 = f.v[2].pos.y, z2 = f.v[2].pos.z;
 
-				for (uint x = bbx; x < bbz; ++x)
+				// Signed double area; faces surviving CullFace have area >= 0
+				const float area = (x1 - x0) * (y2 - y0) - (y1 - y0) * (x2 - x0);
+				if (area < 1e-2f) continue; // degenerate
+
+				const Vector4 bbox = BoundingBox(f, fwidth, fheight);
+
+				ScreenTriangle tri;
+				tri.minX = static_cast<int>(bbox.x);
+				tri.minY = static_cast<int>(bbox.y);
+				tri.maxX = static_cast<int>(bbox.z);
+				tri.maxY = static_cast<int>(bbox.w);
+				if (tri.minX >= tri.maxX || tri.minY >= tri.maxY) continue;
+
+				// Edge functions: w0 -> edge v1v2, w1 -> edge v2v0, w2 -> edge v0v1
+				tri.dx0 = y1 - y2; tri.dy0 = x2 - x1;
+				tri.dx1 = y2 - y0; tri.dy1 = x0 - x2;
+				tri.dx2 = y0 - y1; tri.dy2 = x1 - x0;
+
+				const float px = static_cast<float>(tri.minX);
+				const float py = static_cast<float>(tri.minY);
+				tri.w0 = (x2 - x1) * (py - y1) - (y2 - y1) * (px - x1);
+				tri.w1 = (x0 - x2) * (py - y2) - (y0 - y2) * (px - x2);
+				tri.w2 = (x1 - x0) * (py - y0) - (y1 - y0) * (px - x0);
+
+				const float invArea = 1.0f / area;
+				tri.bz0 = z0 * invArea;
+				tri.bz1 = z1 * invArea;
+				tri.bz2 = z2 * invArea;
+
+				tri.color = c;
+
+				m_triangles.push_back(tri);
+			}
+		}
+	}
+
+	void Rasterizer::RasterizeRows(FrameBuffer& fBuffer, const uint width, const uint height, const uint rowStart, const uint rowEnd) const
+	{
+		for (const ScreenTriangle& tri : m_triangles)
+		{
+			const int yBegin = std::max(tri.minY, static_cast<int>(rowStart));
+			const int yEnd = std::min(tri.maxY, static_cast<int>(rowEnd));
+
+			if (yBegin >= yEnd) continue;
+
+			const float yOffset = static_cast<float>(yBegin - tri.minY);
+			float w0row = tri.w0 + tri.dy0 * yOffset;
+			float w1row = tri.w1 + tri.dy1 * yOffset;
+			float w2row = tri.w2 + tri.dy2 * yOffset;
+
+			for (int y = yBegin; y < yEnd; y++)
+			{
+				float w0 = w0row;
+				float w1 = w1row;
+				float w2 = w2row;
+
+				//Because of the Pinhole model
+				const uint rowIndex = width * (height - static_cast<uint>(y) - 1u);
+
+				for (int x = tri.minX; x < tri.maxX; x++)
 				{
-					for (uint y = bby; y < bbw; ++y)
+					if (w0 >= 0.f && w1 >= 0.f && w2 >= 0.f)
 					{
-						Vector3 bary = Barycentre(static_cast<float>(x), static_cast<float>(y), f);
-
-						if (bary.x < 0.0f || bary.y < 0.0f || bary.z < 0.0f) continue;
-
-						float z = f.v[0].pos.z * bary.x + f.v[1].pos.z * bary.y + f.v[2].pos.z * bary.z;
-
-						//Because of the Pinhole model
-						uint index = width * (height - y - 1) + x;
+						const float z = w0 * tri.bz0 + w1 * tri.bz1 + w2 * tri.bz2;
+						const uint index = rowIndex + static_cast<uint>(x);
 
 						if (z < fBuffer.GetDepth(index))
 						{
-							fBuffer.WriteToColor(index, c);
+							fBuffer.WriteToColor(index, tri.color);
 							fBuffer.WriteToDepth(index, z);
 						}
-
 					}
+
+					w0 += tri.dx0;
+					w1 += tri.dx1;
+					w2 += tri.dx2;
 				}
+
+				w0row += tri.dy0;
+				w1row += tri.dy1;
+				w2row += tri.dy2;
 			}
 		}
 	}

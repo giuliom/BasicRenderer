@@ -11,40 +11,39 @@ namespace BasicRenderer
 	using AccelerationStructure = BoundingVolumeHierarchy;
 	using InstanceList = std::vector<std::shared_ptr<MeshInstance>>;
 
-	class BVHnode
-	{
-		const Primitive* m_primitive;
-		const AxisAlignedBoundingBox m_box;
-		std::unique_ptr<const BVHnode> m_left;
-		std::unique_ptr<const BVHnode> m_right;
-
-	public:
-
-		BVHnode(const Primitive* primitive, const AxisAlignedBoundingBox& box, const BVHnode* left, const BVHnode* right) noexcept : m_primitive(primitive), m_box(box), m_left(left), m_right(right) {}
-
-		inline const Primitive* GetPrimitive() const noexcept { return m_primitive; }
-		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox() const noexcept { return m_box; }
-		inline const BVHnode* GetLeft() const noexcept { return m_left.get(); }
-		inline const BVHnode* GetRight() const noexcept { return m_right.get(); }
-
-		inline bool GetHit(const Ray& r, float tMin, float tMax) const noexcept { return m_box.GetHit(r, tMin, tMax); }
-	};
-
-
 	class BoundingVolumeHierarchy
 	{
+	public:
+
+		// Flat, cache-friendly 32-byte node.
+		// Children of an internal node are stored contiguously at leftFirst and leftFirst + 1
+		struct Node
+		{
+			Vector3 boundsMin;
+			uint32_t leftFirst;	// Internal node: index of the left child. Leaf: index of the first primitive
+			Vector3 boundsMax;
+			uint32_t primCount;	// Number of primitives in the leaf, 0 for internal nodes
+
+			inline bool IsLeaf() const noexcept { return primCount > 0u; }
+		};
+
 	protected:
 
-		std::unique_ptr<const BVHnode> m_root;
-		uint m_treeLevels;
+		std::vector<Node> m_nodes;
+		std::vector<const Primitive*> m_primitives;				// Leaf primitives, ordered to match leaf ranges
+		std::vector<const Primitive*> m_unboundedPrimitives;	// Primitives without a finite bounding box (e.g. infinite planes), always tested
+		uint m_treeLevels = 0u;
+
+		struct BuildEntry;
+		void Subdivide(const uint32_t nodeIndex, std::vector<BuildEntry>& entries, const uint32_t start, const uint32_t count, const uint depth);
 
 	public:
 
-		BoundingVolumeHierarchy() noexcept : m_root(nullptr), m_treeLevels(0u) {}
+		BoundingVolumeHierarchy() noexcept = default;
 
 		uint LevelsCount() const noexcept { return m_treeLevels; }
 
-		const Primitive* GetHit(const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, HitResult& outHit) const;
+		const Primitive* GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const;
 
 		void Build(const InstanceList& instances);
 
@@ -53,11 +52,10 @@ namespace BasicRenderer
 
 	};
 
-	inline const Primitive* Raycast(const AccelerationStructure& accStruct, const Ray& r, float tMin, float tMax, std::vector<const BVHnode*>& dfsStack, Vector3& hitPosition, Vector3& hitNormal)
+	inline const Primitive* Raycast(const AccelerationStructure& accStruct, const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal)
 	{
-		const Primitive* anyHit = nullptr;
 		HitResult hit;
-		anyHit = accStruct.GetHit(r, tMin, tMax, dfsStack, hit);
+		const Primitive* anyHit = accStruct.GetHit(r, tMin, tMax, hit);
 
 		if (anyHit != nullptr)
 		{

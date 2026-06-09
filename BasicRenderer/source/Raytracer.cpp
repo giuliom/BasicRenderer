@@ -24,28 +24,21 @@ namespace BasicRenderer
 		m_shadingFunc = Shading;
 		m_pixelSamples = std::max(1u, m_pixelSamples);
 		m_pixelsRendered = 0u;
+		m_nextRow = 0u;
 		m_totalPixels = static_cast<uint64_t>(fBuffer.GetWidth()) * static_cast<uint64_t>(fBuffer.GetHeight());
 
 		std::vector<std::future<size_t>> renderFutures;
 		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u;
-		const uint rowCount = fBuffer.GetHeight();
-		const uint rowsPerThread = rowCount / threadCount;
-		const uint remainderRows = rowCount % threadCount;
 
 		std::cout << "Rendering with " << threadCount << " threads\n";
 		std::cout << "Progress: " << 0u << "% \r";
 
 		const auto beginTime = std::chrono::high_resolution_clock::now();
 
-		uint currentRow = 0u;
 		for (uint i = 0u; i < threadCount; i++)
 		{
-			const uint startRowIndex = currentRow;
-			const uint extraRow = i < remainderRows ? 1u : 0u;
-			const uint endRowIndex = startRowIndex + rowsPerThread + extraRow;
-			currentRow = endRowIndex;
-
-			auto future = std::async(std::launch::async, &Raytracer::RenderJob, this, std::cref(state), startRowIndex, endRowIndex);
+			// Each job pulls rows dynamically from a shared atomic counter for load balancing
+			auto future = std::async(std::launch::async, &Raytracer::RenderJob, this, std::cref(state));
 			renderFutures.push_back(std::move(future));
 		}
 
@@ -80,7 +73,7 @@ namespace BasicRenderer
 		std::cout << std::scientific;
 	}
 
-	size_t Raytracer::RenderJob(const RenderState& state, const uint startRowIndex, const uint endRowIndex)
+	size_t Raytracer::RenderJob(const RenderState& state)
 	{
 		FrameBuffer& fBuffer = *m_fBuffer;
 
@@ -96,13 +89,10 @@ namespace BasicRenderer
 		const float inverseHeight = 1.0f / fheight;
 		const float fInversePixelSamples = 1.0f / static_cast<float>(m_pixelSamples);
 
-		std::vector<const BVHnode*> dfsStack;
-		dfsStack.reserve(state.GetAccelerationStructure().LevelsCount());
-
 		size_t tracedRays = 0;
 
-		//Top-left, drawing rows
-		for (uint y = startRowIndex; y < endRowIndex; y++)
+		//Top-left, drawing rows pulled dynamically from the shared counter
+		for (uint y = m_nextRow.fetch_add(1u, std::memory_order_relaxed); y < height; y = m_nextRow.fetch_add(1u, std::memory_order_relaxed))
 		{
 			for (uint x = 0u; x < width; x++)
 			{
@@ -115,7 +105,7 @@ namespace BasicRenderer
 					const float v = (static_cast<float>(y) + 0.5f + jitterY) * inverseHeight;
 
 					Ray r = camera.GetCameraRay(u, v);
-					c += RayTrace(r, state, dfsStack, m_shadingFunc, tracedRays);
+					c += RayTrace(r, state, m_shadingFunc, tracedRays);
 				}
 
 				c *= fInversePixelSamples;
@@ -134,7 +124,7 @@ namespace BasicRenderer
 		return tracedRays;
 	}
 
-	Color Raytracer::RayTrace(const Ray& ray, const RenderState& state, std::vector<const BVHnode*>& dfsStack, const ShadingFunc& Shading, size_t& outTracedRays)
+	Color Raytracer::RayTrace(const Ray& ray, const RenderState& state, const ShadingFunc& Shading, size_t& outTracedRays)
 	{
 		(void)Shading;
 		Vector3 hitPosition, hitNormal;
@@ -149,7 +139,7 @@ namespace BasicRenderer
 
 		do
 		{
-			if ((hitObject = Raycast(acc, iterationRay, 0.0001f, 999999.99f, dfsStack, hitPosition, hitNormal)) != nullptr)
+			if ((hitObject = Raycast(acc, iterationRay, 0.0001f, 999999.99f, hitPosition, hitNormal)) != nullptr)
 			{
 				const Material* material = hitObject->GetMaterial();
 
