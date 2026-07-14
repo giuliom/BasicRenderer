@@ -7,7 +7,7 @@
 namespace BasicRenderer
 {
 	/* Row-major */
-	class Matrix4
+	class alignas(16) Matrix4
 	{
 	public:
 		float x1 = 0.0f;

@@ -17,6 +17,9 @@ namespace BasicRenderer
 
 	public:
 
+		static constexpr float MIN_RAYCAST_DIST = 0.0001f;	// Bias to avoid self-intersection
+		static constexpr float MAX_RAYCAST_DIST = 999999.99f;
+
 		FrameBuffer* m_fBuffer = nullptr;
 		ShadingFunc m_shadingFunc;
 

@@ -2,14 +2,13 @@
 
 #include <vector>
 #include "Global.h"
-#include "MeshInstance.h"
+#include "DrawableInstance.h"
 
 namespace BasicRenderer
 {
 	class BoundingVolumeHierarchy;
 
 	using AccelerationStructure = BoundingVolumeHierarchy;
-	using InstanceList = std::vector<std::shared_ptr<MeshInstance>>;
 
 	class BoundingVolumeHierarchy
 	{
@@ -17,7 +16,7 @@ namespace BasicRenderer
 
 		// Flat, cache-friendly 32-byte node.
 		// Children of an internal node are stored contiguously at leftFirst and leftFirst + 1
-		struct Node
+		struct alignas(32) Node
 		{
 			Vector3 boundsMin;
 			uint32_t leftFirst;	// Internal node: index of the left child. Leaf: index of the first primitive
@@ -26,12 +25,39 @@ namespace BasicRenderer
 
 			inline bool IsLeaf() const noexcept { return primCount > 0u; }
 		};
+		static_assert(sizeof(Node) == 32u, "BVH nodes must remain 32 bytes");
+		static_assert(alignof(Node) == 32u, "BVH nodes must remain 32-byte aligned");
 
 	protected:
+		// Compact non-owning reference into the RenderState buffers. The high bit
+		// distinguishes analytic instances from faces; instanceIndex owns material.
+		struct alignas(8) PrimitiveRef
+		{
+			static constexpr uint32_t AnalyticMask = uint32_t{ 1 } << 31u;
+			static constexpr uint32_t IndexMask = ~AnalyticMask;
+
+			uint32_t indexAndKind;
+			uint32_t instanceIndex;
+
+			static PrimitiveRef FromFace(const uint32_t faceIndex, const uint32_t ownerIndex) noexcept
+			{
+				return { faceIndex, ownerIndex };
+			}
+
+			static PrimitiveRef FromAnalytic(const uint32_t ownerIndex) noexcept
+			{
+				return { ownerIndex | AnalyticMask, ownerIndex };
+			}
+
+			bool IsAnalytic() const noexcept { return (indexAndKind & AnalyticMask) != 0u; }
+			uint32_t GeometryIndex() const noexcept { return indexAndKind & IndexMask; }
+		};
+		static_assert(sizeof(PrimitiveRef) == 8u, "BVH primitive references must remain compact");
 
 		std::vector<Node> m_nodes;
-		std::vector<const Primitive*> m_primitives;				// Leaf primitives, ordered to match leaf ranges
-		std::vector<const Primitive*> m_unboundedPrimitives;	// Primitives without a finite bounding box (e.g. infinite planes), always tested
+		std::vector<PrimitiveRef> m_primitives;	// Leaf primitives, ordered to match leaf ranges
+		const Face* m_faces = nullptr;				// Owned by the RenderState that owns this BVH
+		const DrawableInstance* m_instances = nullptr;	// Owned by the RenderState that owns this BVH
 		uint m_treeLevels = 0u;
 
 		struct BuildEntry;
@@ -43,24 +69,23 @@ namespace BasicRenderer
 
 		uint LevelsCount() const noexcept { return m_treeLevels; }
 
-		const Primitive* GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const;
+		bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const;
 
-		void Build(const InstanceList& instances);
+		void Build(const DrawableInstanceList& instances, const FaceBuffer& faceBuffer);
 
 
 		void DebugPrint();
 
 	};
 
-	inline const Primitive* Raycast(const AccelerationStructure& accStruct, const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal)
+	inline bool Raycast(const AccelerationStructure& accStruct, const Ray& r, float tMin, float tMax, Vector3& hitPosition, Vector3& hitNormal, HitResult& outHit)
 	{
-		HitResult hit;
-		const Primitive* anyHit = accStruct.GetHit(r, tMin, tMax, hit);
+		const bool anyHit = accStruct.GetHit(r, tMin, tMax, outHit);
 
-		if (anyHit != nullptr)
+		if (anyHit)
 		{
-			hitPosition = r.GetPoint(hit.t);
-			hitNormal = hit.normal;
+			hitPosition = r.GetPoint(outHit.t);
+			hitNormal = outHit.normal;
 		}
 
 		return anyHit;

@@ -76,9 +76,6 @@
     <ClCompile Include="source\PointLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Primitive.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source\PrimitiveTypes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -118,7 +115,7 @@
     <ClCompile Include="source\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\MeshInstance.cpp">
+    <ClCompile Include="source\DrawableInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\RenderState.cpp">
@@ -177,7 +174,7 @@
     <ClInclude Include="include\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MeshInstance.h">
+    <ClInclude Include="include\DrawableInstance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Model.h">
@@ -192,10 +189,13 @@
     <ClInclude Include="include\PointLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Primitive.h">
+    <ClInclude Include="include\PrimitiveTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\PrimitiveTypes.h">
+    <ClInclude Include="include\AABB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Drawable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Rasterizer.h">

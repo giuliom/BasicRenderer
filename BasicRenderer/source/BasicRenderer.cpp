@@ -54,9 +54,6 @@ namespace BasicRenderer
 			break;
 		}
 
-		// TODO partial rebuilding of the bvh?
-		state.BuildAccelerationStructure();
-
 		switch (mode)
 		{
 			default:

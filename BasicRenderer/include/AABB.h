@@ -1,43 +1,16 @@
 #pragma once
 
-#include <concepts>
-#include <memory>
 #include <algorithm>
-#include <optional>
-#include <string>
-#include <variant>
-#include <vector>
 #include "Global.h"
 #include "Vector3.h"
 #include "Ray.h"
-#include "Matrix4.h"
-#include "Transform.h"
 
 namespace BasicRenderer
 {
 	class Material;
-	class Primitive;
-	class Face;
-	class Sphere;
-	class Plane;
-
-	using PrimitiveData = std::variant<Face, Sphere, Plane>;
-	using PrimitiveList = std::vector<std::unique_ptr<Primitive>>;
-
-	struct HitResult
-	{
-		Primitive* primitive;
-		Material* material;
-		float t;
-		Vector3 normal;
-
-		HitResult() noexcept : primitive(nullptr), material(nullptr), t(0.f), normal() {}
-	};
 
 	class AxisAlignedBoundingBox
 	{
-		friend class Plane;
-
 	protected:
 		Vector3 m_minimum;
 		Vector3 m_maximum;
@@ -58,8 +31,8 @@ namespace BasicRenderer
 		{
 			if (m_size <= 0.f)
 			{
-				// Empty boxes are non-hittable but negative sized ones are
-				return m_size < 0.f;
+				// Empty boxes are non-hittable
+				return false;
 			}
 
 			// X axis
@@ -109,38 +82,4 @@ namespace BasicRenderer
 			return AxisAlignedBoundingBox(min, max);
 		}
 	};
-
-	enum class PrimitiveType : uint
-	{
-		SPHERE,
-		PLANE,
-		FACE
-	};
-
-	class Primitive
-	{
-	protected:
-		Material* m_material;
-		AxisAlignedBoundingBox m_boundingBox;
-
-	public:
-		virtual PrimitiveType GetType() const = 0;
-		virtual AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const = 0;
-
-		Primitive() noexcept : m_material(nullptr), m_boundingBox() {}
-		Primitive(Material* material) noexcept : m_material(material), m_boundingBox() {}
-		Primitive(const Primitive& other) noexcept
-			: m_material(other.m_material), m_boundingBox(other.m_boundingBox) {}
-		virtual ~Primitive() {}
-
-		void SetMaterial(Material* material) noexcept { m_material = material; }
-		inline Material* GetMaterial() const noexcept { return m_material; }
-
-		virtual bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const = 0;
-		inline const AxisAlignedBoundingBox& GetAxisAlignedBoundingBox()	const noexcept	{ return m_boundingBox; }
-	};
-
-	template<typename T>
-		requires std::derived_from<T, Primitive>
-	T ProcessForRendering(const T& prim, const Transform& transform);
 }

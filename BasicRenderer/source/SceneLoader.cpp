@@ -10,8 +10,7 @@
 #include "Mesh.h"
 #include "ObjLoader.h"
 #include "SceneObject.h"
-#include "MeshInstance.h"
-#include "PrimitiveTypes.h"
+#include "DrawableInstance.h"
 #include "PathUtils.h"
 
 namespace BasicRenderer
@@ -33,7 +32,7 @@ namespace BasicRenderer
 		return Material::Type::DIFFUSE;
 	}
 
-	static std::pair<std::optional<MeshInstance>, std::shared_ptr<Material>> parsePrimitive(const json& objJson, const std::string& name, const MaterialMap& materials)
+	static std::optional<DrawableInstance> parsePrimitive(const json& objJson, const std::string& name, const MaterialMap& materials)
 	{
 		std::string primitiveType = objJson.value("primitive", "");
 
@@ -59,8 +58,7 @@ namespace BasicRenderer
 			if (objJson.contains("radius"))
 				radius = objJson["radius"].get<float>();
 
-			Sphere sphere(pos, radius, mat.get());
-			return { MeshInstance{sphere, mat}, mat };
+			return DrawableInstance(Sphere(pos, radius), std::move(mat));
 		}
 		else if (primitiveType == "plane")
 		{
@@ -72,11 +70,10 @@ namespace BasicRenderer
 			if (objJson.contains("normal"))
 				normal = ParseVector3(objJson["normal"]);
 
-			Plane plane(centre, normal, mat.get());
-			return { MeshInstance{plane, mat}, mat };
+			return DrawableInstance(Plane(centre, normal), std::move(mat));
 		}
 
-		return { std::nullopt, nullptr };
+		return std::nullopt;
 	}
 
 
@@ -118,10 +115,10 @@ namespace BasicRenderer
 		}
 		else
 		{
-			auto [instance, mat] = parsePrimitive(objJson, name, materials);
+			auto drawable = parsePrimitive(objJson, name, materials);
 
-			if (instance){
-				sceneObj = std::make_unique<SceneObject>(*instance, mat, name);
+			if (drawable){
+				sceneObj = std::make_unique<SceneObject>(std::move(*drawable), name);
 			}
 			else
 			{

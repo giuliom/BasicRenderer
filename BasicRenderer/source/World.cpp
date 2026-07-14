@@ -1,8 +1,5 @@
 #include "World.h"
 #include "Ray.h"
-#include "PrimitiveTypes.h"
-#include "Face.h"
-#include "MeshInstance.h"
 #include "SceneObject.h"
 
 namespace BasicRenderer
@@ -32,7 +29,13 @@ namespace BasicRenderer
 
 	SceneObject* World::Find(const uint id)
 	{
-		return m_objectList[id].get();
+		auto it = m_objectList.find(id);
+
+		if (it != m_objectList.end())
+		{
+			return it->second.get();
+		}
+		return nullptr;
 	}
 
 	const SceneObject* World::Find(const uint id) const
@@ -69,11 +72,10 @@ namespace BasicRenderer
 		}
 	}
 
-	InstanceList World::ProcessForRendering()
+	DrawableInstanceList World::ProcessForRendering(FaceBuffer& outFaceBuffer)
 	{
-		// TODO: optimize list creation
-		InstanceList outProcessed;
-		outProcessed.reserve(m_objectList.size());
+		std::vector<SceneObject*> visibleObjects;
+		visibleObjects.reserve(m_objectList.size());
 
 		std::vector<Transform*> stack;
 		stack.push_back(&m_root);
@@ -84,11 +86,9 @@ namespace BasicRenderer
 			stack.pop_back();
 
 			SceneObject* obj = node->GetObject();
-			if (obj != nullptr && obj->GetEnabled() && obj->GetVisible() && obj->GetMeshInstance() != nullptr)
+			if (obj != nullptr && obj->GetEnabled() && obj->GetVisible() && obj->GetDrawableInstance().has_value())
 			{
-				auto instance = obj->GetMeshInstance();
-				instance->ProcessForRendering(obj->GetTransform());
-				outProcessed.push_back(instance);
+				visibleObjects.push_back(obj);
 			}
 
 			for (auto* child : node->GetChildren())
@@ -97,33 +97,22 @@ namespace BasicRenderer
 			}
 		}
 
-		return outProcessed;
-	}
-
-	[[deprecated("Raycast by brute forcing all primitives")]]
-	const Primitive* World::OldRaycast(const Ray& r, float tMin, float tMax, HitResult& outHit) const
-	{
-		const Primitive* anyHit = nullptr;
-		float closestHit = tMax;
-
-		outHit.t = tMax;
-
-		for (const auto& [id, obj] : m_objectList)
+		size_t totalFaces = 0u;
+		for (const SceneObject* obj : visibleObjects)
 		{
-			const auto instance = obj->GetMeshInstance();
-			if (instance && instance->GetHit(r, tMin, tMax, outHit))
-			{
-				if (outHit.t < closestHit)
-				{
-					closestHit = outHit.t;
-					anyHit = outHit.primitive;
-				}
-			}
+			totalFaces += obj->GetDrawableInstance()->NumSourceFaces();
 		}
 
-		outHit.t = closestHit;
+		DrawableInstanceList outProcessed;
+		outProcessed.reserve(visibleObjects.size());
+		outFaceBuffer.clear();
+		outFaceBuffer.reserve(totalFaces);
 
-		return anyHit;
+		for (SceneObject* obj : visibleObjects)
+		{
+			outProcessed.emplace_back(obj->GetDrawableInstance()->ProcessForRendering(obj->GetTransform(), outFaceBuffer));
+		}
+
+		return outProcessed;
 	}
-	
 }

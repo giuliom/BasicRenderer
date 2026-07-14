@@ -7,8 +7,7 @@
 #include "SceneObject.h"
 #include "Material.h"
 #include "Mesh.h"
-#include "PrimitiveTypes.h"
-#include "MeshInstance.h"
+#include "DrawableInstance.h"
 #include "PathUtils.h"
 
 #define SUITE_NAME TestSceneLoader
@@ -143,7 +142,8 @@ TEST(SUITE_NAME, ParseSceneObject_Sphere)
 	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
-	ASSERT_NE(obj->GetMeshInstance(), nullptr);
+	ASSERT_TRUE(obj->GetDrawableInstance().has_value());
+	EXPECT_TRUE(std::holds_alternative<Sphere>(obj->GetDrawableInstance()->GetDrawable()));
 }
 
 TEST(SUITE_NAME, ParseSceneObject_Plane)
@@ -160,7 +160,8 @@ TEST(SUITE_NAME, ParseSceneObject_Plane)
 	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
-	ASSERT_NE(obj->GetMeshInstance(), nullptr);
+	ASSERT_TRUE(obj->GetDrawableInstance().has_value());
+	EXPECT_TRUE(std::holds_alternative<Plane>(obj->GetDrawableInstance()->GetDrawable()));
 }
 
 TEST(SUITE_NAME, ParseSceneObject_WithMaterial)
@@ -178,7 +179,8 @@ TEST(SUITE_NAME, ParseSceneObject_WithMaterial)
 	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
-	ASSERT_NE(obj->GetMeshInstance(), nullptr);
+	ASSERT_TRUE(obj->GetDrawableInstance().has_value());
+	EXPECT_TRUE(std::holds_alternative<Sphere>(obj->GetDrawableInstance()->GetDrawable()));
 }
 
 // --- LoadFromFile tests ---
@@ -259,7 +261,8 @@ TEST(SUITE_NAME, LoadFromFile_CornellBox_Materials)
 	// Spere uses "silver" material (metallic type)
 	SceneObject* sphere = FindByName(*world, "Spere");
 	ASSERT_NE(sphere, nullptr);
-	ASSERT_NE(sphere->GetMeshInstance(), nullptr);
+	ASSERT_TRUE(sphere->GetDrawableInstance().has_value());
+	EXPECT_TRUE(std::holds_alternative<Sphere>(sphere->GetDrawableInstance()->GetDrawable()));
 }
 
 TEST(SUITE_NAME, LoadFromFile_CornellBox_Transforms)

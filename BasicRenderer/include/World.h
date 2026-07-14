@@ -6,14 +6,10 @@
 #include "Vertex.h"
 #include "DirectionalLight.h"
 #include "Camera.h"
-#include "Primitive.h"
-#include "AccelerationStructure.h"
 #include "SceneObject.h"
 
 namespace BasicRenderer
 {
-	class Ray;
-
 	typedef std::unordered_map<uint, std::unique_ptr<SceneObject>> ObjectList;
 
 	struct EnvironmentSettings
@@ -61,8 +57,10 @@ namespace BasicRenderer
 		const SceneObject* Find(const uint id) const;
 
 		void Update(const TimeDuration& deltaTime);
-		InstanceList ProcessForRendering();
 
-		const Primitive* OldRaycast(const Ray& r, float tMin, float tMax, HitResult& outHit) const;
+		// Produces the world-space DrawableInstances of all visible objects.
+		// The faces of every mesh instance are appended to outFaceBuffer
+		// TODO: don't reprocess static drawables every frame, only when they change
+		DrawableInstanceList ProcessForRendering(FaceBuffer& outFaceBuffer);
 	};
 }

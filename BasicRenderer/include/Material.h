@@ -3,7 +3,6 @@
 #include <cmath>
 #include "Ray.h"
 #include "Vector3.h"
-#include "Primitive.h"
 #include "World.h"
 #include "RenderState.h"
 #include "Color.h"

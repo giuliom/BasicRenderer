@@ -27,6 +27,9 @@ namespace BasicRenderer
 		m_nextRow = 0u;
 		m_totalPixels = static_cast<uint64_t>(fBuffer.GetWidth()) * static_cast<uint64_t>(fBuffer.GetHeight());
 
+		// TODO partial rebuilding of the bvh?
+		state.BuildAccelerationStructure();
+
 		std::vector<std::future<size_t>> renderFutures;
 		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u;
 
@@ -128,7 +131,7 @@ namespace BasicRenderer
 	{
 		(void)Shading;
 		Vector3 hitPosition, hitNormal;
-		const Primitive* hitObject = nullptr;
+		HitResult hit;
 
 		uint bounces = 0;
 		bool success = false;
@@ -139,9 +142,9 @@ namespace BasicRenderer
 
 		do
 		{
-			if ((hitObject = Raycast(acc, iterationRay, 0.0001f, 999999.99f, hitPosition, hitNormal)) != nullptr)
+			if (Raycast(acc, iterationRay, MIN_RAYCAST_DIST, MAX_RAYCAST_DIST, hitPosition, hitNormal, hit))
 			{
-				const Material* material = hitObject->GetMaterial();
+				const Material* material = hit.material;
 
 				success = false;
 				

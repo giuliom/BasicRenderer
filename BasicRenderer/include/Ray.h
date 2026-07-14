@@ -4,6 +4,17 @@
 
 namespace BasicRenderer
 {
+	class Material;
+	
+	struct HitResult
+	{
+		const Material* material;
+		float t;
+		Vector3 normal;
+
+		HitResult() noexcept : material(nullptr), t(0.f), normal() {}
+	};
+
 	// Rays are always normalized at construction
 	class Ray
 	{

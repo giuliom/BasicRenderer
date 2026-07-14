@@ -1,6 +1,4 @@
 #include "SceneObject.h"
-#include "Face.h"
-#include "MeshInstance.h"
 
 
 namespace BasicRenderer
@@ -12,19 +10,19 @@ namespace BasicRenderer
 		, m_name(name.size() > 0 ? name : "SceneObject_" + std::to_string(m_id))
 		, m_worldTransform()
 		, m_transform()
-		, m_meshInstance(nullptr)
+		, m_drawable(std::nullopt)
 		, m_enabled(true)
 		, m_visible(true)
 	{
 		m_transform.m_object = this;
 	}
 
-	SceneObject::SceneObject(const MeshInstance& instance, std::shared_ptr<Material> mat, const std::string& name)
+	SceneObject::SceneObject(DrawableInstance drawable, const std::string& name)
 		: m_id(m_idCounter++)
 		, m_name(name.size() > 0 ? name : "SceneObject_" + std::to_string(m_id))
 		, m_worldTransform()
 		, m_transform()
-		, m_meshInstance(std::make_shared<MeshInstance>(instance))
+		, m_drawable(std::move(drawable))
 		, m_enabled(true)
 		, m_visible(true)
 	{
@@ -36,7 +34,7 @@ namespace BasicRenderer
 		, m_name(name.size() > 0 ? name : "SceneObject_" + std::to_string(m_id))
 		, m_worldTransform()
 		, m_transform()
-		, m_meshInstance(std::make_shared<MeshInstance>(mesh, mat))
+		, m_drawable(DrawableInstance(Drawable(std::move(mesh)), std::move(mat)))
 		, m_enabled(true)
 		, m_visible(true)
 	{
@@ -48,7 +46,7 @@ namespace BasicRenderer
 		, m_name(obj.m_name)
 		, m_worldTransform(obj.m_worldTransform)
 		, m_transform(obj.m_transform)
-		, m_meshInstance(std::make_shared<MeshInstance>(*obj.m_meshInstance))
+		, m_drawable(obj.m_drawable)
 		, m_enabled(obj.m_enabled)
 		, m_visible(obj.m_visible)
 	{
@@ -60,7 +58,7 @@ namespace BasicRenderer
 		, m_name(std::move(obj.m_name))
 		, m_worldTransform(std::move(obj.m_worldTransform))
 		, m_transform(std::move(obj.m_transform))
-		, m_meshInstance(std::move(obj.m_meshInstance))
+		, m_drawable(std::move(obj.m_drawable))
 		, m_enabled(obj.m_enabled)
 		, m_visible(obj.m_visible)
 	{

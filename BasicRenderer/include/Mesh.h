@@ -8,7 +8,6 @@ namespace BasicRenderer
 {
 	class Mesh final
 	{
-		friend class MeshInstance;
 	protected:
 		std::vector<Face> m_faces;
 

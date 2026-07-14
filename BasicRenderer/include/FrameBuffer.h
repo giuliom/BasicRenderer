@@ -3,7 +3,8 @@
 #include <cassert>
 #include <limits>
 #include <stdio.h>
-#include "PrimitiveTypes.h"
+#include "Global.h"
+#include "Color.h"
 
 namespace BasicRenderer
 {

@@ -15,5 +15,5 @@ if [[ "$BUILD_TYPE" != "Debug" && "$BUILD_TYPE" != "Release" ]]; then
 fi
 
 echo "Building BasicRenderer ($BUILD_TYPE)"
-cmake -S "$SCRIPT_DIR" -B "$PROJECT_ROOT/build" -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+cmake -S "$SCRIPT_DIR" -B "$PROJECT_ROOT/build" -G Ninja -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 cmake --build "$PROJECT_ROOT/build" --config $BUILD_TYPE --target BasicRenderer

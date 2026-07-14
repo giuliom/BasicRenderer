@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "Global.h"
 #include <vector>
 #include "RenderSystem.h"
@@ -21,6 +22,13 @@ namespace BasicRenderer
 		void Render(FrameBuffer& fBuffer, const RenderState& state, const ShadingFunc& Shading) override;
 
 	protected:
+		// Minimal working triangle used between projection and screen-space setup.
+		// Shading has already consumed the world-space normal, so normals and UVs
+		// do not need to pass through clipping or the remaining transforms.
+		struct alignas(16) ClipTriangle
+		{
+			std::array<Vector4, 3> positions;
+		};
 
 		// Screen-space triangle with precomputed edge functions for incremental rasterization
 		struct ScreenTriangle
@@ -36,16 +44,15 @@ namespace BasicRenderer
 		};
 
 		std::vector<ScreenTriangle> m_triangles;
+		std::vector<std::vector<uint32_t>> m_triangleBins;
 
-		void SetupInstance(const uint width, const uint height, const RenderState& state, const MeshInstance& instance, const ShadingFunc& Shading);
-		void RasterizeRows(FrameBuffer& fBuffer, const uint width, const uint height, const uint rowStart, const uint rowEnd) const;
+		void SetupInstance(const uint width, const uint height, const Matrix4& viewProjection, const RenderState& state, const DrawableInstance& instance, const ShadingFunc& Shading);
+		void RasterizeRows(FrameBuffer& fBuffer, const uint width, const uint height, const uint rowStart, const uint rowEnd, const std::vector<uint32_t>& triangleIndices) const;
 
-		inline void PerspectiveDivide(Face& f) const noexcept;
-		inline void NormalizedToScreenSpace(Face& f, const float fwidth, const float fheight) const noexcept;
-		inline uint Clip(const Face& f, Face(&clippedFaces)[4]) const noexcept;
-		inline uint ClipEdge(const Vertex& v0, const Vertex& v1, Vertex(&vertices)[6], int index) const noexcept;
-		inline bool CullFace(const Face& f) const noexcept;
-		inline Vector4 BoundingBox(const Face& f, const float fwidth, const float fheight) const noexcept;
+		inline void ToScreenSpace(ClipTriangle& triangle, const float fwidth, const float fheight) const noexcept;
+		inline uint Clip(const ClipTriangle& triangle, ClipTriangle(&clippedTriangles)[4]) const noexcept;
+		inline uint ClipEdge(const Vector4& v0, const Vector4& v1, Vector4(&vertices)[6], int index) const noexcept;
+		inline Vector4 BoundingBox(const ClipTriangle& triangle, const float fwidth, const float fheight) const noexcept;
 
 		inline void Clamp(Vector2& v, const Vector2& min, const Vector2& max) const noexcept
 		{

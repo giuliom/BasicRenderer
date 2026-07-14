@@ -9,11 +9,12 @@ namespace BasicRenderer
 	{
 		Camera m_camera;
 		EnvironmentSettings m_environmentSettings;
-		InstanceList m_instances;
+		DrawableInstanceList m_instances;
+		FaceBuffer m_faceBuffer;
 
 		RenderState()
-			: m_camera(), m_environmentSettings(), m_instances(), m_creationTime(), m_bvh() {}
-		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, InstanceList instances);
+			: m_camera(), m_environmentSettings(), m_instances(), m_faceBuffer(), m_creationTime(), m_bvh() {}
+		RenderState(const Camera& camera, const EnvironmentSettings& environmentSettings, DrawableInstanceList instances, FaceBuffer faceBuffer);
 		~RenderState() {}
 
 		RenderState(const RenderState&) = delete;

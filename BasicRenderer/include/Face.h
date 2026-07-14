@@ -1,35 +1,37 @@
 #pragma once
 
 #include <array>
+#include <cmath>
+#include <vector>
 #include "Global.h"
 #include "Vertex.h"
 #include "Ray.h"
-#include "Primitive.h"
+#include "AABB.h"
 
 namespace BasicRenderer
 {
-	class Face : public Primitive
+	class Face
 	{
 	public:
 		std::array<Vertex, 3> v;
 		Vector3 normal;
 
-		Face() noexcept : Primitive(nullptr) {}
-		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2, Material* material = nullptr) noexcept : Primitive(material), v{pV0, pV1, pV2}, normal(CalculateNormal(v[0].pos, v[1].pos, v[2].pos)) {}
+	public:
+		Face() noexcept {}
+		Face(const Vertex& pV0, const Vertex& pV1, const Vertex& pV2) noexcept : v{pV0, pV1, pV2}, normal(CalculateNormal(v[0].pos, v[1].pos, v[2].pos)) {}
 		Face(const Position& p0, const Position& p1, const Position& p2, const Face& face);
-		Face(const Face& f) noexcept : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
-		Face(Face&& f) noexcept : Primitive(f), v{f.v[0], f.v[1], f.v[2]}, normal(f.normal) {}
+		Face(const Face& f) noexcept = default;
+		Face(Face&& f) noexcept = default;
 
-		Face& operator=(const Face& f) noexcept;
-		Face& operator=(Face&& f) noexcept;
+		Face& operator=(const Face& f) noexcept = default;
+		Face& operator=(Face&& f) noexcept = default;
 
 		const Vector3& GetNormal() const noexcept { return normal; }
-		PrimitiveType GetType() const noexcept override { return PrimitiveType::FACE; }
-		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const noexcept override;
-		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const noexcept override;
-
-		friend void ToMatrixSpace(Face& f, const Matrix4& m);
+		AxisAlignedBoundingBox UpdateAxisAlignedBoundingBox() const noexcept;
+		inline bool GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const noexcept;
 	};
+
+	using FaceBuffer = std::vector<Face>;
 
 	inline Vector3 CalculateNormal(const Face& f) noexcept { return CalculateNormal(f.v[0].pos, f.v[1].pos, f.v[2].pos); }
 
@@ -39,7 +41,6 @@ namespace BasicRenderer
 		f.v[1] = { m * f.v[1].pos, m * f.v[1].nrml, f.v[1].uv };
 		f.v[2] = { m * f.v[2].pos, m * f.v[2].nrml, f.v[2].uv };
 		f.normal = CalculateNormal(f);
-		f.m_boundingBox = f.UpdateAxisAlignedBoundingBox();
 	}
 
 	//Moller-Trumbore intersection algorithm

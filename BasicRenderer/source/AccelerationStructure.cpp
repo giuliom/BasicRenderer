@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <limits>
 #include <iostream>
+#include "Material.h"
 
 namespace BasicRenderer
 {
@@ -42,102 +43,108 @@ namespace BasicRenderer
 
 	struct BoundingVolumeHierarchy::BuildEntry
 	{
-		const Primitive* primitive;
+		PrimitiveRef primitive;
 		Vector3 boundsMin;
 		Vector3 boundsMax;
 		Vector3 centroid;
 	};
 
-	const Primitive* BoundingVolumeHierarchy::GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const
+	bool BoundingVolumeHierarchy::GetHit(const Ray& r, float tMin, float tMax, HitResult& outHit) const
 	{
-		const Primitive* closestPrim = nullptr;
+		uint32_t closestInstanceIndex = 0u;
+		bool anyHit = false;
 		outHit.t = tMax;
-
-		// Unbounded primitives (infinite planes) are tested linearly
-		for (const Primitive* prim : m_unboundedPrimitives)
-		{
-			if (prim->GetHit(r, tMin, outHit.t, outHit))
-			{
-				closestPrim = prim;
-			}
-		}
 
 		if (m_nodes.empty())
 		{
-			return closestPrim;
+			return false;
 		}
 
 		const Node* const nodes = m_nodes.data();
-		const Primitive* const* const prims = m_primitives.data();
+		const PrimitiveRef* const prims = m_primitives.data();
+		const Face* const faces = m_faces;
+		const DrawableInstance* const instances = m_instances;
+
+		const auto intersect = [&](const PrimitiveRef& prim) noexcept
+		{
+			if (prim.IsAnalytic())
+			{
+				return instances[prim.GeometryIndex()].GetHit(r, tMin, outHit.t, outHit);
+			}
+			return faces[prim.GeometryIndex()].GetHit(r, tMin, outHit.t, outHit);
+		};
 
 		uint32_t stack[MaxTraversalDepth];
 		uint32_t stackSize = 0u;
 		uint32_t nodeIndex = 0u;
 
-		if (IntersectAABB(nodes[0].boundsMin, nodes[0].boundsMax, r, tMin, outHit.t) == std::numeric_limits<float>::max())
+		if (IntersectAABB(nodes[0].boundsMin, nodes[0].boundsMax, r, tMin, outHit.t) != std::numeric_limits<float>::max())
 		{
-			return closestPrim;
-		}
-
-		while (true)
-		{
-			const Node& node = nodes[nodeIndex];
-
-			if (node.IsLeaf())
+			while (true)
 			{
-				const uint32_t end = node.leftFirst + node.primCount;
-				for (uint32_t i = node.leftFirst; i < end; i++)
+				const Node& node = nodes[nodeIndex];
+
+				if (node.IsLeaf())
 				{
-					const Primitive* prim = prims[i];
-					if (prim->GetHit(r, tMin, outHit.t, outHit)) // t updated in the call
+					const uint32_t end = node.leftFirst + node.primCount;
+					for (uint32_t i = node.leftFirst; i < end; i++)
 					{
-						closestPrim = prim;
+						if (intersect(prims[i])) // t updated in the call
+						{
+							closestInstanceIndex = prims[i].instanceIndex;
+							anyHit = true;
+						}
+					}
+
+					if (stackSize == 0u)
+					{
+						break;
+					}
+					nodeIndex = stack[--stackSize];
+					continue;
+				}
+
+				// Internal node: test both children, traverse the nearest first
+				const uint32_t leftIndex = node.leftFirst;
+				const uint32_t rightIndex = leftIndex + 1u;
+
+				float distLeft = IntersectAABB(nodes[leftIndex].boundsMin, nodes[leftIndex].boundsMax, r, tMin, outHit.t);
+				float distRight = IntersectAABB(nodes[rightIndex].boundsMin, nodes[rightIndex].boundsMax, r, tMin, outHit.t);
+
+				uint32_t nearIndex = leftIndex;
+				uint32_t farIndex = rightIndex;
+				if (distRight < distLeft)
+				{
+					std::swap(distLeft, distRight);
+					nearIndex = rightIndex;
+					farIndex = leftIndex;
+				}
+
+				if (distLeft == std::numeric_limits<float>::max()) // No child hit
+				{
+					if (stackSize == 0u)
+					{
+						break;
+					}
+					nodeIndex = stack[--stackSize];
+				}
+				else
+				{
+					nodeIndex = nearIndex;
+					if (distRight != std::numeric_limits<float>::max())
+					{
+						stack[stackSize++] = farIndex;
 					}
 				}
-
-				if (stackSize == 0u)
-				{
-					break;
-				}
-				nodeIndex = stack[--stackSize];
-				continue;
-			}
-
-			// Internal node: test both children, traverse the nearest first
-			const uint32_t leftIndex = node.leftFirst;
-			const uint32_t rightIndex = leftIndex + 1u;
-
-			float distLeft = IntersectAABB(nodes[leftIndex].boundsMin, nodes[leftIndex].boundsMax, r, tMin, outHit.t);
-			float distRight = IntersectAABB(nodes[rightIndex].boundsMin, nodes[rightIndex].boundsMax, r, tMin, outHit.t);
-
-			uint32_t nearIndex = leftIndex;
-			uint32_t farIndex = rightIndex;
-			if (distRight < distLeft)
-			{
-				std::swap(distLeft, distRight);
-				nearIndex = rightIndex;
-				farIndex = leftIndex;
-			}
-
-			if (distLeft == std::numeric_limits<float>::max()) // No child hit
-			{
-				if (stackSize == 0u)
-				{
-					break;
-				}
-				nodeIndex = stack[--stackSize];
-			}
-			else
-			{
-				nodeIndex = nearIndex;
-				if (distRight != std::numeric_limits<float>::max())
-				{
-					stack[stackSize++] = farIndex;
-				}
 			}
 		}
 
-		return closestPrim;
+		if (anyHit)
+		{
+			outHit.material = instances[closestInstanceIndex].GetMaterial();
+			return true;
+		}
+		return false;
 	}
 
 	void BoundingVolumeHierarchy::Subdivide(const uint32_t nodeIndex, std::vector<BuildEntry>& entries, const uint32_t start, const uint32_t count, const uint depth)
@@ -194,36 +201,48 @@ namespace BasicRenderer
 		Subdivide(leftIndex + 1u, entries, mid, start + count - mid, depth + 1u);
 	}
 
-	void BoundingVolumeHierarchy::Build(const InstanceList& instances)
+	void BoundingVolumeHierarchy::Build(const DrawableInstanceList& instances, const FaceBuffer& faceBuffer)
 	{
 		m_nodes.clear();
 		m_primitives.clear();
-		m_unboundedPrimitives.clear();
+		m_faces = faceBuffer.data();
+		m_instances = instances.data();
 		m_treeLevels = 0u;
 
 		std::vector<BuildEntry> entries;
+		entries.reserve(faceBuffer.size() + instances.size());
 
-		for (const auto& instance : instances)
+		const auto addPrimitive = [&entries](const PrimitiveRef prim, const AxisAlignedBoundingBox& box)
 		{
-			for (size_t i = 0; i < instance->NumPrimitives(); i++)
+			if (box.GetSize() <= 0.f)
 			{
-				const auto* prim = instance->GetPrimitive(i);
-				if (prim)
+				// Degenerate primitives are skipped
+				return;
+			}
+
+			entries.push_back({ prim, box.GetMinimum(), box.GetMaximum(), (box.GetMinimum() + box.GetMaximum()) * 0.5f });
+		};
+
+		for (size_t i = 0u; i < instances.size(); ++i)
+		{
+			const DrawableInstance& instance = instances[i];
+			const uint32_t instanceIndex = static_cast<uint32_t>(i);
+
+			if (instance.IsMesh())
+			{
+				const uint32_t firstFace = instance.GetFirstFace();
+				const uint32_t faceCount = instance.NumFaces();
+
+				for (uint32_t faceOffset = 0u; faceOffset < faceCount; ++faceOffset)
 				{
-					const AxisAlignedBoundingBox& box = prim->GetAxisAlignedBoundingBox();
-
-					if (box.GetSize() <= 0.f)
-					{
-						// Unbounded (infinite plane) or degenerate primitives bypass the tree
-						if (box.GetSize() < 0.f)
-						{
-							m_unboundedPrimitives.push_back(prim);
-						}
-						continue;
-					}
-
-					entries.push_back({ prim, box.GetMinimum(), box.GetMaximum(), (box.GetMinimum() + box.GetMaximum()) * 0.5f });
+					const uint32_t faceIndex = firstFace + faceOffset;
+					const Face& face = faceBuffer[faceIndex];
+					addPrimitive(PrimitiveRef::FromFace(faceIndex, instanceIndex), face.UpdateAxisAlignedBoundingBox());
 				}
+			}
+			else
+			{
+				addPrimitive(PrimitiveRef::FromAnalytic(instanceIndex), instance.GetAxisAlignedBoundingBox());
 			}
 		}
 
@@ -242,7 +261,7 @@ namespace BasicRenderer
 	void BoundingVolumeHierarchy::DebugPrint()
 	{
 		std::cout << std::endl << "BVH: " << m_nodes.size() << " nodes, " << m_primitives.size() << " primitives, "
-			<< m_unboundedPrimitives.size() << " unbounded primitives, " << m_treeLevels << " levels" << std::endl;
+			<< m_treeLevels << " levels" << std::endl;
 
 		std::vector<uint32_t> currentLevel;
 

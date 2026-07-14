@@ -16,9 +16,9 @@ namespace BasicRenderer
 
 	RenderState Model::ProcessForRendering()
 	{
-		InstanceList instances = m_scene->ProcessForRendering();
-		// TODO: optimize
-		return RenderState(m_scene->GetMainCamera(), m_scene->GetEnvironmentSettings(), std::move(instances));
+		FaceBuffer faceBuffer;
+		DrawableInstanceList instances = m_scene->ProcessForRendering(faceBuffer);
+		return RenderState(m_scene->GetMainCamera(), m_scene->GetEnvironmentSettings(), std::move(instances), std::move(faceBuffer));
 	}
 
 	void Model::ProcessInput(InputManager& inputMgr, World& scene)
@@ -32,6 +32,7 @@ namespace BasicRenderer
 			{
 			case InputCategory::BUTTON_EVENT:
 			{
+				// TODO: remove dynamic_cast for RTTI-free code
 				const ButtonInputEvent& buttonEvent = dynamic_cast<ButtonInputEvent&>(*event.get());
 				ProcessButtonInput(buttonEvent, scene);
 				break;
