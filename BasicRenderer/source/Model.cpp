@@ -32,14 +32,13 @@ namespace BasicRenderer
 			{
 			case InputCategory::BUTTON_EVENT:
 			{
-				// TODO: remove dynamic_cast for RTTI-free code
-				const ButtonInputEvent& buttonEvent = dynamic_cast<ButtonInputEvent&>(*event.get());
+				const ButtonInputEvent& buttonEvent = static_cast<ButtonInputEvent&>(*event.get());
 				ProcessButtonInput(buttonEvent, scene);
 				break;
 			}
 			case InputCategory::CURSOR_EVENT:
 			{
-				const CursorInputEvent& cursorEvent = dynamic_cast<CursorInputEvent&>(*event.get());
+				const CursorInputEvent& cursorEvent = static_cast<CursorInputEvent&>(*event.get());
 				ProcessCursorInput(inputMgr, cursorEvent, scene);
 				break;
 			}

@@ -11,6 +11,13 @@ elseif(MSVC)
     add_compile_options(/fp:fast)
 endif()
 
+# RTTI is disabled: no dynamic_cast or typeid in the codebase
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    add_compile_options(-fno-rtti)
+elseif(MSVC)
+    string(REGEX REPLACE "/GR( |$)" "/GR-\\1" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+endif()
+
 # Output directories for all configurations
 set(PROJECT_ROOT_DIR ${CMAKE_SOURCE_DIR}/..)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_ROOT_DIR}/build/bin)
