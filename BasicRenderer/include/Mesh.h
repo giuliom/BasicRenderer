@@ -13,7 +13,7 @@ namespace BasicRenderer
 
 	public:
 		Mesh() = delete;
-		Mesh(uint nVertices, const Vertex vertices[], uint nFaces, const Face faces[]);
+		explicit Mesh(std::vector<Face> faces) noexcept;
 		Mesh(const Mesh& m);
 		Mesh(Mesh&& m) noexcept;
 

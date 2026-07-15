@@ -1,8 +1,12 @@
 #include "ObjLoader.h"
 #include <iostream>
 #include <fstream>
+#include <cerrno>
+#include <cstdlib>
+#include <limits>
 #include <string>
 #include <string_view>
+#include <stdexcept>
 #include <vector>
 #include <cassert>
 #include <stdio.h>
@@ -15,12 +19,43 @@ namespace BasicRenderer
 {
 	float MatchToFloat(const std::cmatch& m)
 	{
-		return std::stof(m.str());
+		const std::csub_match& matched = m[0];
+		errno = 0;
+		char* end = nullptr;
+		const float value = std::strtof(matched.first, &end);
+		if (end == matched.second && errno != ERANGE)
+		{
+			return value;
+		}
+
+		if (errno == ERANGE)
+		{
+			throw std::out_of_range("Float value is out of range");
+		}
+
+		throw std::invalid_argument("Invalid float value");
 	}
 
 	int MatchToInt(const std::cmatch& m)
 	{
-		return std::stoi(m.str());
+		const std::csub_match& matched = m[0];
+		errno = 0;
+		char* end = nullptr;
+		const long value = std::strtol(matched.first, &end, 10);
+		if (end == matched.second && errno != ERANGE
+			&& value >= std::numeric_limits<int>::min()
+			&& value <= std::numeric_limits<int>::max())
+		{
+			return static_cast<int>(value);
+		}
+
+		if (errno == ERANGE || value < std::numeric_limits<int>::min()
+			|| value > std::numeric_limits<int>::max())
+		{
+			throw std::out_of_range("Integer value is out of range");
+		}
+
+		throw std::invalid_argument("Invalid integer value");
 	}
 
 	bool regex_search_all_matches(const char* s, std::vector<std::cmatch>& outMatches, const std::regex& rgx)
@@ -125,12 +160,12 @@ namespace BasicRenderer
 
 				if(indices.size() >= 3) // .obj indices start from 1
 				{
-					vIndices.emplace_back(FaceIndices(MatchToInt(indices[0]) - 1, MatchToInt(indices[1]) - 1, MatchToInt(indices[2]) - 1));
+					vIndices.emplace_back(MatchToInt(indices[0]) - 1, MatchToInt(indices[1]) - 1, MatchToInt(indices[2]) - 1);
 				}
 				if (indices.size() >= 9)
 				{
-					nIndices.emplace_back(FaceIndices(MatchToInt(indices[3]) - 1, MatchToInt(indices[4]) - 1, MatchToInt(indices[5]) - 1));
-					tIndices.emplace_back(FaceIndices(MatchToInt(indices[6]) - 1, MatchToInt(indices[7]) - 1, MatchToInt(indices[8]) - 1));
+					nIndices.emplace_back(MatchToInt(indices[3]) - 1, MatchToInt(indices[4]) - 1, MatchToInt(indices[5]) - 1);
+					tIndices.emplace_back(MatchToInt(indices[6]) - 1, MatchToInt(indices[7]) - 1, MatchToInt(indices[8]) - 1);
 				}
 
 				indices.clear();
@@ -143,14 +178,14 @@ namespace BasicRenderer
 		{
 			for (size_t i = 0; i < rawVertices.size(); ++i)
 			{
-				vertices.push_back(Vertex(rawVertices[i], rawNormals[i], rawUVs[i]));
+				vertices.emplace_back(rawVertices[i], rawNormals[i], rawUVs[i]);
 			}
 		}
 		else if (rawVertices.size() > 3 && vIndices.size() > 1)
 		{
 			for (size_t i = 0; i < rawVertices.size(); ++i)
 			{
-				vertices.push_back(Vertex(rawVertices[i], Vector4::Zero(), Vector2::Zero()));
+				vertices.emplace_back(rawVertices[i], Vector4::Zero(), Vector2::Zero());
 			}
 		}
 		else {
@@ -160,12 +195,11 @@ namespace BasicRenderer
 
 		for (size_t i = 0; i < vIndices.size(); i++)
 		{
-			Face f(vertices[vIndices[i].i0], vertices[vIndices[i].i1], vertices[vIndices[i].i2]);
-			faces.push_back(f);
+			faces.emplace_back(vertices[vIndices[i].i0], vertices[vIndices[i].i1], vertices[vIndices[i].i2]);
 		}
 
 		file.close();
 
-		return std::make_unique<Mesh>((int)vertices.size(), vertices.data(), (int)faces.size(), faces.data());
+		return std::make_unique<Mesh>(std::move(faces));
 	}
 }

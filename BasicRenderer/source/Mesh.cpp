@@ -4,17 +4,7 @@
 
 namespace BasicRenderer
 {
-	Mesh::Mesh(uint nVertices, const Vertex vertices[], uint nFaces, const Face faces[])
-	{
-		(void)nVertices;
-		(void)vertices;
-		assert(nFaces >= 0 && faces != nullptr);
-
-		for (uint i = 0; i < nFaces; ++i)
-		{
-			m_faces.emplace_back(faces[i]);
-		}
-	}
+	Mesh::Mesh(std::vector<Face> faces) noexcept : m_faces(std::move(faces)) {}
 
 	Mesh::Mesh(const Mesh& m)
 	{
