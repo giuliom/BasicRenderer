@@ -19,7 +19,7 @@ namespace BasicRenderer
 	class SceneLoader
 	{
 	public:
-		static std::unique_ptr<SceneObject> parseSceneObject(const json& objJson, const MeshMap& meshes, const MaterialMap& materials);
+		static std::unique_ptr<SceneObject> ParseSceneObject(const json& objJson, const MeshMap& meshes, const MaterialMap& materials);
 		static std::unique_ptr<World> LoadFromFile(const std::string& filepath);
 	};
 }

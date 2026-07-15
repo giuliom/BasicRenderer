@@ -34,7 +34,7 @@ TEST(SUITE_NAME, ParseSceneObject_Name)
 	MeshMap meshes;
 	MaterialMap materials;
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	EXPECT_EQ(obj->GetName(), "TestObj");
@@ -46,7 +46,7 @@ TEST(SUITE_NAME, ParseSceneObject_DefaultName)
 	MeshMap meshes;
 	MaterialMap materials;
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	EXPECT_EQ(obj->GetName(), "unnamed");
@@ -64,7 +64,7 @@ TEST(SUITE_NAME, ParseSceneObject_Transform)
 	MeshMap meshes;
 	MaterialMap materials;
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	const auto& pos = obj->GetTransform().GetPosition();
@@ -89,7 +89,7 @@ TEST(SUITE_NAME, ParseSceneObject_UniformScale)
 	MeshMap meshes;
 	MaterialMap materials;
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	const auto& scale = obj->GetTransform().GetScale();
@@ -107,7 +107,7 @@ TEST(SUITE_NAME, ParseSceneObject_Enabled)
 	MeshMap meshes;
 	MaterialMap materials;
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	EXPECT_FALSE(obj->GetEnabled());
@@ -122,7 +122,7 @@ TEST(SUITE_NAME, ParseSceneObject_Visible)
 	MeshMap meshes;
 	MaterialMap materials;
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	EXPECT_FALSE(obj->GetVisible());
@@ -139,7 +139,7 @@ TEST(SUITE_NAME, ParseSceneObject_Sphere)
 	MeshMap meshes;
 	MaterialMap materials;
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	ASSERT_TRUE(obj->GetDrawableInstance().has_value());
@@ -157,7 +157,7 @@ TEST(SUITE_NAME, ParseSceneObject_Plane)
 	MeshMap meshes;
 	MaterialMap materials;
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	ASSERT_TRUE(obj->GetDrawableInstance().has_value());
@@ -176,7 +176,7 @@ TEST(SUITE_NAME, ParseSceneObject_WithMaterial)
 		{"material", "red_metal"}
 	};
 
-	auto obj = SceneLoader::parseSceneObject(j, meshes, materials);
+	auto obj = SceneLoader::ParseSceneObject(j, meshes, materials);
 
 	ASSERT_NE(obj, nullptr);
 	ASSERT_TRUE(obj->GetDrawableInstance().has_value());
