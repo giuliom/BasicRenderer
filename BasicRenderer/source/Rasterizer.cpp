@@ -7,7 +7,6 @@
 #include <chrono>
 #include <future>
 #include <iostream>
-#include <thread>
 
 namespace BasicRenderer
 {
@@ -41,7 +40,7 @@ namespace BasicRenderer
 		// pulled dynamically from a shared counter, so framebuffer writes never race.
 		constexpr uint rowsPerChunk = 16u;
 		const uint chunkCount = (height + rowsPerChunk - 1u) / rowsPerChunk;
-		const uint threadCount = std::min(std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u, chunkCount);
+		const uint threadCount = std::min(m_threadCount, chunkCount);
 
 		m_triangleBins.resize(chunkCount);
 		for (auto& bin : m_triangleBins)

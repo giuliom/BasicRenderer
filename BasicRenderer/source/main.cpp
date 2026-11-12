@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include <iostream>
 #include <chrono>
 #include <string>
@@ -30,12 +31,15 @@ int main(int argc, char *argv[])
 	parser.addOption("file", "f", ArgvNaut::OptionType::STRING, "");
 	parser.addOption("samples", "p", ArgvNaut::OptionType::INTEGER, "4");
 	parser.addOption("bounces", "b", ArgvNaut::OptionType::INTEGER, "3");
+	parser.addOption("threads", "t", ArgvNaut::OptionType::INTEGER);
 
 	if (!parser.parse(argc, const_cast<const char**>(argv)))
 	{
 		std::cerr << "Error: invalid arguments. Use --help for usage information." << std::endl;
 		return 1;
 	}
+
+	const uint maxThreads = RenderSystem::MaxThreadCount();
 
 	if (parser.getFlag("help"))
 	{
@@ -48,6 +52,7 @@ int main(int argc, char *argv[])
 		<< "-s, --shading   shading mode [lit, normal]" << std::endl
 		<< "-p, --samples   pixel samples" << std::endl
 		<< "-b, --bounces   max bounces" << std::endl
+		<< "-t, --threads   rendering threads [1, " << maxThreads << "], default " << maxThreads << std::endl
 		<< std::endl;
 		return 0;
 	}
@@ -56,6 +61,7 @@ int main(int argc, char *argv[])
 	int height = parser.getInt("height").value_or(720);
 	int pixelSamples = parser.getInt("samples").value_or(4);
 	int maxBounces = parser.getInt("bounces").value_or(3);
+	uint threadCount = parser.getInt("threads").value_or(maxThreads);
 
 	std::string sceneFile = parser.getString("file").value_or("");
 	if (sceneFile.empty())
@@ -88,11 +94,13 @@ int main(int argc, char *argv[])
 	std::cout << "Shading: " + shadingModeName << std::endl;
 	std::cout << "Pixel Samples: " << pixelSamples << std::endl;
 	std::cout << "Max Bounces: " << maxBounces << std::endl;
+	std::cout << "Threads: " << threadCount << std::endl;
 
 	std::cout << "\n----- RENDERING -----"<<std::endl;
 
 	
 	Renderer renderer;
+	renderer.SetThreadCount(threadCount);
 	std::unique_ptr<World> scene = SceneLoader::LoadFromFile(sceneFile);
 	if (!scene)
 	{

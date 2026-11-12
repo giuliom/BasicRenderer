@@ -48,6 +48,9 @@ namespace BasicRenderer
 		Rasterizer& GetRasterizer() noexcept { return m_rasterizer; }
 		Raytracer& GetRaytracer() noexcept { return m_raytracer; }
 
+		void SetThreadCount(uint count) noexcept;
+		uint GetThreadCount() const noexcept { return m_raytracer.GetThreadCount(); }
+
 		const FrameBuffer* Render(const RenderState& scene, uint width, uint height, RenderingMode mode = RenderingMode::RASTERIZER, ShadingMode shading = ShadingMode::LIT, const float deltaTime = 0.f);
 
 		static std::string GenerateFilename(const std::string& customPrefix, uint imageHeight, RenderingMode mode, ShadingMode shading, uint pixelSamples = 1u, uint bounces = 0u);

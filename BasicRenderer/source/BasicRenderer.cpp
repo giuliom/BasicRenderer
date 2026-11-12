@@ -25,6 +25,14 @@ namespace BasicRenderer
 		m_renderSystems.emplace_back(&m_raytracer);
 	}
 
+	void Renderer::SetThreadCount(uint count) noexcept
+	{
+		for (RenderSystem* system : m_renderSystems)
+		{
+			system->SetThreadCount(count);
+		}
+	}
+
 	const FrameBuffer* Renderer::Render(const RenderState& state, uint width, uint height, RenderingMode mode, ShadingMode shading, const float deltaTime)
 	{
 		(void)deltaTime;

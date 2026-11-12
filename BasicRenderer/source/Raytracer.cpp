@@ -31,7 +31,7 @@ namespace BasicRenderer
 		state.BuildAccelerationStructure();
 
 		std::vector<std::future<size_t>> renderFutures;
-		const uint threadCount = std::thread::hardware_concurrency() > 1u ? std::thread::hardware_concurrency() - 1u : 1u;
+		const uint threadCount = m_threadCount;
 
 		std::cout << "Rendering with " << threadCount << " threads\n";
 		std::cout << "Progress: " << 0u << "% \r";
