@@ -4,7 +4,7 @@ A simple renderer
 
 ![Build and Tests](https://github.com/giuliom/BasicRenderer/actions/workflows/CI.yml/badge.svg?branch=main)
 
-![Screenshot](basicrenderer.JPG?raw=true "Screenshot")
+![Screenshot](basicrenderer.jpg?raw=true "Screenshot")
 
 ## Description
 
