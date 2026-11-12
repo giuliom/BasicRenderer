@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
 	}
 
 	const uint maxThreads = RenderSystem::MaxThreadCount();
+	const uint defaultThreads = RenderSystem::DefaultThreadCount();
 
 	if (parser.getFlag("help"))
 	{
@@ -52,7 +53,7 @@ int main(int argc, char *argv[])
 		<< "-s, --shading   shading mode [lit, normal]" << std::endl
 		<< "-p, --samples   pixel samples" << std::endl
 		<< "-b, --bounces   max bounces" << std::endl
-		<< "-t, --threads   rendering threads [1, " << maxThreads << "], default " << maxThreads << std::endl
+		<< "-t, --threads   rendering threads [1, " << maxThreads << "], default " << defaultThreads << std::endl
 		<< std::endl;
 		return 0;
 	}
@@ -61,7 +62,7 @@ int main(int argc, char *argv[])
 	int height = parser.getInt("height").value_or(720);
 	int pixelSamples = parser.getInt("samples").value_or(4);
 	int maxBounces = parser.getInt("bounces").value_or(3);
-	uint threadCount = parser.getInt("threads").value_or(maxThreads);
+	uint threadCount = parser.getInt("threads").value_or(defaultThreads);
 
 	std::string sceneFile = parser.getString("file").value_or("");
 	if (sceneFile.empty())

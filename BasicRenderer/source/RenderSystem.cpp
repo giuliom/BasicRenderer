@@ -6,8 +6,12 @@ namespace BasicRenderer
 {
 	uint RenderSystem::MaxThreadCount() noexcept
 	{
-		const uint hardwareThreads = std::thread::hardware_concurrency();
-		return hardwareThreads > 1u ? hardwareThreads - 1u : 1u;
+		return std::max(1u, std::thread::hardware_concurrency());
+	}
+
+	uint RenderSystem::DefaultThreadCount() noexcept
+	{
+		return std::max(1u, MaxThreadCount() - 1u);
 	}
 
 	void RenderSystem::SetThreadCount(uint count) noexcept

@@ -14,11 +14,12 @@ namespace BasicRenderer
 	{
 	public:
 		static uint MaxThreadCount() noexcept;
+		static uint DefaultThreadCount() noexcept;
 		uint GetThreadCount() const noexcept { return m_threadCount; }
 		void SetThreadCount(uint count) noexcept;
 
 	protected:
-		uint m_threadCount = MaxThreadCount();
+		uint m_threadCount = DefaultThreadCount();
 
 	private:
 		virtual void Render(FrameBuffer& fBuffer, const RenderState& state, const ShadingFunc& Shading) = 0;
