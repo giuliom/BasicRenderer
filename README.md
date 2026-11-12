@@ -27,9 +27,11 @@ The solution includes two projects:
 ### BasicRenderer
 The project root folder contains a BasicRenderer.sln Visual Studio file but this project is made to use CMake
 - Install CMake
-- Move into the BasicRenderer folder
-- Run shell scripts `build.sh` and `run_tests.sh` to build the project and run the tests
-- Otherwise CMake can be used directly, these targets are provided:
+- Use the scripts in the `scripts` folder (on Windows run them from Git Bash or WSL):
+  - `scripts/build.sh [Debug|Release]` builds the executable (default Release)
+  - `scripts/run.sh [args...]` runs the executable, building it first if needed, e.g. `scripts/run.sh --help`
+  - `scripts/tests.sh` builds and runs the tests
+- Otherwise CMake can be used directly on the BasicRenderer folder, these targets are provided:
   - The library `BasicRendererLib`
   - The executable `BasicRenderer`
   - The Google Test executable `BasicRendererTest`
